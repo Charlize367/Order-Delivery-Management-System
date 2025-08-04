@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+body{
+  margin:0;
+  padding:0;
+  align-items: center;
+  width:100%;
+  background-image: linear-gradient(to right, #FD1D1D, #FCB045);
+  font-family: "Montserrat", sans-serif;
+}
+
+.login-body{
+  width:100%;
+  height:100%;
+}
+
+.login-container{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: space-around;
+  position:relative;
+  max-width:600px;
+  margin:150px auto;
+  background-color:white;
+  align-items:center;
+  border-radius:30px;
+  padding-top:30px;
+
+}
+
+.fields{
+  padding:20px;
+  width: 83%;
+  height:25px;
+  border-style: none;
+  border-radius:30px;
+  background-color:white;
+  border-color:gray;
+  margin:30px;
+  background-image: linear-gradient(to right, #E0D7D7, #F5E5D0);
+  font-family: "Montserrat", sans-serif;
+}
+
+.loginBtn{
+  width:80%;
+  background-image: linear-gradient(to right, #FD1D1D, #FCB045);
+  border-style: none;
+  border-radius:30px;
+  height:50px;
+  margin:50px;
+  font-family: "Montserrat", sans-serif;
+  color:white;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.dashboard{
+  background-color:white;
+  height:700px;
+}
+
+.header{
+  display:flex;
+  background-image: linear-gradient(to right, #FD1D1D, #FCB045);
+  color:white;
+  padding:20px;
+}
+
+.menu{
+  margin:18px;
+  width:3%;
+  height:3%;
+}
+
+.sidebar{
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(to right, #FD1D1D, #FCB045);
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+  
+}
+
+.link-list{
+  list-style-type: none;
+}
+
+.openBtn{
+  width:5%;
+  height:3%;
+  font-size:30px;
+  background-color:transparent;
+  border-style: none;
+  color:white;
+  padding:20px;
+
+}
+
+.sidebar .closeBtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  background-color:transparent;
+  color:white;
+  border-style: none;
+}
+
+a{
+  text-decoration:none;
+  color:white;
+}
+
+.navlink{
+  margin:0;
+  padding:10px;
+}
+
+.navlink:hover{
+  background-color:red;
+}
