@@ -44,7 +44,7 @@ const Login = () => {
 
     return(
         <section className="login-body">
-        <div className="login-container">
+        <div className="form-container">
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
             <input className="fields" type="text" placeholder="Username" value={username} onChange={handleUsernameChange}  />
