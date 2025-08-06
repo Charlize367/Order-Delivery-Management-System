@@ -1,5 +1,6 @@
 package org.example;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.Users.Users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,25 +16,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
 
     private static final Logger Log = LoggerFactory.getLogger(AuthController.class);
 
     private final TokenService tokenService;
 
-    public AuthController(TokenService tokenService, AuthenticationManager authenticationManager){
+    public AuthController(TokenService tokenService){
         this.tokenService = tokenService;
-        this.authenticationManager = authenticationManager;
+//        this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping("/register")
-    public String register(@RequestBody Users users){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(users.getUsername(), users.getPassword()));
-
-        String token = tokenService.generateToken(authentication);
-        return token;
-
-    }
+//    @PostMapping("/register")
+//    public String register(@RequestBody Users users){
+//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(users.getUsername(), users.getPassword()));
+//
+//        String token = tokenService.generateToken(authentication);
+//        return token;
+//
+//    }
 
     @PostMapping("/token")
     public String token(Authentication authentication) {
@@ -42,4 +44,7 @@ public class AuthController {
         return token;
     }
 
+
 }
+
+
