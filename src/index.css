@@ -33,14 +33,17 @@ body{
   flex-direction: column;
   flex-wrap: wrap;
   align-content: space-around;
-  position:relative;
+  position:absolute;
   max-width:600px;
-  margin:70px auto;
   background-color:white;
   align-items:center;
   border-radius:30px;
   padding-top:30px;
  border-style:groove;
+ margin-left:29%;
+ margin-top:5%;
+ z-index:2;
+
 
 }
 
@@ -92,9 +95,9 @@ body{
 
 .customers{
   background-color:white;
-  height:700px;
   align-items: center;
   max-width:2000px;
+  height:4000px;
 }
 
 .header{
@@ -174,4 +177,71 @@ a{
 
 .navlink:hover{
   background-color:red;
+}
+
+.c-table{
+	border-collapse:collapse;
+	box-shadow:0 5px 10px gray;
+	background-color:white;
+	text-align:left;
+	overflow:hidden;
+  width:50%;
+	position:relative;
+	margin-left:25%;
+  margin-top:5%;
+  align-items:center;
+}
+
+table{
+	padding:40px;
+}
+
+thead{
+	box-shadow:0 5px 10px gray;
+}
+
+th{
+	padding:20px;
+	text-transform:uppercase;
+	letter-spacing:0.1rem;
+	font-size:0.7rem;
+	font-weight:900;
+  text-align:center;
+}
+
+td{
+	padding-left:20px;
+  padding-top:20px;
+  padding-bottom:20px;
+}
+
+.deleteBtn{
+  background-color:transparent;
+  border-style:none;
+  padding:0;
+  width:10%;
+  margin-left:8%;
+}
+
+.editBtn{
+  background-color:transparent;
+  border-style:none;
+  padding:0;
+  width:10%;
+  margin:0;
+  
+}
+
+
+
+.delete-icon{
+  width:70%;
+  height:70%;
+  margin:0;
+}
+
+.edit-icon{
+  width:70%;
+  height:70%;
+  margin:0;
 }

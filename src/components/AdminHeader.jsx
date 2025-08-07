@@ -20,7 +20,7 @@ const Header = () => {
       <h1 className="title">Delivery App</h1>
 
       <div className="sidebar" style={isActive ? {width: "250px"} : {width: "0px"}}>
-        <button className="closeBtn" onclick={openNav} href="">x</button>
+        <button className="closeBtn" onClick={openNav}>x</button>
         <ul className="link-list">
           <li className="navlink"><Link to = "/catalog_dashboard">Dashboard</Link></li>
         <li className="navlink"><Link to = "/orders">Orders</Link></li>
