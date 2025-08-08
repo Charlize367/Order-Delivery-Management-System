@@ -3,43 +3,53 @@ import Header from '../components/AdminHeader.jsx'
 import { useState, useEffect } from 'react'
 import axios from 'axios';
 
+
 const Customers = () => {
    const [isActive, setIsActive] = useState(false);
    const [isActive2, setIsActive2] = useState(false);
    const token = localStorage.getItem('jwtToken')
-   const [username, setUsername] = useState("");
-   const [password, setPassword] = useState("");
-   const [inputData, setInputData] = useState({ username: '', password: '', role: 'Customer' });
-   const [updatedUsername, setUpdatedUsername] = useState("");
-   const [updatedPassword, setUpdatedPassword] = useState("");
+   const [inputData, setInputData] = useState({username : "", password : "", role : "Customer"});
    const [customers, setCustomers] = useState([]);
-   const [resource_ID, setResource_ID] = useState(0);
-   
+   const [resource_ID, setResource_ID] = useState(null);
 
+   
+   console.log("Customers", customers)
    const openForm = () => {
     setIsActive(!isActive);
   };
 
-  const openUpdateForm = () => {
+  const openUpdateForm = (id) => {
+    const selectedCustomer = customers.find(customer => customer.user_ID === id);
+
+    if (selectedCustomer) {
+      setInputData({
+      username: selectedCustomer.username,
+      password: selectedCustomer.password,
+      role: 'Customer'
+      });
+    }
+    setResource_ID(id);
     setIsActive2(!isActive2);
-  
-  };
-  
+}
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
   
 
+const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+  setInputData({ ...inputData, [name]: value });
+  }
+
+
+  
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(username);
+        
+      
             try {
               
                 const response = await axios.post('http://localhost:8083/users', inputData, {
@@ -50,8 +60,7 @@ const Customers = () => {
                 });
                 const dt = response.config.data;
                 fetchData();
-                console.log(dt);
-                setResource_ID(response.data.user_ID);
+                
                 return true;
 
             } catch (error) {
@@ -69,8 +78,7 @@ const Customers = () => {
                         'Content-Type': 'application/json'
                     }});
             setCustomers(response.data);
-            console.log(customers);
-            console.log(response);
+            
           } catch {
             console.error("Error");
           }
@@ -89,35 +97,39 @@ const Customers = () => {
                         'Content-Type': 'application/json'
                     }});
           console.log("Deleted");
+        
           fetchData();
         } catch {
           console.log("Failed to delete.");
         }
       }
 
+
       const updateData = async (e) => {
         e.preventDefault();
+
+      
+      
         try {
 
-          const response = await axios.put(`http://localhost:8083/users/${resource_ID}`, inputData, {
+          const response = await axios.put(`http://localhost:8083/users/${updateID}`, inputData, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
           console.log("Updated");
-          console.log(resource_ID);
+          console.log("UPDATE RESPONSE :", response)
+          console.log(updateID);
+          console.log(`http://localhost:8083/users/${resource_ID}`)
           fetchData();
         } catch {
           console.log("Failed to Update.");
-          console.log(inputData);
-          console.log(resource_ID);
+         
         }
       }
+      
 
-      const handleChange = (e) => {
-  setInputData({ ...inputData, [e.target.name]: e.target.value });
-};
-
+    
 
   return (
     <div className="body">
@@ -129,10 +141,10 @@ const Customers = () => {
           <form onSubmit={handleSubmit}>
           <input className="fields" type="text" placeholder="Username" name="username" value={inputData.username} onChange={handleChange} />
             <input className="fields" type="password" placeholder="Password" name="password" value={inputData.password} onChange={handleChange} />
-            <input className="loginBtn" type="submit" value="Add" />
+            <input className="loginBtn" type="submit" value="Add"/>
             </form>
         </div>
-
+        
         <div className="customers-table">
           <table className="c-table">
             <thead>
@@ -144,15 +156,16 @@ const Customers = () => {
             </thead>
             <tbody>
             {customers.map(customer => (
-              <tr key={customer.id}>
+              <tr key={customer.user_ID}>
                 <td>{customer.username}</td>
                 <td>{customer.password}</td>
-                <td><center><button className="editBtn"><img className="edit-icon" src="/edit.svg" onClick={openUpdateForm}/></button>
+                <td><center><button className="editBtn"><img className="edit-icon" src="/edit.svg" onClick={() => openUpdateForm(customer.user_ID)}/></button>
                 <button className="deleteBtn"><img className="delete-icon" src="/delete.svg" onClick={() => deleteData(customer.user_ID)} /></button></center>
                 </td>
             </tr>
             ))}
             </tbody>
+            
           </table>
           <div className="form-container2" style={isActive2 ? {display: "flex"} : {display: "none"}}>
           <button className="closeBtn2" onClick={openUpdateForm}>x</button>
@@ -162,7 +175,7 @@ const Customers = () => {
             <input className="loginBtn" type="submit" value="Edit" />
             </form>
             
-            
+        
         </div> 
         </div>
       </div>
@@ -170,6 +183,7 @@ const Customers = () => {
   )
 }
 
-export default Customers
+
+export default Customers;
 
 
