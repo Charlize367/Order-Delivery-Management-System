@@ -8,7 +8,7 @@ const Customers = () => {
    const [isActive, setIsActive] = useState(false);
    const [isActive2, setIsActive2] = useState(false);
    const token = localStorage.getItem('jwtToken')
-   const [inputData, setInputData] = useState({username : "", password : "", role : "Customer"});
+   const [inputData, setInputData] = useState([]);
    const [customers, setCustomers] = useState([]);
    const [resource_ID, setResource_ID] = useState(null);
 
@@ -19,22 +19,27 @@ const Customers = () => {
   };
 
   const openUpdateForm = (id) => {
-    const selectedCustomer = customers.find(customer => customer.user_ID === id);
-
+    
+    const selectedCustomer = customers.find(customer => customer.user_ID === id)
+    setResource_ID(id);
     if (selectedCustomer) {
       setInputData({
+      user_ID : selectedCustomer.user_ID,
       username: selectedCustomer.username,
       password: selectedCustomer.password,
       role: 'Customer'
       });
     }
-    setResource_ID(id);
+    
     setIsActive2(!isActive2);
 }
 
-  
+
 
 const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
+  
+
+
 
 
   const handleChange = (e) => {
@@ -49,7 +54,6 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
     const handleSubmit = async (event) => {
         event.preventDefault();
         
-      
             try {
               
                 const response = await axios.post('http://localhost:8083/users', inputData, {
@@ -60,7 +64,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
                 });
                 const dt = response.config.data;
                 fetchData();
-                
+                openForm(isActive);
                 return true;
 
             } catch (error) {
@@ -90,6 +94,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
 
 
       const deleteData = async (id) => {
+
         try {
           const response = await axios.delete(`http://localhost:8083/users/${id}`, {
               headers: {
@@ -118,10 +123,8 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
                         'Content-Type': 'application/json'
                     }});
           console.log("Updated");
-          console.log("UPDATE RESPONSE :", response)
-          console.log(updateID);
-          console.log(`http://localhost:8083/users/${resource_ID}`)
           fetchData();
+          openUpdateForm(isActive2);
         } catch {
           console.log("Failed to Update.");
          
@@ -136,7 +139,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
       <Header />
       <div className="customers">
         <button className="addCustomers" onClick={openForm}>Add Customers/Users</button>
-        <div className="form-container2" style={isActive ? {display: "flex"} : {display: "none"}}>
+        <div className="add-form" style={isActive ? {display: "flex"} : {display: "none"}}>
           <button className="closeBtn2" onClick={openForm}>x</button>
           <form onSubmit={handleSubmit}>
           <input className="fields" type="text" placeholder="Username" name="username" value={inputData.username} onChange={handleChange} />
@@ -167,7 +170,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
             </tbody>
             
           </table>
-          <div className="form-container2" style={isActive2 ? {display: "flex"} : {display: "none"}}>
+          <div className="edit-form" style={isActive2 ? {display: "flex"} : {display: "none"}}>
           <button className="closeBtn2" onClick={openUpdateForm}>x</button>
           <form onSubmit={updateData}>
           <input className="fields" type="text" placeholder="Username" name="username" value={inputData.username} onChange={handleChange} />
