@@ -1,9 +1,13 @@
 package org.example.Users;
 
 
+import org.example.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,12 +16,17 @@ import java.util.List;
 @RequestMapping("users")
 public class UserController {
 
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
+
     @Autowired
     UsersRepository usersRepository;
     private final UserService userService;
 
 
-    public UserController(UserService userService) {
+    public UserController(AuthenticationManager authenticationManager, TokenService tokenService, UserService userService) {
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
         this.userService = userService;
     }
 
@@ -35,6 +44,14 @@ public class UserController {
     public ResponseEntity<Users> createUser(@RequestBody Users users) {
         userService.addUsers(users);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody Users users) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(users.getUsername(), users.getPassword()));
+
+        String token = tokenService.generateToken(authentication);
+        return ResponseEntity.ok(token);
     }
 
     @PutMapping("/{user_ID}")

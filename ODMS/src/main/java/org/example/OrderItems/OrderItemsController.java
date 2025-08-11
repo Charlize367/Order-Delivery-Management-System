@@ -48,9 +48,8 @@ public class OrderItemsController {
         return new ResponseEntity<>(updateOrderItems, HttpStatus.OK);
     }
 
-    @PutMapping("/{orderItems_ID}/orders/{orders_ID}")
-    public OrderItems addOrderItemsToOrder(@PathVariable int orderItems_ID, @PathVariable int orders_ID) {
-        OrderItems orderItems = orderItemsRepository.findById(orderItems_ID).get();
+    @PutMapping("orders/{orders_ID}")
+    public OrderItems addOrderItemsToOrder(@PathVariable int orders_ID, @RequestBody OrderItems orderItems) {
         Orders orders = ordersRepository.findById(orders_ID).get();
         orderItems.setOrders(orders);
         return orderItemsRepository.save(orderItems);

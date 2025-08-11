@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-//    private final AuthenticationManager authenticationManager;
+
 
     private static final Logger Log = LoggerFactory.getLogger(AuthController.class);
 
@@ -24,17 +24,8 @@ public class AuthController {
 
     public AuthController(TokenService tokenService){
         this.tokenService = tokenService;
-//        this.authenticationManager = authenticationManager;
     }
 
-//    @PostMapping("/register")
-//    public String register(@RequestBody Users users){
-//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(users.getUsername(), users.getPassword()));
-//
-//        String token = tokenService.generateToken(authentication);
-//        return token;
-//
-//    }
 
     @PostMapping("/token")
     public String token(Authentication authentication) {

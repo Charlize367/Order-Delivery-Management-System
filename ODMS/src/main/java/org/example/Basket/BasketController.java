@@ -52,20 +52,18 @@ public class BasketController {
         return new ResponseEntity<>(updateBaskets, HttpStatus.OK);
     }
 
-    @PutMapping("/{basket_ID}/users/{user_ID}")
-    public Basket addUserToBasket(@PathVariable int basket_ID, @PathVariable int user_ID) {
-        Basket basket = basketRepository.findById(basket_ID).get();
+    @PostMapping("/users/{user_ID}")
+    public Basket addUserToBasket(@PathVariable int user_ID, @RequestBody Basket basket) {
         Users users = usersRepository.findById(user_ID).get();
         basket.setCustomer(users);
         return basketRepository.save(basket);
     }
 
-    @PutMapping("/{basket_ID}/catalog/{catalog_ID}")
-    public Catalog addCatalogToBasket(@PathVariable int basket_ID, @PathVariable int catalog_ID) {
-        Basket basket = basketRepository.findById(basket_ID).get();
+    @PostMapping("catalog/{catalog_ID}")
+    public Basket addCatalogToBasket(@PathVariable int catalog_ID,  @RequestBody Basket basket) {
         Catalog catalog = catalogRepository.findById(catalog_ID).get();
         basket.setCatalog(catalog);
-        return catalogRepository.save(catalog);
+        return basketRepository.save(basket);
     }
 
     @DeleteMapping("/{basket_ID}")

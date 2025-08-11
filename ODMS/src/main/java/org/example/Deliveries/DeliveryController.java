@@ -54,17 +54,16 @@ public class DeliveryController {
         return new ResponseEntity<>(updateDelivery, HttpStatus.OK);
     }
 
-    @PutMapping("/{delivery_ID}/users/{user_ID}")
-    public Deliveries addUserToDeliveries(@PathVariable int delivery_ID, @PathVariable int user_ID) {
-        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
+
+    @PostMapping("/users/{user_ID}")
+    public Deliveries addUserToDeliveries(@PathVariable int user_ID, @RequestBody Deliveries deliveries) {
         Users users = usersRepository.findById(user_ID).get();
         deliveries.setDelivery_men(users);
         return deliveryRepository.save(deliveries);
     }
 
-    @PutMapping("/{delivery_ID}/orders/{orders_ID}")
-    public Deliveries addOrderToDelivery(@PathVariable int delivery_ID, @PathVariable int orders_ID) {
-        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
+    @PostMapping("/orders/{orders_ID}")
+    public Deliveries addOrderToDelivery(@PathVariable int orders_ID, @RequestBody Deliveries deliveries) {
         Orders orders = ordersRepository.findById(orders_ID).get();
         deliveries.setOrders(orders);
         return deliveryRepository.save(deliveries);

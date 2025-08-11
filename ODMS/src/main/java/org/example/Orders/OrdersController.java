@@ -1,5 +1,6 @@
 package org.example.Orders;
 
+import org.aspectj.weaver.ast.Or;
 import org.example.Deliveries.Deliveries;
 import org.example.Users.Users;
 import org.example.Users.UsersRepository;
@@ -49,9 +50,8 @@ public class OrdersController {
         return new ResponseEntity<>(updateOrders, HttpStatus.OK);
     }
 
-    @PutMapping("/{delivery_ID}/users/{user_ID}")
-    public Orders addUserToOrders(@PathVariable int orders_ID, @PathVariable int user_ID) {
-        Orders orders = ordersRepository.findById(orders_ID).get();
+    @PutMapping("/users/{user_ID}")
+    public Orders addUserToOrders(@PathVariable int user_ID, @RequestBody Orders orders) {
         Users users = usersRepository.findById(user_ID).get();
         orders.setCustomer(users);
         return ordersRepository.save(orders);

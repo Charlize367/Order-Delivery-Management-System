@@ -2,6 +2,7 @@ package org.example.Catalog;
 
 import jakarta.persistence.*;
 import org.example.Basket.Basket;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -15,7 +16,7 @@ public class Catalog {
     private String catalog_name;
     private Integer catalog_price;
     private String catalog_description;
-    private File catalog_image;
+    private String catalog_image;
 
     @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Basket> basket;
@@ -53,11 +54,11 @@ public class Catalog {
         this.catalog_description = catalog_description;
     }
 
-    public File getCatalog_image() {
+    public String getCatalog_image() {
         return catalog_image;
     }
 
-    public void setCatalog_image(File catalog_image) {
+    public void setCatalog_image(String catalog_image) {
         this.catalog_image = catalog_image;
     }
 
