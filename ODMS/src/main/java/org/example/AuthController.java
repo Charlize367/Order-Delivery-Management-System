@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.Users.Users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     private static final Logger Log = LoggerFactory.getLogger(AuthController.class);
 
@@ -27,12 +29,21 @@ public class AuthController {
     }
 
 
-    @PostMapping("/token")
-    public String token(Authentication authentication) {
-        Log.debug("Token requested for user: '{}'", authentication.getName());
+//    @PostMapping("/token")
+//    public String token(Authentication authentication) {
+//        Log.debug("Token requested for user: '{}'", authentication.getName());
+//        String token = tokenService.generateToken(authentication);
+//        Log.debug("Token granted {}", token);
+//        return token;
+//    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Users users) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(users.getUsername(), users.getPassword())
+        );
         String token = tokenService.generateToken(authentication);
-        Log.debug("Token granted {}", token);
-        return token;
+        return ResponseEntity.ok(token);
     }
 
 

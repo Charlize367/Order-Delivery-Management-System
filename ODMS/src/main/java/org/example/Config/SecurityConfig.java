@@ -6,12 +6,14 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.example.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +21,8 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -34,26 +38,38 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    public SecurityConfig(RsaKeyProperties rsaKeyProperties) {
+    private final CustomUserDetailsService userDetailsService;
+    private final RsaKeyProperties rsaKeyProperties;
+
+    public SecurityConfig(CustomUserDetailsService userDetailsService, RsaKeyProperties rsaKeyProperties) {
+        this.userDetailsService = userDetailsService;
         this.rsaKeyProperties = rsaKeyProperties;
     }
 
 
-    private final RsaKeyProperties rsaKeyProperties;
-
-    @Bean
-    public InMemoryUserDetailsManager user() {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("Liz")
-                        .password("{noop}liz367")
-                        .authorities("read")
-                        .build()
-        );
-    }
+//    @Bean
+//    public InMemoryUserDetailsManager user() {
+//        return new InMemoryUserDetailsManager(
+//                User.withUsername("Liz")
+//                        .password("{noop}liz367")
+//                        .authorities("read")
+//                        .roles("ADMIN")
+//                        .build()
+//        );
+//    }
 
    @Bean
-   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+   public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder())
+                .and()
+                .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 
@@ -64,7 +80,11 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/src/main/resources/static/images/**").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/admin/hello").hasRole("ADMIN")
+                        .requestMatchers("/customers/hello").hasAnyRole("CUSTOMER", "ADMIN")
+                        .requestMatchers("/delivery/hello").hasRole("DELIVERY")
+
                         .anyRequest().authenticated()
 
                 )

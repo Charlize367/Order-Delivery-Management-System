@@ -49,4 +49,9 @@ public class UserService {
         return usersRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + "not found"));
     }
+
+    public Users getUsersByRole(String role) {
+        return usersRepository.findByRole(role)
+                .orElseThrow(() -> new IllegalStateException(role + "not found"));
+    }
 }

@@ -40,6 +40,11 @@ public class UserController {
         return userService.getUsersById(id);
     }
 
+    @GetMapping("{role}")
+    public Users getUsersByRole(@PathVariable String role) {
+        return userService.getUsersByRole(role);
+    }
+
     @PostMapping
     public ResponseEntity<Users> createUser(@RequestBody Users users) {
         userService.addUsers(users);

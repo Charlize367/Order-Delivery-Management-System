@@ -2,5 +2,10 @@ package org.example.Users;
 
 import org.example.Users.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
 public interface UsersRepository extends JpaRepository<Users, Integer> {
+    Users findByUsername(String username);
+    Optional<Users> findByRole(String role);
 }
