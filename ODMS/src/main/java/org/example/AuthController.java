@@ -29,18 +29,10 @@ public class AuthController {
     }
 
 
-//    @PostMapping("/token")
-//    public String token(Authentication authentication) {
-//        Log.debug("Token requested for user: '{}'", authentication.getName());
-//        String token = tokenService.generateToken(authentication);
-//        Log.debug("Token granted {}", token);
-//        return token;
-//    }
-
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Users users) {
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(users.getUsername(), users.getPassword())
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
         String token = tokenService.generateToken(authentication);
         return ResponseEntity.ok(token);
