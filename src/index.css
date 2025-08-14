@@ -5,7 +5,7 @@ body{
   padding:0;
   align-items: center;
   width:100%;
-  background-image: linear-gradient(to right, #FD1D1D, #FCB045);
+  background-color: #1b1c1b;
   font-family: "Montserrat", sans-serif;
 }
 
@@ -22,14 +22,17 @@ body{
   position:relative;
   max-width:600px;
   margin:150px auto;
-  background-color:white;
+  background-color:#222422;
   align-items:center;
   border-radius:30px;
+  color:white;
   padding-top:30px;
+  border-style:outset;
+  border-color:#4a4d4a;
 
 }
 
-.form-container2{
+.add-form{
   flex-direction: column;
   flex-wrap: wrap;
   align-content: space-around;
@@ -46,6 +49,24 @@ body{
 
 
 }
+.edit-form{
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: space-around;
+  position:absolute;
+  max-width:600px;
+  background-color:white;
+  align-items:center;
+  border-radius:30px;
+  padding-top:30px;
+ border-style:groove;
+ margin-left:29%;
+ margin-top:-20%;
+ margin-bottom:5%;
+ z-index:3;
+
+
+}
 
 .fields{
   padding:20px;
@@ -56,13 +77,14 @@ body{
   background-color:white;
   border-color:gray;
   margin:30px;
-  background-image: linear-gradient(to right, #E0D7D7, #F5E5D0);
+  background-color: #4a4d4a;
   font-family: "Montserrat", sans-serif;
+  color:white;
 }
 
 .loginBtn{
   width:80%;
-  background-image: linear-gradient(to right, #FD1D1D, #FCB045);
+  background-image: linear-gradient(to right, #56C789, #096E22);
   border-style: none;
   border-radius:30px;
   height:50px;
@@ -88,7 +110,7 @@ body{
 }
 
 .dashboard{
-  background-color:white;
+  background-color:#1b1c1b;
   height:700px;
   max-width:2000px;
 }
@@ -97,12 +119,12 @@ body{
   background-color:white;
   align-items: center;
   max-width:2000px;
-  height:4000px;
+  height:4000px;      
 }
 
 .header{
   display:flex;
-  background-image: linear-gradient(to right, #FD1D1D, #FCB045);
+ background-image: linear-gradient(to right, #32bf71, #096E22);
   color:white;
   padding:20px;
 }
@@ -120,7 +142,7 @@ body{
   z-index: 1;
   top: 0;
   left: 0;
-  background-image: linear-gradient(to right, #FD1D1D, #FCB045);
+  background-image: linear-gradient(to right, #32bf71, #096E22);
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;
@@ -153,7 +175,7 @@ body{
   border-style: none;
 }
 
-.form-container2 .closeBtn2{
+.closeBtn2{
   position: absolute;
   top: 0;
   right: 25px;
@@ -176,7 +198,7 @@ a{
 }
 
 .navlink:hover{
-  background-color:red;
+  background-color:#186318;
 }
 
 .c-table{
@@ -244,4 +266,135 @@ td{
   width:70%;
   height:70%;
   margin:0;
+}
+
+.item{
+  width: 190px;
+  display:flex;
+  align-items:center;
+  flex-direction: column;
+  gap:10px;
+  padding: 10px 1rem;
+  border-radius: 10px;
+  background: var(--accent-color);
+  box-shadow: 0px 10px 15pz -3px rgba(0, 0, 0, 0.1);
+  text-align:center;
+  color:var(--text-color);
+}
+
+.item-display{
+  display: grid;
+  grid-template-columns: auto auto auto auto auto ;
+  align-items: center;
+}
+
+.item_card{
+  width:50%;
+  height:28%;
+  background-color: #363836;
+  color:white;
+  border-radius:20px;
+}
+
+.catalog_image{
+  width:100%;
+  height:60%;
+  border-radius:20px;
+}
+
+.catalog_name{
+  font-weight:bold;
+  margin:5%;
+}
+
+.catalog_price{
+  margin:5%;
+}
+
+
+.editCatalog{
+   width:30%;
+  background-image: linear-gradient(to right, #56C789, #096E22);
+  border-style: none;
+  border-radius:30px;
+  font-family: "Montserrat", sans-serif;
+  color:white;
+  font-weight:bold;
+  margin:5%;
+}
+
+.hero-image{
+  width:100%;
+  height:600px;
+}
+
+.hero-text{
+  color:white;
+  position:absolute;
+  top:20%;
+  font-size:70px;
+  left:4%;
+  width:35%;
+}
+
+.search{
+  position:absolute;
+  top:65%;
+  left:2%;
+  width: 35%;
+  height:30px;
+  border-style: none;
+  border-radius:35px;
+  background-color:white;
+  margin:30px;
+  font-family: "Montserrat", sans-serif;
+  color:black;
+  padding:20px;
+}
+
+
+.category-list {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding:0;
+  margin:0;
+}
+
+.categories-display{
+  width:90%;
+}
+
+.category_card{
+  position:relative;
+  overflow:hidden;
+  width:100%;
+  top:10%;
+  left:15%;
+
+}
+
+.category_image{
+  width:99%;
+  height:300px;
+}
+
+.overlay{
+  position:absolute;
+  color:white;
+  font-weight:bold;
+  top:-10%;
+  font-size:30px;
+  background: rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.5); /* Black see-through */
+  width: 100%;
+  height:100%;
+  transition: .5s ease;
+  opacity:0;
+  padding-top: 30%;
+  text-align: center;
+}
+
+
+.category_card:hover .overlay {
+  opacity: 1;
 }
