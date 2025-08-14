@@ -11,9 +11,10 @@ import AdminLogin from "./Admin/AdminLogin.jsx"
 import DeliveryLogin from "./Delivery/DeliveryLogin.jsx"
 import CustomerLogin from "./Customer/CustomerLogin.jsx"
 import Basket from "./Customer/Basket.jsx"
-import BrowseCatalog from "./Customer/BrowseCatalog.jsx"
+import BrowseCategory from "./Customer/BrowseCategory.jsx"
 import OrderDeliveryDetails from "./Customer/OrderDeliveryDetails.jsx"
 import DeliveriesList from './Delivery/DeliveriesList.jsx'
+import CatalogCategory from './Admin/CatalogCategory.jsx'
 import { Outlet, NavLink } from "react-router-dom";
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
 
             <Routes>
                 <Route exact path="/catalog_dashboard" element={<CatalogDashboard />} />
+                <Route exact path="/catalog/:id" element={<CatalogCategory />} />
                 <Route exact path="/customers" element={<Customers />} />
                 <Route exact path="/deliveries" element={<Deliveries />} />
                 <Route exact path="/delivery_drivers" element={<DeliveryDrivers />} />
@@ -34,7 +36,7 @@ const App = () => {
                 <Route exact path="/delivery_login" element={<DeliveryLogin />} />
                 <Route exact path="/register" element={<CreateCustomerReg />} />
                 <Route exact path="/basket" element={<Basket />} />
-                <Route exact path="/browse" element={<BrowseCatalog />} />
+                <Route exact path="/browse" element={<BrowseCategory />} />
                 <Route exact path="/order_delivery_details" element={<OrderDeliveryDetails />} />
                 <Route exact path="/deliveries_list" element={<DeliveriesList />} />
                 <Route exact path="/customers/:id" element={<CustomersUpdate />} />
