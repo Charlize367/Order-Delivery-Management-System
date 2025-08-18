@@ -2,17 +2,30 @@ import React from 'react'
 import Header from '../components/AdminHeader.jsx'
 import { useState, useEffect } from 'react'
 import axios from 'axios';
-import Item from '../components/AdminItem.jsx'
 import Category from '../components/Category.jsx'
+import { useNavigate, Link } from 'react-router-dom';
 
 const CatalogDashboard = () => {
 
   
   const token = localStorage.getItem('jwtToken');
   const [categories, setCategories] = useState([]);
+  const navigate = new useNavigate();
+  const [isActive, setIsActive] = useState(false);
+  const [inputData, setInputData] = useState([]);
 
 
-  console.log(categories);
+
+  const openAddForm = () => {
+    setIsActive(!isActive);
+  };
+
+  const handleChange = (e) => {
+    const { name, value, files, type } = e.target;
+  setInputData({ ...inputData, [name]: type === "file" ? files[0] : type === "number" ? Number(value) : value,
+    });
+  }
+  
 
     const fetchCategories = async () => {
           try {
@@ -34,6 +47,32 @@ const CatalogDashboard = () => {
         fetchCategories();
     }, []);
 
+    const addCategory = async (event) => {
+        event.preventDefault();
+        
+            try {
+              
+                const response = await axios.post(`http://localhost:8083/category`, inputData, {
+                    headers: {
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+              
+                const dt = response.data;
+                fetchCategories();
+                openAddForm(isActive);
+                return true;
+
+            } catch (error) {
+                console.error('Failed to add item:', error);
+                return false;
+            }
+
+        }
+
+
 
 
   return (
@@ -46,12 +85,27 @@ const CatalogDashboard = () => {
           <input type="text" className="search" placeholder="What are you craving for?"/>
         </div>
 
-        <div className="categories-display">
+        <button className="addCategoryBtn" onClick={openAddForm}>Add Category</button>
+        <div className="addCatForm" style={isActive ? {display: "flex"} : {display: "none"}}>
+            <h2>Add Category</h2>
+            <button className="closeBtn2" onClick={openAddForm}>x</button>
+              <form onSubmit={addCategory}>
+                <input className="fields" type="text" placeholder="Category Name" name="category_name" value={inputData.category_name} onChange={handleChange} />
+                <input className="fields" type="file" placeholder="Category Image" name="category_image"  onChange={handleChange} />
+                <input className="addBtn" type="submit" value="Add"/>
+              </form>
+          </div>
+        <div className="categories-display" >
           <ul className="category-list">
           {categories.map((category) => (
+            
+            <Link to = {`/catalog/${category.category_ID}/${category.category_name}`}>
             <Category key={category.category_ID} category={category}/>
-          ))}
+            </Link>
+          ))
+          }
           </ul>
+          
         </div>
                   
       </section>

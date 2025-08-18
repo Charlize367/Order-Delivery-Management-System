@@ -17,7 +17,7 @@ const Header = () => {
   return (
     <div className="header" style={isActive ? {marginLeft: "250px"} : {marginLeft: "0px"}}>
       <button className="openBtn" onClick={openNav}>☰</button>
-      <h1 className="title">Delivery App</h1>
+      <h1 className="title">The Flavor Hub</h1>
 
       <div className="sidebar" style={isActive ? {width: "250px"} : {width: "0px"}}>
         <button className="closeBtn" onClick={openNav}>x</button>

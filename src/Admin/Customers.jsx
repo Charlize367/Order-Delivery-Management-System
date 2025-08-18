@@ -173,8 +173,8 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
           <div className="edit-form" style={isActive2 ? {display: "flex"} : {display: "none"}}>
           <button className="closeBtn2" onClick={openUpdateForm}>x</button>
           <form onSubmit={updateData}>
-          <input className="fields" type="text" placeholder="Username" name="username" value={inputData.username} onChange={handleChange} />
-            <input className="fields" type="password" placeholder="Password" name="password" value={inputData.password} onChange={handleChange} />
+          <input className="fields" type="text" placeholder="Username" name="username" value={inputData.username} onChange={handleChange} required/>
+            <input className="fields" type="password" placeholder="Password" name="password" value={inputData.password} onChange={handleChange} required />
             <input className="loginBtn" type="submit" value="Edit" />
             </form>
             
