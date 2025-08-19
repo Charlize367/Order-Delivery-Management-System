@@ -105,7 +105,7 @@ const CatalogCategory = () => {
 
                   <ul className="item-display">
           {item.map((items) => (
-            <AdminItem items={items} onReload={handleReloadData} />
+            <AdminItem items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}
           </ul>
       </section>

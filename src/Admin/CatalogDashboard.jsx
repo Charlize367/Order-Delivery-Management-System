@@ -52,7 +52,7 @@ const CatalogDashboard = () => {
         
             try {
               
-                const response = await axios.post(`http://localhost:8083/category`, inputData, {
+                const response = await axios.post(`http://localhost:8083/categories`, inputData, {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
@@ -71,6 +71,10 @@ const CatalogDashboard = () => {
             }
 
         }
+
+    const handleReloadData = () => {
+      fetchCategories();
+    }
 
 
 
@@ -98,13 +102,15 @@ const CatalogDashboard = () => {
         <div className="categories-display" >
           <ul className="category-list">
           {categories.map((category) => (
+             
+             
             
-            <Link to = {`/catalog/${category.category_ID}/${category.category_name}`}>
-            <Category key={category.category_ID} category={category}/>
-            </Link>
+            <Category key={category.category_ID} category={category} onReload={handleReloadData}/>
+            
           ))
           }
           </ul>
+       
           
         </div>
                   
