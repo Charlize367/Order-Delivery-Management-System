@@ -42,15 +42,16 @@ public class UserController {
         return userService.getUsersById(id);
     }
 
-    @GetMapping("{role}")
-    public Users getUsersByRole(@PathVariable String role) {
-        return userService.getUsersByRole(role);
+    @GetMapping("/role/{role}")
+    public List<Users> getUsersByRole(@PathVariable String role) {
+        return usersRepository.findByRole(role);
     }
 
     @PostMapping
     public ResponseEntity<Users> createUser(@RequestBody Users users) {
         String encodedPassword = passwordEncoder.encode(users.getPassword());
         users.setPassword(encodedPassword);
+        users.setEnabled(true);
         userService.addUsers(users);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

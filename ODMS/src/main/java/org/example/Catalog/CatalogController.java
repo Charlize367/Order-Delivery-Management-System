@@ -47,7 +47,10 @@ public class CatalogController {
         return catalogService.getCatalogById(id);
     }
 
-
+    @GetMapping("/category/{category_ID}")
+    public List<Catalog> getCatalogByCategory(@PathVariable Integer category_ID){
+        return catalogService.getCatalogByCategory(category_ID);
+    }
 
     @PostMapping
     public ResponseEntity<Catalog> addCatalog( @RequestParam("catalog_name") String catalog_name,
@@ -87,11 +90,28 @@ public class CatalogController {
         catalogService.addCatalog(catalog);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+    
 
-    @PutMapping("/{catalog_ID}")
-    public ResponseEntity<Catalog> updateCatalog(@PathVariable int catalog_ID, @RequestBody Catalog catalog) {
-        Catalog updateCatalogs = catalogService.updateCatalog(catalog, catalog_ID);
-        return new ResponseEntity<>(updateCatalogs, HttpStatus.OK);
+    @PutMapping("/{catalog_ID}/category/{category_ID}")
+    public ResponseEntity<Catalog> updateCatalog(@PathVariable int catalog_ID, @PathVariable int category_ID, @RequestParam("catalog_name") String catalog_name,
+                                                 @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
+
+        Category category = categoryRepository.findById(category_ID).get();
+
+        String originalFilename = catalog_image.getOriginalFilename();
+        Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
+        Files.write(fileNameAndPath, catalog_image.getBytes());
+
+        Catalog catalog = catalogRepository.findById(catalog_ID).get();
+        catalog.setCatalog_ID(catalog_ID);
+        catalog.setCatalog_name(catalog_name);
+        catalog.setCatalog_price(catalog_price);
+        catalog.setCatalog_description(catalog_description);
+        catalog.setCatalog_image(originalFilename);
+        catalog.setCategory(category);
+
+        catalogService.updateCatalog(catalog, catalog_ID);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 

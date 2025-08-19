@@ -1,6 +1,7 @@
 package org.example.Category;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
+    @Autowired
+    CategoryRepository categoryRepository;
 
     public static String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/static/images";
 
@@ -56,9 +59,19 @@ public class CategoryController {
 
 
     @PutMapping("/{category_ID}")
-    public ResponseEntity<Category> updateCategory(@PathVariable int category_ID, @RequestBody Category category) {
-        Category updatedCategory = categoryService.updateCategory(category, category_ID);
-        return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
+    public ResponseEntity<Category> updateCategory(@PathVariable int category_ID, @RequestParam("category_name") String category_name,
+                                                   @RequestParam("category_image") MultipartFile category_image) throws IOException {
+        String originalFilename = category_image.getOriginalFilename();
+        Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
+        Files.write(fileNameAndPath, category_image.getBytes());
+
+        Category category = categoryRepository.findById(category_ID).get();
+        category.setCategory_ID(category_ID);
+        category.setCategory_name(category_name);
+        category.setCategory_image(originalFilename);
+
+        categoryService.updateCategory(category, category_ID);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("{id}")
