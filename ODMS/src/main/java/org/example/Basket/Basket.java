@@ -24,6 +24,8 @@ public class Basket {
 
     private Integer quantity;
 
+    private Integer subtotal;
+
 
     public Basket(){}
 
@@ -59,18 +61,25 @@ public class Basket {
     public void setCustomer(Users customer) {
         this.customer = customer;
     }
+    public Integer getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(Integer subtotal) {
+        this.subtotal = subtotal;
+    }
 
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Basket basket = (Basket) o;
-        return Objects.equals(basket_ID, basket.basket_ID) && Objects.equals(customer, basket.customer) && Objects.equals(catalog, basket.catalog) && Objects.equals(quantity, basket.quantity);
+        return Objects.equals(basket_ID, basket.basket_ID) && Objects.equals(customer, basket.customer) && Objects.equals(catalog, basket.catalog) && Objects.equals(quantity, basket.quantity) && Objects.equals(subtotal, basket.subtotal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(basket_ID, customer, catalog, quantity);
+        return Objects.hash(basket_ID, customer, catalog, quantity, subtotal);
     }
 
 

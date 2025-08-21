@@ -2,11 +2,13 @@ package org.example.Orders;
 
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.example.Basket.Basket;
 import org.example.Deliveries.Deliveries;
 import org.example.OrderItems.OrderItems;
 import org.example.Users.Users;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +24,7 @@ public class Orders {
     private Users customer;
 
     private Date order_date;
-    private Integer order_price;
+    private double order_price;
     private String order_status;
 
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
@@ -59,11 +61,11 @@ public class Orders {
         this.order_date = order_date;
     }
 
-    public Integer getOrder_price() {
+    public double getOrder_price() {
         return order_price;
     }
 
-    public void setOrder_price(Integer order_price) {
+    public void setOrder_price(double order_price) {
         this.order_price = order_price;
     }
 
@@ -74,6 +76,8 @@ public class Orders {
     public void setOrder_status(String order_status) {
         this.order_status = order_status;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

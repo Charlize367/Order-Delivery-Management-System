@@ -1,7 +1,11 @@
 package org.example.Orders;
 
 
+import jakarta.persistence.EntityNotFoundException;
+import org.example.Basket.Basket;
 import org.example.OrderItems.OrderItems;
+import org.example.Users.Users;
+import org.example.Users.UsersRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +15,21 @@ import java.util.Optional;
 public class OrdersService {
     private final OrdersRepository ordersRepository;
 
-    public OrdersService(OrdersRepository ordersRepository) {
+    private final UsersRepository usersRepository;
+
+    public OrdersService(OrdersRepository ordersRepository, UsersRepository usersRepository) {
         this.ordersRepository = ordersRepository;
+        this.usersRepository = usersRepository;
     }
 
     public List<Orders> getAllOrders() {
         return ordersRepository.findAll();
+    }
+
+    public List<Orders> getOrderByUser(Integer user_ID) {
+        Users users = usersRepository.findById(user_ID)
+                .orElseThrow(() -> new EntityNotFoundException("User basket not found"));
+        return ordersRepository.findByCustomer(users);
     }
 
     public void addOrders(Orders orders) {

@@ -42,6 +42,13 @@ public class DeliveryController {
         return deliveryService.getDeliveriesById(id);
     }
 
+
+    @GetMapping("/user/{user_ID}/deliveries")
+    public ResponseEntity<List<Deliveries>> getUserDeliveries(@PathVariable Integer user_ID) {
+        List<Deliveries> deliveries = deliveryRepository.findByOrderCustomerID(user_ID);
+        return ResponseEntity.ok(deliveries);
+    }
+
     @PostMapping
     public ResponseEntity<Deliveries> addDeliveries(@RequestBody Deliveries deliveries) {
         deliveryService.addDeliveries(deliveries);
@@ -65,6 +72,15 @@ public class DeliveryController {
     @PostMapping("/orders/{orders_ID}")
     public Deliveries addOrderToDelivery(@PathVariable int orders_ID, @RequestBody Deliveries deliveries) {
         Orders orders = ordersRepository.findById(orders_ID).get();
+        deliveries.setOrders(orders);
+        return deliveryRepository.save(deliveries);
+    }
+
+    @PostMapping("/users/{username}/orders/{order_ID}")
+    public Deliveries addUserAndOrderToDeliveries(@PathVariable String username, @PathVariable int order_ID, @RequestBody Deliveries deliveries) {
+        Users users = usersRepository.findByUsername(username);
+        Orders orders = ordersRepository.findById(order_ID).get();
+        deliveries.setDelivery_men(users);
         deliveries.setOrders(orders);
         return deliveryRepository.save(deliveries);
     }

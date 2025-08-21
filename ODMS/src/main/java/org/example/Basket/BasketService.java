@@ -1,6 +1,11 @@
 package org.example.Basket;
 
 
+import jakarta.persistence.EntityNotFoundException;
+import org.example.Catalog.Catalog;
+import org.example.Category.Category;
+import org.example.Users.Users;
+import org.example.Users.UsersRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +16,21 @@ public class BasketService {
 
     private final BasketRepository basketRepository;
 
-    public BasketService(BasketRepository basketRepository) {
+    private final UsersRepository usersRepository;
+
+    public BasketService(BasketRepository basketRepository, UsersRepository usersRepository) {
         this.basketRepository = basketRepository;
+        this.usersRepository = usersRepository;
     }
 
     public List<Basket> getAllBasket() {
         return basketRepository.findAll();
+    }
+
+    public List<Basket> getBasketByUser(Integer user_ID) {
+        Users users = usersRepository.findById(user_ID)
+                .orElseThrow(() -> new EntityNotFoundException("User basket not found"));
+        return basketRepository.findByCustomer(users);
     }
 
     public void addBasket(Basket basket) {

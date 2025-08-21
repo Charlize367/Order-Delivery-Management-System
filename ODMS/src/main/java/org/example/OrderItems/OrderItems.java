@@ -3,9 +3,8 @@ package org.example.OrderItems;
 import jakarta.persistence.*;
 import org.example.Catalog.Catalog;
 import org.example.Orders.Orders;
-import org.example.Users.Users;
 
-import java.io.File;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -18,11 +17,11 @@ public class OrderItems {
     @JoinColumn(name = "order_ID")
     private Orders orders;
 
-    private String order_item;
-    private String order_price;
-    private File order_image;
+    @ManyToOne
+    private Catalog order_catalog;
     private Integer quantity;
-    private Integer total_price;
+    private Integer subtotal;
+
 
     public OrderItems(){}
 
@@ -43,28 +42,12 @@ public class OrderItems {
         this.orders = orders;
     }
 
-    public String getOrder_item() {
-        return order_item;
+    public Catalog getOrder_catalog() {
+        return order_catalog;
     }
 
-    public void setOrder_item(String order_item) {
-        this.order_item = order_item;
-    }
-
-    public String getOrder_price() {
-        return order_price;
-    }
-
-    public void setOrder_price(String order_price) {
-        this.order_price = order_price;
-    }
-
-    public File getOrder_image() {
-        return order_image;
-    }
-
-    public void setOrder_image(File order_image) {
-        this.order_image = order_image;
+    public void setOrder_catalog(Catalog order_catalog) {
+        this.order_catalog = order_catalog;
     }
 
     public Integer getQuantity() {
@@ -75,24 +58,25 @@ public class OrderItems {
         this.quantity = quantity;
     }
 
-    public Integer getTotal_price() {
-        return total_price;
+    public Integer getSubtotal() {
+        return subtotal;
     }
 
-    public void setTotal_price(Integer total_price) {
-        this.total_price = total_price;
+    public void setSubtotal(Integer subtotal) {
+        this.subtotal = subtotal;
     }
+
 
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         OrderItems that = (OrderItems) o;
-        return Objects.equals(orderItems_ID, that.orderItems_ID) && Objects.equals(orders, that.orders) && Objects.equals(order_item, that.order_item) && Objects.equals(order_price, that.order_price) && Objects.equals(order_image, that.order_image) && Objects.equals(quantity, that.quantity) && Objects.equals(total_price, that.total_price);
+        return Objects.equals(orderItems_ID, that.orderItems_ID) && Objects.equals(orders, that.orders) && Objects.equals(order_catalog, that.order_catalog) && Objects.equals(quantity, that.quantity) && Objects.equals(subtotal, that.subtotal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderItems_ID, orders, order_item, order_price, order_image, quantity, total_price);
+        return Objects.hash(orderItems_ID, orders, order_catalog, quantity, subtotal);
     }
 }

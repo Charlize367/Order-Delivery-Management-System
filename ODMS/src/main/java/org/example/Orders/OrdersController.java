@@ -1,7 +1,11 @@
 package org.example.Orders;
 
 import org.aspectj.weaver.ast.Or;
+import org.example.Basket.Basket;
+import org.example.Basket.BasketRepository;
 import org.example.Deliveries.Deliveries;
+import org.example.OrderItems.OrderItems;
+import org.example.OrderItems.OrderItemsRepository;
 import org.example.Users.Users;
 import org.example.Users.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -21,6 +26,12 @@ public class OrdersController {
 
     @Autowired
     UsersRepository usersRepository;
+
+    @Autowired
+    BasketRepository basketRepository;
+
+    @Autowired
+    OrderItemsRepository orderItemsRepository;
 
 
 
@@ -38,6 +49,12 @@ public class OrdersController {
         return ordersService.getOrdersById(id);
     }
 
+
+    @GetMapping("/users/{user_ID}")
+    public List<Orders> getOrderByUser(@PathVariable Integer user_ID){
+        return ordersService.getOrderByUser(user_ID);
+    }
+
     @PostMapping
     public ResponseEntity<Orders> createOrders(@RequestBody Orders orders) {
         ordersService.addOrders(orders);
@@ -50,12 +67,40 @@ public class OrdersController {
         return new ResponseEntity<>(updateOrders, HttpStatus.OK);
     }
 
-    @PutMapping("/users/{user_ID}")
-    public Orders addUserToOrders(@PathVariable int user_ID, @RequestBody Orders orders) {
+    @PostMapping("/users/{user_ID}")
+    public Orders addUserToOrders(@PathVariable int user_ID) {
+
+
         Users users = usersRepository.findById(user_ID).get();
+        List<Basket> userBasket = basketRepository.findByCustomer(users);
+
+        Orders orders = new Orders();
         orders.setCustomer(users);
+        orders.setOrder_price(0.0);
+
+        ordersRepository.save(orders);
+
+        double total =  0;
+
+        for (Basket basketItem : userBasket) {
+            OrderItems orderItem = new OrderItems();
+            orderItem.setOrder_catalog(basketItem.getCatalog());
+            orderItem.setOrders(orders);
+            orderItem.setQuantity(basketItem.getQuantity());
+            orderItem.setSubtotal(basketItem.getSubtotal());
+            orderItemsRepository.save(orderItem);
+
+            total += orderItem.getSubtotal();
+        }
+
+        orders.setOrder_price(total);
+
         return ordersRepository.save(orders);
+
+
     }
+
+
 
 
     @DeleteMapping("/{orders_ID}")

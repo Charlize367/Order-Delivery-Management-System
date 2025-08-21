@@ -16,6 +16,7 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer user_ID;
+
     private String username;
     private String password;
     private boolean enabled;
@@ -29,6 +30,9 @@ public class Users {
 
     @OneToMany(mappedBy = "delivery_men", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Deliveries> deliveries;
+
+    @OneToMany(mappedBy = "customers", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    private List<Deliveries> customers;
 
     public Users(Integer user_ID, String username, String password, Boolean enabled, String role) {
         this.user_ID = user_ID;

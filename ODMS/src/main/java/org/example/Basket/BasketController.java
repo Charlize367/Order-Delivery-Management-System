@@ -40,6 +40,11 @@ public class BasketController {
         return basketService.getBasketById(id);
     }
 
+    @GetMapping("/users/{user_ID}")
+    public List<Basket> getBasketByUser(@PathVariable Integer user_ID){
+        return basketService.getBasketByUser(user_ID);
+    }
+
     @PostMapping
     public ResponseEntity<Basket> addBasket(@RequestBody Basket basket) {
         basketService.addBasket(basket);
@@ -52,16 +57,11 @@ public class BasketController {
         return new ResponseEntity<>(updateBaskets, HttpStatus.OK);
     }
 
-    @PostMapping("/users/{user_ID}")
-    public Basket addUserToBasket(@PathVariable int user_ID, @RequestBody Basket basket) {
+    @PostMapping("/users/{user_ID}/catalog/{catalog_ID}")
+    public Basket addUserandCatalogToBasket(@PathVariable int user_ID, @PathVariable int catalog_ID, @RequestBody Basket basket) {
         Users users = usersRepository.findById(user_ID).get();
-        basket.setCustomer(users);
-        return basketRepository.save(basket);
-    }
-
-    @PostMapping("catalog/{catalog_ID}")
-    public Basket addCatalogToBasket(@PathVariable int catalog_ID,  @RequestBody Basket basket) {
         Catalog catalog = catalogRepository.findById(catalog_ID).get();
+        basket.setCustomer(users);
         basket.setCatalog(catalog);
         return basketRepository.save(basket);
     }
