@@ -30,8 +30,11 @@ const AdminLogin = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                const token = response.data;
+                const token = response.data.token;
+                const user_ID = response.data.id;
                 localStorage.setItem('jwtToken', token);
+                localStorage.setItem('username', username)
+                localStorage.setItem('user_ID', user_ID)
                 console.log(token);
                 console.log(response);
                 navigate('/catalog_dashboard');

@@ -12,9 +12,12 @@ import DeliveryLogin from "./Delivery/DeliveryLogin.jsx"
 import CustomerLogin from "./Customer/CustomerLogin.jsx"
 import Basket from "./Customer/Basket.jsx"
 import BrowseCategory from "./Customer/BrowseCategory.jsx"
+import BrowseCatalog from './Customer/BrowseCatalog.jsx'
+import ItemDetails from './Customer/ItemDetails.jsx'
 import OrderDeliveryDetails from "./Customer/OrderDeliveryDetails.jsx"
 import DeliveriesList from './Delivery/DeliveriesList.jsx'
 import CatalogCategory from './Admin/CatalogCategory.jsx'
+import OrderDetails from './Customer/OrderDetails.jsx'
 import { Outlet, NavLink } from "react-router-dom";
 
 const App = () => {
@@ -25,11 +28,12 @@ const App = () => {
 
             <Routes>
                 <Route exact path="/catalog_dashboard" element={<CatalogDashboard />} />
-                <Route exact path="/catalog/:id" element={<CatalogCategory />} />
+                <Route exact path="/catalog/:id/:name" element={<CatalogCategory />} />
                 <Route exact path="/customers" element={<Customers />} />
                 <Route exact path="/deliveries" element={<Deliveries />} />
                 <Route exact path="/delivery_drivers" element={<DeliveryDrivers />} />
                 <Route exact path="/orders" element={<Orders />} />
+                <Route exact path="/order" element={<OrderDetails />} />
                 <Route exact path="/registration" element={<CreateCustomerReg />} />
                 <Route exact path="/admin_login" element={<AdminLogin />} />
                 <Route exact path="/login" element={<CustomerLogin />} />
@@ -37,6 +41,8 @@ const App = () => {
                 <Route exact path="/register" element={<CreateCustomerReg />} />
                 <Route exact path="/basket" element={<Basket />} />
                 <Route exact path="/browse" element={<BrowseCategory />} />
+                <Route exact path="/browse_food/:id/:name" element={<BrowseCatalog />} />
+                <Route exact path="/food_details/:id/" element={<ItemDetails />} />
                 <Route exact path="/order_delivery_details" element={<OrderDeliveryDetails />} />
                 <Route exact path="/deliveries_list" element={<DeliveriesList />} />
                 <Route exact path="/customers/:id" element={<CustomersUpdate />} />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import BrowseCatalog from "./BrowseCatalog.jsx"
+import BrowseCatalog from "./BrowseCategory.jsx"
 
 const CustomerLogin = () => {
 
@@ -41,6 +41,7 @@ const CustomerLogin = () => {
                 return true;
 
             } catch (error) {
+                 window.alert("Login failed");
                 console.error('Login failed:', error);
                 return false;
             }
@@ -51,7 +52,7 @@ const CustomerLogin = () => {
     return(
         <section className="login-body">
         <div className="form-container">
-            <h2>Login</h2>
+            <h2>Sign In.</h2>
             <form onSubmit={handleSubmit}>
             <input className="fields" type="text" placeholder="Username" value={username} onChange={handleUsernameChange}  />
             <input className="fields" type="password" placeholder="Password" value={password} onChange={handlePasswordChange}/>

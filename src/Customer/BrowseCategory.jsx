@@ -1,0 +1,68 @@
+import React from 'react'
+import Header from '../components/CustomerHeader.jsx'
+import { useState, useEffect } from 'react'
+import axios from 'axios';
+import BrowseCategoryCard from '../components/BrowseCategoryCard.jsx'
+import { useNavigate, Link } from 'react-router-dom';
+
+const BrowseCategory = () => {
+
+  
+  const token = localStorage.getItem('jwtToken');
+  const [categories, setCategories] = useState([]);
+  const navigate = new useNavigate();
+  
+
+    const fetchCategories = async () => {
+          try {
+            const response = await axios.get('http://localhost:8083/categories', {
+              headers: {
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }});
+         
+            setCategories(response.data);
+            
+            
+          } catch {
+            console.error("Error");
+          }
+        }
+
+        useEffect(() => {
+        fetchCategories();
+    }, []);
+
+
+
+  return (
+    <div className="body">
+      <Header />
+      <section className="dashboard">
+        <div className="hero">
+          <img src="./main-hero.jpg" className="hero-image" />
+          <h1 className="hero-text">Deliciousness at your doorstep.</h1>
+          <input type="text" className="search" placeholder="What are you craving for?"/>
+        </div>
+        <div className="categories-display" >
+          <ul className="category-list">
+          {categories.map((category) => (
+             
+             
+            
+            <BrowseCategoryCard key={category.category_ID} category={category}/>
+            
+          ))
+          }
+          </ul>
+       
+          
+        </div>
+                  
+      </section>
+    </div>
+    
+  )
+}
+
+export default BrowseCategory

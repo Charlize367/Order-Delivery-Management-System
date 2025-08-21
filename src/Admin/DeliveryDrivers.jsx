@@ -68,7 +68,7 @@ const updateID = deliveryDrivers.find(d => d.user_ID === resource_ID)?.user_ID;
                 });
                 const dt = response.config.data;
                 fetchData();
-               
+                openForm(isActive);
                 console.log(inputData);
                 return true;
 
@@ -87,8 +87,7 @@ const updateID = deliveryDrivers.find(d => d.user_ID === resource_ID)?.user_ID;
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
-            setCustomers(response.data);
-            openForm(isActive);
+            setDeliveryDrivers(response.data);
           } catch {
             console.error("Error");
           }
@@ -108,7 +107,6 @@ const updateID = deliveryDrivers.find(d => d.user_ID === resource_ID)?.user_ID;
                         'Content-Type': 'application/json'
                     }});
           console.log("Deleted");
-        
           fetchData();
         } catch {
           console.log("Failed to delete.");
