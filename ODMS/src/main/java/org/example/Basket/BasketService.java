@@ -3,6 +3,7 @@ package org.example.Basket;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.example.Catalog.Catalog;
+import org.example.Catalog.CatalogRepository;
 import org.example.Category.Category;
 import org.example.Users.Users;
 import org.example.Users.UsersRepository;
@@ -18,9 +19,12 @@ public class BasketService {
 
     private final UsersRepository usersRepository;
 
-    public BasketService(BasketRepository basketRepository, UsersRepository usersRepository) {
+    private final CatalogRepository catalogRepository;
+
+    public BasketService(BasketRepository basketRepository, UsersRepository usersRepository, CatalogRepository catalogRepository) {
         this.basketRepository = basketRepository;
         this.usersRepository = usersRepository;
+        this.catalogRepository = catalogRepository;
     }
 
     public List<Basket> getAllBasket() {
@@ -34,7 +38,10 @@ public class BasketService {
     }
 
     public void addBasket(Basket basket) {
+
+
         basketRepository.save(basket);
+
     }
 
 

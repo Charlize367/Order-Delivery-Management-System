@@ -17,13 +17,12 @@ public class Deliveries {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name = "user_ID")
-    private Users delivery_men;
+    private Users deliveryMen;
 
 
     @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name = "order_ID")
     private Orders orders;
-
     private String delivery_status;
     private String address;
     private Time estimated_time;
@@ -45,12 +44,12 @@ public class Deliveries {
         this.orders = orders;
     }
 
-    public Users getDelivery_men() {
-        return delivery_men;
+    public Users getDeliveryMen() {
+        return deliveryMen;
     }
 
-    public void setDelivery_men(Users delivery_men) {
-        this.delivery_men = delivery_men;
+    public void setDeliveryMen(Users delivery_men) {
+        this.deliveryMen = delivery_men;
     }
 
     public String getDelivery_status() {
@@ -89,12 +88,12 @@ public class Deliveries {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Deliveries that = (Deliveries) o;
-        return Objects.equals(delivery_ID, that.delivery_ID) && Objects.equals(orders, that.orders) && Objects.equals(delivery_men, that.delivery_men) && Objects.equals(delivery_status, that.delivery_status) && Objects.equals(estimated_time, that.estimated_time) && Objects.equals(delivered_time, that.delivered_time)  && Objects.equals(address, that.address);
+        return Objects.equals(delivery_ID, that.delivery_ID) && Objects.equals(orders, that.orders) && Objects.equals(deliveryMen, that.deliveryMen) && Objects.equals(delivery_status, that.delivery_status) && Objects.equals(estimated_time, that.estimated_time) && Objects.equals(delivered_time, that.delivered_time) && Objects.equals(address, that.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(delivery_ID, orders, delivery_men, delivery_status, estimated_time, delivered_time, address);
+        return Objects.hash(delivery_ID, orders, deliveryMen, delivery_status, estimated_time, delivered_time, address);
     }
 
 

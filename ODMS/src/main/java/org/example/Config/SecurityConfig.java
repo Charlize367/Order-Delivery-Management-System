@@ -1,5 +1,4 @@
 package org.example.Config;
-
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -7,30 +6,26 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.example.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example.Users.Users;
+import org.example.Users.UsersRepository;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-
 import static org.springframework.security.config.Customizer.withDefaults;
 
 
@@ -47,17 +42,6 @@ public class SecurityConfig {
     }
 
 
-//    @Bean
-//    public InMemoryUserDetailsManager user() {
-//        return new InMemoryUserDetailsManager(
-//                User.withUsername("Liz")
-//                        .password("{noop}liz367")
-//                        .authorities("read")
-//                        .roles("ADMIN")
-//                        .build()
-//        );
-//    }
-
    @Bean
    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
@@ -72,18 +56,55 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    CommandLineRunner init(UsersRepository usersRepository, PasswordEncoder encoder) {
+        return args -> {
+
+                Users admin = new Users();
+                admin.setUsername("Admin");
+                admin.setPassword(encoder.encode("admin-odms-123"));
+                admin.setEnabled(true);
+                admin.setRole("ADMIN");
+                usersRepository.save(admin);
+
+        };
+    }
+
+
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationManagerBuilder.authenticationProvider(authenticationProvider);
+        return authenticationManagerBuilder.build();
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
+
+        JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
+        authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return authenticationConverter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
                 .csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/admin/hello").hasRole("ADMIN")
-                        .requestMatchers("/customers/hello").hasAnyRole("CUSTOMER", "ADMIN")
-                        .requestMatchers("/delivery/hello").hasRole("DELIVERY")
+                        .requestMatchers("/login", "/users/register", "/images/**").permitAll()
+                        .requestMatchers("/catalog/**", "/basket/**", "/orderItems/**", "/orders/**", "/delivery/**", "/users/**").hasRole("ADMIN")
+                        .requestMatchers("/catalog", "/basket", "/orderItems", "/orders", "/delivery").hasAnyRole("CUSTOMER")
+                        .requestMatchers("/delivery").hasRole("DELIVERY")
 
                         .anyRequest().authenticated()
 
@@ -94,6 +115,7 @@ public class SecurityConfig {
                 .build();
 
     }
+
 
     @Bean
     JwtDecoder jwtDecoder() {

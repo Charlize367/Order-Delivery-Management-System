@@ -103,7 +103,7 @@ public class CatalogController {
         Files.write(fileNameAndPath, catalog_image.getBytes());
 
         Catalog catalog = catalogRepository.findById(catalog_ID).get();
-        catalog.setCatalog_ID(catalog_ID);
+        catalog.setCatalogId(catalog_ID);
         catalog.setCatalog_name(catalog_name);
         catalog.setCatalog_price(catalog_price);
         catalog.setCatalog_description(catalog_description);

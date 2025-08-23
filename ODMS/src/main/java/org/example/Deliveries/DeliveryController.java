@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("delivery")
@@ -43,9 +44,18 @@ public class DeliveryController {
     }
 
 
-    @GetMapping("/user/{user_ID}/deliveries")
+    @GetMapping("/users/customer/{user_ID}")
     public ResponseEntity<List<Deliveries>> getUserDeliveries(@PathVariable Integer user_ID) {
-        List<Deliveries> deliveries = deliveryRepository.findByOrderCustomerID(user_ID);
+       Users customer = usersRepository.findById(user_ID).get();
+       List<Deliveries> deliveries = deliveryRepository.findByOrdersCustomer(customer);
+       return ResponseEntity.ok(deliveries);
+    }
+
+    @GetMapping("/users/delivery/{user_ID}")
+    public ResponseEntity<List<Deliveries>> getDeliveriesForDeliveryMan(@PathVariable Integer user_ID) {
+        Users delivery_man = usersRepository.findById(user_ID).get();
+        List<Deliveries> deliveries = deliveryRepository.findByDeliveryMen(delivery_man);
+
         return ResponseEntity.ok(deliveries);
     }
 
@@ -65,7 +75,7 @@ public class DeliveryController {
     @PostMapping("/users/{user_ID}")
     public Deliveries addUserToDeliveries(@PathVariable int user_ID, @RequestBody Deliveries deliveries) {
         Users users = usersRepository.findById(user_ID).get();
-        deliveries.setDelivery_men(users);
+        deliveries.setDeliveryMen(users);
         return deliveryRepository.save(deliveries);
     }
 
@@ -80,7 +90,7 @@ public class DeliveryController {
     public Deliveries addUserAndOrderToDeliveries(@PathVariable String username, @PathVariable int order_ID, @RequestBody Deliveries deliveries) {
         Users users = usersRepository.findByUsername(username);
         Orders orders = ordersRepository.findById(order_ID).get();
-        deliveries.setDelivery_men(users);
+        deliveries.setDeliveryMen(users);
         deliveries.setOrders(orders);
         return deliveryRepository.save(deliveries);
     }

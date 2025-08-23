@@ -12,10 +12,11 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer user_ID;
+    private Integer userId;
 
     private String username;
     private String password;
@@ -28,14 +29,13 @@ public class Users {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Basket> basket;
 
-    @OneToMany(mappedBy = "delivery_men", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "deliveryMen", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Deliveries> deliveries;
 
-    @OneToMany(mappedBy = "customers", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    private List<Deliveries> customers;
 
-    public Users(Integer user_ID, String username, String password, Boolean enabled, String role) {
-        this.user_ID = user_ID;
+
+    public Users(Integer userId, String username, String password, Boolean enabled, String role) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -46,12 +46,12 @@ public class Users {
 
     }
 
-    public Integer getUser_ID() {
-        return user_ID;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUser_ID(Integer user_ID) {
-        this.user_ID = user_ID;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -91,12 +91,12 @@ public class Users {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Users users = (Users) o;
-        return Objects.equals(user_ID, users.user_ID) && Objects.equals(username, users.username) && Objects.equals(password, users.password) && Objects.equals(enabled, users.enabled) && Objects.equals(role, users.role);
+        return Objects.equals(userId, users.userId) && Objects.equals(username, users.username) && Objects.equals(password, users.password) && Objects.equals(enabled, users.enabled) && Objects.equals(role, users.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user_ID, username, password, enabled, role);
+        return Objects.hash(userId, username, password, enabled, role);
     }
 
 }

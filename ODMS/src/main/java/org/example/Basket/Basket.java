@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Basket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer basket_ID;
+    private Integer basketId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name = "user_ID")
@@ -38,12 +38,12 @@ public class Basket {
         this.quantity = quantity;
     }
 
-    public Integer getBasket_ID() {
-        return basket_ID;
+    public Integer getBasketId() {
+        return basketId;
     }
 
-    public void setBasket_ID(Integer basket_ID) {
-        this.basket_ID = basket_ID;
+    public void setBasketId(Integer basket_ID) {
+        this.basketId = basket_ID;
     }
 
     public Catalog getCatalog() {
@@ -74,12 +74,12 @@ public class Basket {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Basket basket = (Basket) o;
-        return Objects.equals(basket_ID, basket.basket_ID) && Objects.equals(customer, basket.customer) && Objects.equals(catalog, basket.catalog) && Objects.equals(quantity, basket.quantity) && Objects.equals(subtotal, basket.subtotal);
+        return Objects.equals(basketId, basket.basketId) && Objects.equals(customer, basket.customer) && Objects.equals(catalog, basket.catalog) && Objects.equals(quantity, basket.quantity) && Objects.equals(subtotal, basket.subtotal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(basket_ID, customer, catalog, quantity, subtotal);
+        return Objects.hash(basketId, customer, catalog, quantity, subtotal);
     }
 
 

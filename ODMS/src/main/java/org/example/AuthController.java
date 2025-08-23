@@ -44,7 +44,7 @@ public class AuthController {
         Users users = usersRepository.findByUsername(request.getUsername());
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
-        response.put("id", users.getUser_ID());
+        response.put("id", users.getUserId());
         response.put("username", users.getUsername());
 
         return ResponseEntity.ok(response);

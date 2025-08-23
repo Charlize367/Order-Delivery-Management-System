@@ -36,6 +36,11 @@ public class OrderItemsController {
         return orderItemsService.getOrderItemsById(id);
     }
 
+    @GetMapping("/orders/{order_ID}")
+    public OrderItems getOrderItemsByOrders(@PathVariable int order_ID) {
+        return orderItemsService.getOrderItemsByOrder(order_ID);
+    }
+
     @PostMapping
     public ResponseEntity<OrderItems> createOrderItems(@RequestBody OrderItems orderItems) {
         orderItemsService.addOrderItems(orderItems);
