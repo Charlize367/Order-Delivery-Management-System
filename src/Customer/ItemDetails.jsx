@@ -57,7 +57,7 @@ const ItemDetails = () => {
       
             try {
               
-                const response = await axios.post(`http://localhost:8083/basket/users/${user_ID}/catalog/${item.catalog_ID}`, postData, {
+                const response = await axios.post(`http://localhost:8083/basket/users/${user_ID}/catalog/${item.catalogId}`, postData, {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'

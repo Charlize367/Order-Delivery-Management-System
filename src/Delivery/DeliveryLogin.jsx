@@ -39,6 +39,7 @@ const DeliveryLogin = () => {
                 return true;
 
             } catch (error) {
+                 window.alert("Login failed"); 
                 console.error('Login failed:', error);
                 return false;
             }
