@@ -7,8 +7,10 @@ import org.example.Basket.Basket;
 import org.example.Deliveries.Deliveries;
 import org.example.OrderItems.OrderItems;
 import org.example.Users.Users;
+import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +25,7 @@ public class Orders {
     @JoinColumn(name = "user_ID")
     private Users customer;
 
-    private Date order_date;
+    private LocalDate order_date;
     private double order_price;
     private String order_status;
 
@@ -53,11 +55,11 @@ public class Orders {
         this.customer = customer;
     }
 
-    public Date getOrder_date() {
+    public LocalDate getOrder_date() {
         return order_date;
     }
 
-    public void setOrder_date(Date order_date) {
+    public void setOrder_date(LocalDate order_date) {
         this.order_date = order_date;
     }
 

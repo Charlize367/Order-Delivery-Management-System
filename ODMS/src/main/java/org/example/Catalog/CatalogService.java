@@ -48,14 +48,8 @@ public class CatalogService {
         return catalog;
     }
 
-    public void deleteCatalog(Catalog catalog, Integer id) {
-        Optional<Catalog> catalogs = catalogRepository.findById(id);
-        if (catalogs.isPresent()) {
-            catalogRepository.delete(catalog);
-        }
-        else {
-            return;
-        }
+    public void deleteCatalog(Integer catalogId) {
+        catalogRepository.deleteById(catalogId);
     }
 
     public Catalog getCatalogById(Integer id) {

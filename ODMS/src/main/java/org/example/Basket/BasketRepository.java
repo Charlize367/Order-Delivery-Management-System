@@ -1,5 +1,6 @@
 package org.example.Basket;
 
+import jakarta.transaction.Transactional;
 import org.example.Basket.Basket;
 import org.example.Catalog.Catalog;
 import org.example.Category.Category;
@@ -13,6 +14,6 @@ import java.util.Optional;
 
 public interface BasketRepository extends JpaRepository<Basket, Integer> {
     List<Basket> findByCustomer(Users customer);
-    Optional<Basket> findByCustomer_UserIdAndCatalog_CatalogId(Integer user_ID, Integer catalog_ID);
+    Optional<Basket> findByCustomer_UserIdAndCatalog_CatalogId(Integer userId, Integer catalogId);
 
 }

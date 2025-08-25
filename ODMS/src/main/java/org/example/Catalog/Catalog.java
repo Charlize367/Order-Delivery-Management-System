@@ -19,11 +19,11 @@ public class Catalog {
     private String catalog_description;
     private String catalog_image;
 
-    @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "catalog", fetch=FetchType.EAGER)
     private List<Basket> basket;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToOne( fetch=FetchType.EAGER)
     @JoinColumn(name = "category_ID")
     private Category category;
 

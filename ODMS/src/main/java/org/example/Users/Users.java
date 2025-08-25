@@ -23,10 +23,10 @@ public class Users {
     private boolean enabled;
     private String role;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "customer", fetch=FetchType.EAGER)
     private List<Orders> orders;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "customer", fetch=FetchType.EAGER)
     private List<Basket> basket;
 
     @OneToMany(mappedBy = "deliveryMen", cascade = CascadeType.ALL, fetch=FetchType.EAGER)

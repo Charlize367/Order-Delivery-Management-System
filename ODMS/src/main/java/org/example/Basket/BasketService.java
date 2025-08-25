@@ -2,15 +2,16 @@ package org.example.Basket;
 
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.Catalog.Catalog;
+import jakarta.transaction.Transactional;
 import org.example.Catalog.CatalogRepository;
-import org.example.Category.Category;
 import org.example.Users.Users;
 import org.example.Users.UsersRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+
 
 @Service
 public class BasketService {
@@ -31,8 +32,8 @@ public class BasketService {
         return basketRepository.findAll();
     }
 
-    public List<Basket> getBasketByUser(Integer user_ID) {
-        Users users = usersRepository.findById(user_ID)
+    public List<Basket> getBasketByUser(Integer userId) {
+        Users users = usersRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User basket not found"));
         return basketRepository.findByCustomer(users);
     }
@@ -56,14 +57,10 @@ public class BasketService {
         return basket;
     }
 
-    public void deleteBasket(Basket basket, Integer id) {
-        Optional<Basket> baskets = basketRepository.findById(id);
-        if (baskets.isPresent()) {
-            basketRepository.delete(basket);
-        }
-        else {
-            return;
-        }
+    @Transactional
+    public void deleteBasket(Integer userId, Integer catalogId) {
+        Basket basket = basketRepository.findByCustomer_UserIdAndCatalog_CatalogId(userId, catalogId).get();
+        basketRepository.delete(basket);
     }
 
     public Basket getBasketById(Integer id) {

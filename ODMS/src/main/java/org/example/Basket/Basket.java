@@ -13,13 +13,13 @@ public class Basket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer basketId;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name = "user_ID")
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name = "user_ID", nullable = false)
     private Users customer;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name = "catalog_ID")
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name = "catalog_ID", nullable = false)
     private Catalog catalog;
 
     private Integer quantity;

@@ -4,6 +4,7 @@ import org.aspectj.weaver.ast.Or;
 import org.example.Basket.Basket;
 import org.example.Basket.BasketRepository;
 import org.example.Deliveries.Deliveries;
+import org.example.Deliveries.DeliveryRepository;
 import org.example.OrderItems.OrderItems;
 import org.example.OrderItems.OrderItemsRepository;
 import org.example.Users.Users;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -33,6 +35,8 @@ public class OrdersController {
     @Autowired
     OrderItemsRepository orderItemsRepository;
 
+    @Autowired
+    DeliveryRepository deliveryRepository;
 
 
     public OrdersController(OrdersService ordersService) {
@@ -70,14 +74,17 @@ public class OrdersController {
     }
 
     @PostMapping("/users/{user_ID}")
-    public Orders addUserToOrders(@PathVariable int user_ID) {
+    public Orders addUserToOrders(@PathVariable int user_ID, @RequestBody OrderRequest orderRequest) {
 
 
         Users users = usersRepository.findById(user_ID).get();
         List<Basket> userBasket = basketRepository.findByCustomer(users);
+        LocalDate currentDate = LocalDate.now();
 
         Orders orders = new Orders();
         orders.setCustomer(users);
+        orders.setOrder_status("Confirmed");
+        orders.setOrder_date(currentDate);
         orders.setOrder_price(0.0);
 
         ordersRepository.save(orders);
@@ -96,6 +103,12 @@ public class OrdersController {
         }
 
         orders.setOrder_price(total);
+
+        Deliveries deliveries = new Deliveries();
+        deliveries.setOrders(orders);
+        deliveries.setDelivery_status("Pending Assignment");
+        deliveries.setAddress(orderRequest.getAddress());
+        deliveryRepository.save(deliveries);
 
         return ordersRepository.save(orders);
 

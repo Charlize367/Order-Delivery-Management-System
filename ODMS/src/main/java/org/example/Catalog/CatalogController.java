@@ -92,8 +92,8 @@ public class CatalogController {
     }
     
 
-    @PutMapping("/{catalog_ID}/category/{category_ID}")
-    public ResponseEntity<Catalog> updateCatalog(@PathVariable int catalog_ID, @PathVariable int category_ID, @RequestParam("catalog_name") String catalog_name,
+    @PutMapping("/{catalogId}/category/{category_ID}")
+    public ResponseEntity<Catalog> updateCatalog(@PathVariable int catalogId, @PathVariable int category_ID, @RequestParam("catalog_name") String catalog_name,
                                                  @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
 
         Category category = categoryRepository.findById(category_ID).get();
@@ -102,22 +102,22 @@ public class CatalogController {
         Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
         Files.write(fileNameAndPath, catalog_image.getBytes());
 
-        Catalog catalog = catalogRepository.findById(catalog_ID).get();
-        catalog.setCatalogId(catalog_ID);
+        Catalog catalog = catalogRepository.findById(catalogId).get();
+        catalog.setCatalogId(catalogId);
         catalog.setCatalog_name(catalog_name);
         catalog.setCatalog_price(catalog_price);
         catalog.setCatalog_description(catalog_description);
         catalog.setCatalog_image(originalFilename);
         catalog.setCategory(category);
 
-        catalogService.updateCatalog(catalog, catalog_ID);
+        catalogService.updateCatalog(catalog, catalogId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
-    @DeleteMapping("/{catalog_ID}")
-    public ResponseEntity<Catalog> deleteCatalog(@PathVariable Integer catalog_ID, Catalog catalog) {
-        catalogService.deleteCatalog(catalog, catalog_ID);
+    @DeleteMapping("/{catalogId}")
+    public ResponseEntity<Catalog> deleteCatalog(@PathVariable Integer catalogId) {
+        catalogService.deleteCatalog(catalogId);
         return null;
     }
 }

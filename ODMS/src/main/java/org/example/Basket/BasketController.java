@@ -52,38 +52,38 @@ public class BasketController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{basket_ID}")
-    public ResponseEntity<Basket> updateBasket(@PathVariable int basket_ID, @RequestBody Basket basket) {
-        Basket updateBaskets = basketService.updateBasket(basket, basket_ID);
+    @PutMapping("/{basketId}")
+    public ResponseEntity<Basket> updateBasket(@PathVariable int basketId, @RequestBody Basket basket) {
+        Basket updateBaskets = basketService.updateBasket(basket, basketId);
         basketRepository.save(basket);
         return new ResponseEntity<>(updateBaskets, HttpStatus.OK);
     }
 
-    @PutMapping("/{basket_ID}/quantity/{quantity}")
-    public ResponseEntity<Basket> updateQuantity(@PathVariable int basket_ID, @PathVariable int quantity) {
-        Basket basket = basketRepository.findById(basket_ID).get();
+    @PutMapping("/{basketId}/quantity/{quantity}")
+    public ResponseEntity<Basket> updateQuantity(@PathVariable int basketId, @PathVariable int quantity) {
+        Basket basket = basketRepository.findById(basketId).get();
         basket.setQuantity(quantity);
         basket.setSubtotal(quantity * basket.getCatalog().getCatalog_price());
         basketRepository.save(basket);
         return new ResponseEntity<>(basket, HttpStatus.OK);
     }
 
-    @PostMapping("/users/{user_ID}/catalog/{catalog_ID}")
-    public Basket addUserandCatalogToBasket(@PathVariable int user_ID, @PathVariable int catalog_ID, @RequestBody Basket basket) {
+    @PostMapping("/users/{userId}/catalog/{catalogId}")
+    public Basket addUserandCatalogToBasket(@PathVariable int userId, @PathVariable int catalogId, @RequestBody Basket basket) {
 
-        Optional<Basket>  existingBasket = basketRepository.findByCustomer_UserIdAndCatalog_CatalogId(user_ID, catalog_ID);
+        Optional<Basket>  existingBasket = basketRepository.findByCustomer_UserIdAndCatalog_CatalogId(userId, catalogId);
 
-        Catalog catalog_price = catalogRepository.findById(catalog_ID).get();
+        Catalog catalog_price = catalogRepository.findById(catalogId).get();
         Basket baskets;
         if (existingBasket.isPresent()) {
              baskets = existingBasket.get();
-            baskets.setQuantity(baskets.getQuantity() + 1);
+            baskets.setQuantity(baskets.getQuantity() + basket.getQuantity());
             baskets.setSubtotal(existingBasket.get().getSubtotal() + catalog_price.getCatalog_price() );
 
 
         } else {
-            Users users = usersRepository.findById(user_ID).get();
-            Catalog catalog = catalogRepository.findById(catalog_ID).get();
+            Users users = usersRepository.findById(userId).get();
+            Catalog catalog = catalogRepository.findById(catalogId).get();
 
             baskets = new Basket();
             baskets.setCustomer(users);
@@ -99,9 +99,9 @@ public class BasketController {
 
     }
 
-    @DeleteMapping("/{basket_ID}")
-    public ResponseEntity<Basket> deleteBasket(@PathVariable Integer basket_ID, Basket basket) {
-        basketService.deleteBasket(basket, basket_ID);
-        return null;
+    @DeleteMapping("/users/{userId}/catalog/{catalogId}")
+    public ResponseEntity<String> deleteBasket(@PathVariable Integer userId, @PathVariable Integer catalogId) {
+        basketService.deleteBasket(userId, catalogId);
+        return ResponseEntity.ok("Deleted successfully");
     }
 }
