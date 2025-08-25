@@ -32,7 +32,7 @@ const CustomerLogin = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                const token = response.data;
+                const token = response.data.token;
                 localStorage.setItem('jwtToken', token);
                 localStorage.setItem('username', username);
                 console.log(token);

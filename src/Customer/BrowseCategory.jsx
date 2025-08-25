@@ -23,9 +23,10 @@ const BrowseCategory = () => {
          
             setCategories(response.data);
             
-            
+          
           } catch {
             console.error("Error");
+            console.log(token);
           }
         }
 

@@ -14,10 +14,11 @@ import Basket from "./Customer/Basket.jsx"
 import BrowseCategory from "./Customer/BrowseCategory.jsx"
 import BrowseCatalog from './Customer/BrowseCatalog.jsx'
 import ItemDetails from './Customer/ItemDetails.jsx'
-import OrderDeliveryDetails from "./Customer/OrderDeliveryDetails.jsx"
+
 import DeliveriesList from './Delivery/DeliveriesList.jsx'
 import CatalogCategory from './Admin/CatalogCategory.jsx'
 import OrderDetails from './Customer/OrderDetails.jsx'
+import Checkout from './Customer/Checkout.jsx'
 import { Outlet, NavLink } from "react-router-dom";
 
 const App = () => {
@@ -43,9 +44,9 @@ const App = () => {
                 <Route exact path="/browse" element={<BrowseCategory />} />
                 <Route exact path="/browse_food/:id/:name" element={<BrowseCatalog />} />
                 <Route exact path="/food_details/:id/" element={<ItemDetails />} />
-                <Route exact path="/order_delivery_details" element={<OrderDeliveryDetails />} />
                 <Route exact path="/deliveries_list" element={<DeliveriesList />} />
                 <Route exact path="/customers/:id" element={<CustomersUpdate />} />
+                <Route exact path="/checkout/:id" element={<Checkout />} />
 
             </Routes>
 </BrowserRouter>
