@@ -1,6 +1,6 @@
 package org.example.Orders;
 
-import org.aspectj.weaver.ast.Or;
+import jakarta.transaction.Transactional;
 import org.example.Basket.Basket;
 import org.example.Basket.BasketRepository;
 import org.example.Deliveries.Deliveries;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class OrdersController {
 
         Orders orders = new Orders();
         orders.setCustomer(users);
-        orders.setOrder_status("Confirmed");
+        orders.setOrder_status("Order Placed");
         orders.setOrder_date(currentDate);
         orders.setOrder_price(0.0);
 
@@ -108,19 +107,29 @@ public class OrdersController {
         deliveries.setOrders(orders);
         deliveries.setDelivery_status("Pending Assignment");
         deliveries.setAddress(orderRequest.getAddress());
+
+
         deliveryRepository.save(deliveries);
 
-        return ordersRepository.save(orders);
+        ordersRepository.save(orders);
+        basketRepository.deleteAll(userBasket);
+
+        return orders;
 
 
     }
 
 
 
-
     @DeleteMapping("/{orders_ID}")
-    public ResponseEntity<Orders> deleteOrders(@PathVariable Integer orders_ID, Orders orders) {
-        ordersService.deleteOrders(orders, orders_ID);
-        return null;
+    @Transactional
+    public ResponseEntity<String> deleteOrders(@PathVariable Integer orders_ID, Orders orders) {
+        Orders order = ordersRepository.findById(orders_ID)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        orderItemsRepository.deleteByOrders(order);
+        deliveryRepository.deleteByOrders(order);
+        ordersRepository.deleteById(orders_ID);
+        return ResponseEntity.ok("Deleted");
     }
 }

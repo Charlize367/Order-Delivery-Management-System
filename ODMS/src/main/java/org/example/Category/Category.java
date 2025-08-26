@@ -16,7 +16,7 @@ public class Category {
     private String category_name;
     private String category_image;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     private List<Catalog> catalog;
 
 

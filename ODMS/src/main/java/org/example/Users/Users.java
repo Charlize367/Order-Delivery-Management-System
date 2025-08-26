@@ -29,7 +29,7 @@ public class Users {
     @OneToMany(mappedBy = "customer", fetch=FetchType.EAGER)
     private List<Basket> basket;
 
-    @OneToMany(mappedBy = "deliveryMen", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "deliveryMen", fetch=FetchType.EAGER)
     private List<Deliveries> deliveries;
 
 

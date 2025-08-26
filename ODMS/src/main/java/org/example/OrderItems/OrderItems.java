@@ -13,7 +13,7 @@ public class OrderItems {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderItems_ID;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToOne( fetch=FetchType.EAGER)
     @JoinColumn(name = "order_ID")
     private Orders orders;
 

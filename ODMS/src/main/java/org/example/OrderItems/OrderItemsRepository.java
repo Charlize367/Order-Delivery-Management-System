@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface OrderItemsRepository extends JpaRepository<OrderItems, Integer> {
     OrderItems findByOrders(Orders orders);
+    void deleteByOrders(Orders orders);
 }

@@ -29,10 +29,10 @@ public class Orders {
     private double order_price;
     private String order_status;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "orders", fetch=FetchType.EAGER)
     private List<OrderItems> orderItems;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "orders", fetch=FetchType.EAGER)
     private List<Deliveries> deliveries;
 
     public Orders(){}
