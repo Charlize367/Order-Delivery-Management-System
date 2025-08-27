@@ -15,12 +15,12 @@ public class Deliveries {
     private Integer delivery_ID;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToOne( fetch=FetchType.EAGER)
     @JoinColumn(name = "user_ID")
     private Users deliveryMen;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToOne( fetch=FetchType.EAGER)
     @JoinColumn(name = "order_ID")
     private Orders orders;
     private String delivery_status;

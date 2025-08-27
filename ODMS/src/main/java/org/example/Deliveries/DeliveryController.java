@@ -2,6 +2,7 @@ package org.example.Deliveries;
 
 import org.example.Basket.Basket;
 import org.example.Catalog.Catalog;
+import org.example.Orders.OrderStatus;
 import org.example.Orders.Orders;
 import org.example.Orders.OrdersRepository;
 import org.example.Users.Users;
@@ -71,6 +72,38 @@ public class DeliveryController {
         return new ResponseEntity<>(updateDelivery, HttpStatus.OK);
     }
 
+    @PutMapping("/deliveryStatus/{delivery_ID}")
+    public ResponseEntity<Deliveries> updateDeliveryStatus(@PathVariable int delivery_ID, @RequestBody DeliveryStatus deliveryStatus) {
+        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
+        deliveries.setDelivery_status(deliveryStatus.getDelivery_status());
+        deliveryRepository.save(deliveries);
+        return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    }
+
+    @PutMapping("/estimatedTime/{delivery_ID}")
+    public ResponseEntity<Deliveries> updateEstimatedTime(@PathVariable int delivery_ID, @RequestBody EstimatedTime estimatedTime) {
+        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
+        deliveries.setEstimated_time(estimatedTime.getEstimated_time());
+        deliveryRepository.save(deliveries);
+        return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    }
+
+    @PutMapping("/deliveredTime/{delivery_ID}")
+    public ResponseEntity<Deliveries> updateDeliveredTime(@PathVariable int delivery_ID, @RequestBody DeliveredTime deliveredTime) {
+        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
+        deliveries.setDelivered_time(deliveredTime.getDelivered_time());
+        deliveryRepository.save(deliveries);
+        return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    }
+
+    @PutMapping("/{delivery_ID}/drivers/{userId}")
+    public ResponseEntity<Deliveries> updatedDriver(@PathVariable int delivery_ID, @PathVariable int userId) {
+        Users deliveryMen = usersRepository.findById(userId).get();
+        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
+        deliveries.setDeliveryMen(deliveryMen);
+        return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    }
+
 
     @PostMapping("/users/{user_ID}")
     public Deliveries addUserToDeliveries(@PathVariable int user_ID, @RequestBody Deliveries deliveries) {
@@ -86,12 +119,12 @@ public class DeliveryController {
         return deliveryRepository.save(deliveries);
     }
 
-    @PostMapping("/users/{username}/orders/{order_ID}")
-    public Deliveries addUserAndOrderToDeliveries(@PathVariable String username, @PathVariable int order_ID, @RequestBody Deliveries deliveries) {
-        Users users = usersRepository.findByUsername(username);
-        Orders orders = ordersRepository.findById(order_ID).get();
+    @PutMapping("/{delivery_ID}/users/{userId}")
+    public Deliveries addUserToDeliveries(@PathVariable Integer delivery_ID, @PathVariable Integer userId) {
+        Users users = usersRepository.findById(userId).get();
+        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
         deliveries.setDeliveryMen(users);
-        deliveries.setOrders(orders);
+
         return deliveryRepository.save(deliveries);
     }
 

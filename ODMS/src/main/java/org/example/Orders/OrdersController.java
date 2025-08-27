@@ -106,6 +106,7 @@ public class OrdersController {
         Deliveries deliveries = new Deliveries();
         deliveries.setOrders(orders);
         deliveries.setDelivery_status("Pending Assignment");
+
         deliveries.setAddress(orderRequest.getAddress());
 
 
@@ -119,6 +120,13 @@ public class OrdersController {
 
     }
 
+    @PutMapping("/orderStatus/{order_ID}")
+    public ResponseEntity<Orders> updateOrderStatus(@PathVariable int order_ID, @RequestBody OrderStatus orderStatus) {
+        Orders orders = ordersRepository.findById(order_ID).get();
+        orders.setOrder_status(orderStatus.getOrder_status());
+        ordersRepository.save(orders);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
 
 
     @DeleteMapping("/{orders_ID}")
