@@ -20,6 +20,7 @@ import CatalogCategory from './Admin/CatalogCategory.jsx'
 import OrderDetails from './Customer/OrderDetails.jsx'
 import Checkout from './Customer/Checkout.jsx'
 import { Outlet, NavLink } from "react-router-dom";
+import OrderHistory from './Customer/OrderHistory.jsx'
 
 const App = () => {
   return (
@@ -47,6 +48,7 @@ const App = () => {
                 <Route exact path="/deliveries_list" element={<DeliveriesList />} />
                 <Route exact path="/customers/:id" element={<CustomersUpdate />} />
                 <Route exact path="/checkout/:id" element={<Checkout />} />
+                <Route exact path="/order_history" element={<OrderHistory />} />
 
             </Routes>
 </BrowserRouter>

@@ -9,7 +9,7 @@ const DeliveryDrivers = () => {
    const [isActive2, setIsActive2] = useState(false);
    const token = localStorage.getItem('jwtToken')
    const [inputData, setInputData] = useState({
-    user_ID : null,
+    userId : null,
     username: "",
     password: "",
     role: "DELIVERY"
@@ -24,11 +24,11 @@ const DeliveryDrivers = () => {
 
   const openUpdateForm = (id) => {
     
-    const selectedDeliveryDriver = deliveryDrivers.find(deliveryDriver => deliveryDriver.user_ID === id)
+    const selectedDeliveryDriver = deliveryDrivers.find(deliveryDriver => deliveryDriver.userId === id)
     setResource_ID(id);
     if (selectedDeliveryDriver) {
       setInputData({
-      user_ID : selectedDeliveryDriver.user_ID,
+      userId : selectedDeliveryDriver.userId,
       username: selectedDeliveryDriver.username,
       password: selectedDeliveryDriver.password,
       role: "DELIVERY"
@@ -40,7 +40,7 @@ const DeliveryDrivers = () => {
 
 
 
-const updateID = deliveryDrivers.find(d => d.user_ID === resource_ID)?.user_ID;
+const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
   
 
 
@@ -166,11 +166,11 @@ const updateID = deliveryDrivers.find(d => d.user_ID === resource_ID)?.user_ID;
             </thead>
             <tbody>
             {deliveryDrivers.map(driver => (
-              <tr key={driver.user_ID}>
+              <tr key={driver.userId}>
                 <td>{driver.username}</td>
                 <td>{driver.password}</td>
-                <td><center><button className="editBtn"><img className="edit-icon" src="/edit-icon.svg" onClick={() => openUpdateForm(driver.user_ID)}/></button>
-                <button className="deleteBtn"><img className="delete-icon" src="/delete-icon.svg" onClick={() => deleteData(driver.user_ID)} /></button></center>
+                <td><center><button className="editBtn"><img className="edit-icon" src="/edit-icon.svg" onClick={() => openUpdateForm(driver.userId)}/></button>
+                <button className="deleteBtn"><img className="delete-icon" src="/delete-icon.svg" onClick={() => deleteData(driver.userId)} /></button></center>
                 </td>
             </tr>
             ))}

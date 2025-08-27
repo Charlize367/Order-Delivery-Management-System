@@ -231,7 +231,7 @@ a{
 	overflow:hidden;
   width:50%;
 	position:relative;
-	margin-left:25%;
+	margin-left:20%;
   margin-top:5%;
   align-items:center;
 }
@@ -245,10 +245,10 @@ table{
 
 
 th{
-	padding:20px;
+	padding:30px;
 	text-transform:uppercase;
 	letter-spacing:0.1rem;
-	font-size:0.7rem;
+	font-size:0.8rem;
 	font-weight:900;
   text-align:center;
   background-color: black;
@@ -261,7 +261,7 @@ td{
   padding-bottom:20px;
   background-color:#404040;
   color:white;
-  font-size:10px;
+  font-size:15px;
 }
 
 .deleteBtn{
@@ -700,7 +700,7 @@ input[type="file"]::file-selector-button {
 
 .itemPicture{
   width:55%;
-  height:65%;
+  height:430px;
 }
 
 .itemName{
@@ -781,7 +781,7 @@ hr{
 
 .b-table{
   width:80%;
-  margin-left:10%;
+  margin-left:9%;
   background-color: transparent;
   
 }
@@ -801,7 +801,7 @@ hr{
 }
 
 .quantity-td{
-  padding-top:75%;
+  padding-top:48%;
   margin:10%;
   width:20%;
   font-size:15px;
@@ -1142,4 +1142,209 @@ hr{
 
 .order-details-bottom{
   display:flex;
+}
+
+.adminOrderTable{
+  border-collapse:collapse;
+	background-color:white;
+	text-align:center;
+	overflow:hidden;
+  width:80%;
+	position:relative;
+	margin-left:10%;
+  margin-top:5%;
+  align-items:center;
+  
+}
+
+.order-th{
+  padding:0;
+  text-align:center;
+  margin:1px;
+}
+
+.order-summary-details-div{
+  display:flex;
+  padding:0;
+  width:100%;
+  padding:0;
+  margin-bottom:5%;
+  
+}
+
+.order-summary-details{
+  display:flex;
+  padding:0;
+  margin:0;
+}
+
+.order-summary-img{
+  width:30%;
+  height:150px;
+}
+
+.order-summary-division{
+  margin-left:10%;
+  padding:0;
+  width:100%;
+  margin-right:100%;
+}
+
+.order-summary-name{
+  width:100%;
+  font-weight: bold;
+}
+
+.order-summary-price{
+  width:max-content;
+}
+
+.order-summary-quantity{
+  width:max-content;
+
+}
+
+.order-summary-subtotal{
+  margin-top:13%;
+  margin-left:13%;
+}
+
+
+.order-summary-total{
+  margin-top:180px; 
+  display:flex;
+  margin-left:-28%;
+  width:100%;
+  font-weight:bold;
+}
+.order-summary-total-txt{
+  
+}
+
+.order-summary-total-amount-txt{
+  margin-left:10%;
+  width:100px;
+
+}
+
+.ordersView{
+  width:60%;
+  margin-top:5%;
+  margin-left:20%;
+  background-color:#222324;
+  align-items:center;
+  border-radius:30px;
+  color:white;
+  padding-top:30px;
+  border-style:double;
+  border-color:#4a4d4a;
+  z-index:3;
+  display:block;
+
+}
+
+.closeBtn3{
+  position: absolute;
+  top: 50%;
+  left:75%;
+
+  font-size: 36px;
+  background-color:transparent;
+  color:white;
+  border-style: none;
+
+}
+
+.viewOrderItems{
+  border-color:white;
+  border-style:groove;
+  width:80%;
+  background-color:transparent;
+  color:white;
+  font-family: "Montserrat", sans-serif;
+}
+
+
+.updateBtn{
+   border-color:white;
+  border-style:groove;
+  width:90%;
+  background-color:transparent;
+  color:white;
+  font-family: "Montserrat", sans-serif;
+}
+
+.editOrderStatusForm{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: space-around;
+  position:fixed;
+  left:30%;
+  max-width:600px;
+  height:700;
+  margin:1px auto;
+  background-color:#222324;
+  align-items:center;
+  border-radius:30px;
+  color:white;
+  padding-top:30px;
+  border-style:double;
+  border-color:#4a4d4a;
+  top:30%;
+  width:50%;
+  z-index:3;
+}
+
+.closeBtn4{
+  position: absolute;
+  top: 5%;
+  left:85%;
+  font-size: 36px;
+  background-color:transparent;
+  color:white;
+  border-style: none;
+
+}
+
+.orStatusForm{
+  width:80%;
+  align-items:center;
+}
+.selectOrderStatus{
+  width:90%;
+  margin-left:5%;
+  height:30px;
+  border-radius:30px;
+  padding:1%;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom:5%;
+  
+}
+
+.submitOrderStatusBtn{
+  width:40%;
+  background-image: linear-gradient(to right, #56C789, #096E22);
+  border-style: none;
+  border-radius:30px;
+  height:30px;
+  margin-left:28%;
+  margin-bottom:8%;
+  font-family: "Montserrat", sans-serif;
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.adminDeliveryTable{
+  border-collapse:collapse;
+	background-color:white;
+	text-align:center;
+	overflow:hidden;
+  width:80%;
+	position:relative;
+	margin-left:10%;
+  margin-top:5%;
+  align-items:center;
+  
 }
