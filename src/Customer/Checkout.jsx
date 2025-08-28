@@ -79,7 +79,7 @@ const token = localStorage.getItem('jwtToken');
                 <img className="summary-img" src={`http://localhost:8083/images/${b.catalog.catalog_image}`}/>
                 <div className="summary-details">
                     <div className="summary-division">
-                        <p className="summary-name">{b.catalog.catalog_name}</p>
+                        <p className="summary-name">{b.catalog.catalogName}</p>
                         <p className="summary-price">Price: PHP {b.catalog.catalog_price}</p>
                         <p className="summary-quantity">Quantity: {b.quantity}</p>
                     </div>

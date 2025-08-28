@@ -21,37 +21,159 @@ import OrderDetails from './Customer/OrderDetails.jsx'
 import Checkout from './Customer/Checkout.jsx'
 import { Outlet, NavLink } from "react-router-dom";
 import OrderHistory from './Customer/OrderHistory.jsx'
+import SearchResults from './components/SearchResults.jsx'
+import { AuthProvider} from './Auth/AuthContext.jsx'
+import ProtectedRoute from './Auth/ProtectedRoute.jsx'
 
 const App = () => {
   return (
     <div>
+      <AuthProvider>
       <BrowserRouter>
       
 
             <Routes>
-                <Route exact path="/catalog_dashboard" element={<CatalogDashboard />} />
-                <Route exact path="/catalog/:id/:name" element={<CatalogCategory />} />
-                <Route exact path="/customers" element={<Customers />} />
-                <Route exact path="/deliveries" element={<Deliveries />} />
-                <Route exact path="/delivery_drivers" element={<DeliveryDrivers />} />
-                <Route exact path="/orders" element={<Orders />} />
-                <Route exact path="/order" element={<OrderDetails />} />
-                <Route exact path="/registration" element={<CreateCustomerReg />} />
-                <Route exact path="/admin_login" element={<AdminLogin />} />
-                <Route exact path="/login" element={<CustomerLogin />} />
-                <Route exact path="/delivery_login" element={<DeliveryLogin />} />
-                <Route exact path="/register" element={<CreateCustomerReg />} />
-                <Route exact path="/basket" element={<Basket />} />
-                <Route exact path="/browse" element={<BrowseCategory />} />
-                <Route exact path="/browse_food/:id/:name" element={<BrowseCatalog />} />
-                <Route exact path="/food_details/:id/" element={<ItemDetails />} />
-                <Route exact path="/deliveries_list" element={<DeliveriesList />} />
-                <Route exact path="/customers/:id" element={<CustomersUpdate />} />
-                <Route exact path="/checkout/:id" element={<Checkout />} />
-                <Route exact path="/order_history" element={<OrderHistory />} />
 
-            </Routes>
+  <Route path="/admin_login" element={<AdminLogin />} />
+  <Route path="/login" element={<CustomerLogin />} />
+  <Route path="/delivery_login" element={<DeliveryLogin />} />
+  <Route path="/register" element={<CreateCustomerReg />} />
+
+                  <Route
+                    path="/catalog_dashboard"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <CatalogDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/catalog/:id/:name"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <CatalogCategory />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/customers"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <Customers />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/deliveries"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <Deliveries />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/delivery_drivers"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <DeliveryDrivers />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/orders"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <Orders />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/customers/:id"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN"]}>
+                        <CustomersUpdate />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                 
+                  <Route
+                    path="/order"
+                    element={
+                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                        <OrderDetails />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/basket"
+                    element={
+                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                        <Basket />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/browse"
+                    element={
+                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                        <BrowseCategory />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/browse_food/:id/:name"
+                    element={
+                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                        <BrowseCatalog />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/food_details/:id/"
+                    element={
+                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                        <ItemDetails />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/checkout/:id"
+                    element={
+                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                        <Checkout />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/order_history"
+                    element={
+                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                        <OrderHistory />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/search"
+                    element={
+                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                        <SearchResults />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  
+                  <Route
+                    path="/deliveries_list"
+                    element={
+                      <ProtectedRoute allowedRoles={["DELIVERY"]}>
+                        <DeliveriesList />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
 </BrowserRouter>
+</AuthProvider>
     </div>
   )
 }

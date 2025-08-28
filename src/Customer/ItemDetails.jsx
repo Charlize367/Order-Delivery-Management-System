@@ -98,7 +98,7 @@ const ItemDetails = () => {
       <div className="item-details">
         <img className="itemPicture" src={`http://localhost:8083/images/${item.catalog_image}`}/>
         <div className="details">
-            <h2 className="itemName">{item.catalog_name}</h2> <p className="itemPrice"> PHP {item.catalog_price}</p> 
+            <h2 className="itemName">{item.catalogName}</h2> <p className="itemPrice"> PHP {item.catalog_price}</p> 
 
 
            <hr />

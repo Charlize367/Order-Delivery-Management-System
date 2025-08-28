@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 
 const Header = () => {
 
+  const { logout } = useAuth();
   const [isActive, setIsActive] = useState(false);
 
   const openNav = () => {
@@ -26,6 +27,7 @@ const Header = () => {
         <li className="navlink"><Link to = "/basket">Basket</Link></li>
         <li className="navlink"><Link to = "/order">Orders</Link></li>
         <li className="navlink"><Link to = "/order_history">Order History</Link></li>
+        <li className="navlink"><Link onClick={logout} /></li>
         </ul>
       </div>
     </div>

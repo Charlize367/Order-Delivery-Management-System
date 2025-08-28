@@ -1,9 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react'
+import { useAuth } from '../Auth/AuthContext';
 
 const Header = () => {
-
+  const { logout } = useAuth();
   const [isActive, setIsActive] = useState(false);
 
   const openNav = () => {
@@ -27,6 +28,7 @@ const Header = () => {
         <li className="navlink"><Link to = "/deliveries">Deliveries</Link></li>
         <li className="navlink"><Link to = "/customers">Customers</Link></li>
         <li className="navlink"><Link to = "/delivery_drivers">Delivery Drivers</Link></li>
+        <li className="navlink"><Link onClick={logout}>Logout</Link></li>
         </ul>
       </div>
     </div>

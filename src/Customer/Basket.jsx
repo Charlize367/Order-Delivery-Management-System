@@ -109,7 +109,7 @@ getAllBasketItems();
             <tbody>
             {basket.map(b => (
               <tr key={b.basketId}>
-                <td className="basket-td">{b.catalog.catalog_name}</td>
+                <td className="basket-td">{b.catalog.catalogName}</td>
                 <td className="image-td"> <img className="basketItemImg" src={`http://localhost:8083/images/${b.catalog.catalog_image}`}/></td>
                 <td className="quantity-td"><button className="minusBasketQuantity" onClick={() => updateQuantity(b.basketId, b.quantity - 1)}>-</button><div className="basket-quantity">{b.quantity}</div>
                 <button className="addBasketQuantity" onClick={() => updateQuantity(b.basketId, b.quantity + 1)}>+</button></td>

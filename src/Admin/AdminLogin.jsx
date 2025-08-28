@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Auth/AuthContext';
+
 
 const AdminLogin = () => {
 
+    const { login } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -30,20 +33,18 @@ const AdminLogin = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                const token = response.data.token;
-                const user_ID = response.data.id;
-                localStorage.setItem('jwtToken', token);
-                localStorage.setItem('username', username)
-                localStorage.setItem('user_ID', user_ID)
-                console.log(token);
-                console.log(response);
+               
+                login({username: response.data.username, role: response.data.role}, response.data.token)
                 navigate('/catalog_dashboard');
                 return true;
 
             } catch (error) {
                 window.alert("Login failed");
                 console.error('Login failed:', error);
+                console.log(response);
+                console.log(login);
                 return false;
+                
             }
 
         }

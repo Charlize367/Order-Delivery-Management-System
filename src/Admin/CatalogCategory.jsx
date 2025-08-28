@@ -93,7 +93,7 @@ const CatalogCategory = () => {
             <h2>Add Item</h2>
             <button className="closeBtn2" onClick={openAddForm}>x</button>
               <form onSubmit={addItem}>
-                <input className="fields" type="text" placeholder="Item Name" name="catalog_name" value={inputData.catalog_name} onChange={handleChange} />
+                <input className="fields" type="text" placeholder="Item Name" name="catalogName" value={inputData.catalogName} onChange={handleChange} />
                 <textarea className="fields" type="text" placeholder="Item Description" name="catalog_description" value={inputData.catalog_description} onChange={handleChange} />
                 <input className="fields" type="number" placeholder="Item Price" name="catalog_price" value={inputData.catalog_price} onChange={handleChange} />
                 <input className="fields" type="file" placeholder="Item Image" name="catalog_image"  onChange={handleChange} />
@@ -105,7 +105,7 @@ const CatalogCategory = () => {
 
                   <ul className="item-display">
           {item.map((items) => (
-            <AdminItem items={items} onReload={handleReloadData} category_ID={param.id} />
+            <AdminItem items={items} category_ID={param.id} />
           ))}
           </ul>
       </section>

@@ -5,13 +5,12 @@ import Header from '../components/CustomerHeader';
 import { useState, useEffect } from 'react'
 
 
-const OrderDetails = () => {
+const OrderHistory = () => {
 
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [orderDetails, setOrderDetails] = useState([]);
   const [order_ID, setOrderID] = useState(0);
-  const navigate = useNavigate();
 
   const getOrderDetails = async () => {
     try {
@@ -53,7 +52,7 @@ const OrderDetails = () => {
     }, []);
 
 
-    const getMergedStatus = (or) => {
+     const getMergedStatus = (or) => {
         if (or.orders.order_status === "Cancelled") {
           return "History";
         } else if (or.orders.order_status === "Completed" || or.delivery_status === "Delivered") {
@@ -65,56 +64,18 @@ const OrderDetails = () => {
 
       const ongoingOrders = orderDetails.filter(or => getMergedStatus(or) === "Ongoing");
       const historyOrders = orderDetails.filter(or => getMergedStatus(or) === "History");
-      
     
 
       console.log(orderDetails);
-
-      const goToHistory = () => {
-        navigate('/order_history');
-      }
-
-      const cancelOrder = async () => {
-         try {
-
-        const putData = {
-          order_status: 'Cancelled'
-        }
-
-        const response = await axios.put(`http://localhost:8083/orders/orderStatus/${order_ID}`, putData , {
-          headers: {
-                        'Authorization' : `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }});
-
-                    console.log(response);
-         setOrderDetails(or =>
-          or.map(orders =>
-            orders.orders.order_ID === order_ID
-              ? { ...orders, orders : {...orders.orders, order_status: response.data.orders.order_status}
-          }
-            : orders
-        )
-
-            );
-      getOrderDetails();
-      console.log(putData);
-        }
-        catch{
-          console.log("Failed to Update Status")
-        }
-      }
       
   
   return (
     <div className="body">
       <Header />
-      <h1 className="my-order-text">My Orders</h1>
-      <button className="orderHistoryBtn" onClick={goToHistory}>Order History</button>
-      
-      {orderDetails.length > 0 && ongoingOrders.map((or) => {
+      <h1 className="my-order-text">Order History</h1>
+      {orderDetails.length > 0 && historyOrders.map((or) => {
 
-      let mergedStatus = "Order Placed";
+      let mergedStatus = "";
       if (or.orders.order_status === "Order Placed") mergedStatus = "Order Placed";
       else if (or.orders.order_status === "Preparing" || or.orders.order_status === "Confirmed"  ) mergedStatus = "Preparing";
       else if (or.delivery_status === "Driver Assigned" || or.delivery_status === "On the Way") mergedStatus = "On the Way";
@@ -143,9 +104,8 @@ const OrderDetails = () => {
         </div>
         <hr className="orders-hr"/>
        <ul className="order-summary">
-             {or.orderItems.map(oi => (
+            {or.orderItems.map(oi => (
         <li className="order-items-div">
-         
           <img className="order-img" src={`http://localhost:8083/images/${oi.order_catalog.catalog_image}`}/>
           <div className="order-details-div">
           <p className="order-item-name">{oi.order_catalog.catalogName}</p>
@@ -154,27 +114,16 @@ const OrderDetails = () => {
           </div>
         <p className="order-subtotal">PHP {oi.subtotal} </p>
         
-   
+       
       </li>
-))}
+            ))}
       </ul>  
       <hr className="orders-hr"/>
       
        <p className="order-total">Total: PHP {or.orders.order_price}</p>
      
       <hr className="orders-hr"/>
-      <div className="order-details-bottom">
-      <div className="delivery-details-container">
-       <p className="delivery_driver"><b>Driver:</b> {!or.deliveryMen || or.deliveryMen === null 
-          ? "No driver assigned yet" : or.deliveryMen.username}</p>
-        <p className="estimated_time"><b>Estimated Time of Delivery: </b> {!or.estimated_time || or.estimated_time === null
-          ? "Pending" : or.estimated_time} </p>
-        <p className="estimated_time"><b>Time Delivered:</b> {!or.delivered_time || or.delivered_time === null
-          ? "Not delivered yet" : or.delivered_time} </p>
-
-    </div>
-      <button className="cancelOrderBtn" onClick ={cancelOrder}>Cancel Order</button>
-      </div>
+      
       
      
       
@@ -185,10 +134,9 @@ const OrderDetails = () => {
     </div>
       )})}
   </div>
-    
-      
-  
-  )
+
+
+)
 }
 
-export default OrderDetails
+export default OrderHistory;

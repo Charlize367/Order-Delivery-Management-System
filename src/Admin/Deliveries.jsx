@@ -14,6 +14,8 @@ const Deliveries = () => {
     const [status, setStatus] = useState("");
     const [driver, setDriver] = useState("");
     const [selectedDriverId, setSelectedDriverId] = useState(0);
+    const [deliveryId, setDeliveryId] = useState(0);
+    const [estimatedTime, setEstimatedTime] = useState("00:00");
     
     
     console.log(deliveryDetails);
@@ -21,8 +23,9 @@ const Deliveries = () => {
     setIsActive(!isActive);
     };
 
-    const openEditDriverForm = () => {
+    const openEditDriverForm = (delivery_ID) => {
       setIsActive2(!isActive2);
+      setDeliveryId(delivery_ID);
     }
 
     const openEditETAForm = () => {
@@ -81,8 +84,8 @@ const Deliveries = () => {
       }
 
      console.log(status);
-        const handleSubmit = async(delivery_ID) => {
-         
+        const handleSubmit = async(e, delivery_ID) => {
+         e.preventDefault();
           console.log("Selected status:", status);
         try {
 
@@ -105,6 +108,7 @@ const Deliveries = () => {
             );
           
       getDeliveryDetails();
+      setSelectedDriverId(null);
       console.log(putData);
         }
         catch{
@@ -123,21 +127,22 @@ const Deliveries = () => {
 
 
       const handleChange2 = (e) => {
-          setSelectedDriverId(e.target.value); 
+          
+          setSelectedDriverId(e.target.value);
         };
 
 
 
       
      
-        const handleSubmit2 = async(delivery_ID) => {
-         
+        const handleSubmit2 = async(e, delivery_ID) => {
+         e.preventDefault();
           console.log("Selected status:", status);
         try {
     
 
 
-        const response = await axios.put(`http://localhost:8083/delivery/${delivery_ID}/drivers/${selectedDriverId}`, {
+        const response = await axios.put(`http://localhost:8083/delivery/${deliveryId}/drivers/${selectedDriverId}`, {}, {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -146,7 +151,7 @@ const Deliveries = () => {
                     console.log(response);
          setDeliveryDetails(d =>
           d.map(dd =>
-            dd.dd.delivery_ID === delivery_ID
+            dd.delivery_ID === deliveryId
               ? { ...dd, deliveryMen:response.data.deliveryMen
           }
             : dd
@@ -163,6 +168,55 @@ const Deliveries = () => {
           
         }
       }
+
+
+
+
+      const handleChange3 = (e) => {
+          setEstimatedTime(e.target.value); 
+        };
+
+
+
+      const putData2 = {
+        estimated_time: estimatedTime
+      }
+
+     
+        const handleSubmit3 = async(e, delivery_ID) => {
+         e.preventDefault();
+          
+        try {
+
+        const response = await axios.put(`http://localhost:8083/delivery/estimatedTime/${delivery_ID}`, putData2 , {
+          headers: {
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }});
+
+                    console.log(response);
+         setDeliveryDetails(d =>
+          d.map(dd =>
+            dd.delivery_ID === delivery_ID
+              ? { ...dd, estimated_time:response.data.estimated_time
+          }
+            : dd
+        
+        )
+
+            );
+          
+      getDeliveryDetails();
+     
+        }
+        catch{
+          console.log("Failed to Update Time")
+          
+          
+        }
+      }
+
+
           
   
   return (
@@ -172,11 +226,15 @@ const Deliveries = () => {
       
       let deliveryDriver = "";
       if(d.deliveryMen === null) deliveryDriver = "Add Driver";
-      else if(d.deliveryMen != null) deliveryDriver = d.deliveryMen;
+      else if(d.deliveryMen != null) deliveryDriver = d.deliveryMen.username;
 
       let ETA = "";
       if(d.estimated_time === null) ETA = "Add ETA";
       else if(d.estimated_time != null) ETA = d.estimated_time;
+
+      let delTime = "";
+      if(d.delivered_time === null) delTime = "Not yet delivered";
+      else if(d.delivered_time != null) delTime = d.estimated_time;
       
       return(
       <div className="delivery-list-table">
@@ -203,7 +261,7 @@ const Deliveries = () => {
                 <td><button className="updateBtn" onClick={openEditStatusForm}>{d.delivery_status}</button></td>
                 <td>{d.address}</td>
                 <td><button className="updateBtn" onClick={openEditETAForm}>{ETA}</button></td>
-                <td>{d.delivered_time}</td>
+                <td>{delTime}</td>
                 
             </tr>
           
@@ -212,8 +270,8 @@ const Deliveries = () => {
 
             <div className="editOrderStatusForm" style={isActive ? {display: "flex"} : {display: "none"}}>
               <button className="closeBtn4" onClick={openEditStatusForm}>x</button>
-              <h2>Edit Delivery Status Status</h2>
-               <form onSubmit={handleSubmit} className="orStatusForm">
+              <h2>Edit Delivery Status </h2>
+               <form method="post" onSubmit={(e) => handleSubmit(e, d.delivery_ID)} className="orStatusForm">
               <select id="status" value={status} onChange={handleChange} className="selectOrderStatus">
                 <option value="">Update Status...</option>
                 <option value="Pending Assignment">Pending Assignment</option>
@@ -222,22 +280,32 @@ const Deliveries = () => {
                 <option value="Delivered">Delivered</option>
                 <option value="Cancelled">Cancelled</option>
               </select>
-              <button type="submit" className="submitOrderStatusBtn" onClick={() => handleSubmit(d.delivery_ID)}>Update</button>
+              <button type="submit" className="submitOrderStatusBtn">Update</button>
               </form>
               </div>
 
 
               <div className="editOrderStatusForm" style={isActive2 ? {display: "flex"} : {display: "none"}}>
-              <button className="closeBtn4" onClick={openEditDriverForm}>x</button>
+              <button className="closeBtn4" onClick={() => openEditDriverForm(d.delivery_ID)}>x</button>
               <h2>Assign a Driver</h2>
-               <form onSubmit={handleSubmit2} className="orStatusForm">
-              <select id="driver" value={driver} onChange={handleChange2} className="selectOrderStatus">
+               <form method="post" onSubmit={(e) => handleSubmit2(e)} className="orStatusForm">
+              <select id="driver" value={selectedDriverId} onChange={handleChange2} className="selectOrderStatus">
                 <option value="">Assign a driver...</option>
                 {d.drivers.map(dd => (
                 <option key={dd.userId} value={dd.userId}>{dd.username}</option>
                 ))}
               </select>
-              <button type="submit" className="submitOrderStatusBtn" onClick={() => handleSubmit2(d.delivery_ID)}>Assign</button>
+              <button type="submit" className="submitOrderStatusBtn" >Assign</button>
+              </form>
+              </div>
+
+               <div className="editOrderStatusForm" style={isActive3 ? {display: "flex"} : {display: "none"}}>
+              <button className="closeBtn4" onClick={openEditETAForm}>x</button>
+              <h2>Edit Delivery Status </h2>
+               <form method="post" onSubmit={(e) => handleSubmit3(e, d.delivery_ID)} className="orStatusForm">
+                <p>Select ETA:</p>
+                <input type="time" id="eta" name="estimatedTime" value={estimatedTime} onChange={handleChange3}/>
+              <button type="submit" className="submitOrderStatusBtn">Select</button>
               </form>
               </div>
 

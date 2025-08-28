@@ -11,6 +11,7 @@ const BrowseCategory = () => {
   const token = localStorage.getItem('jwtToken');
   const [categories, setCategories] = useState([]);
   const navigate = new useNavigate();
+  const [query, setQuery] = useState("");
   
 
     const fetchCategories = async () => {
@@ -34,6 +35,10 @@ const BrowseCategory = () => {
         fetchCategories();
     }, []);
 
+    const searchCatalog = (e) => {
+      e.preventDefault();
+      navigate(`/search?query=${encodeURIComponent(query)}`);
+    }
 
 
   return (
@@ -43,8 +48,11 @@ const BrowseCategory = () => {
         <div className="hero">
           <img src="./main-hero.jpg" className="hero-image" />
           <h1 className="hero-text">Deliciousness at your doorstep.</h1>
-          <input type="text" className="search" placeholder="What are you craving for?"/>
+          <input type="text" name="search" className="search" placeholder="What are you craving for?" value={query} 
+          onChange={(e) => setQuery(e.target.value)}/>
+          <button className="search-btn" onClick={searchCatalog} ><img src="./search.svg" className="search-icon"/></button>
         </div>
+        
         <div className="categories-display" >
           <ul className="category-list">
           {categories.map((category) => (

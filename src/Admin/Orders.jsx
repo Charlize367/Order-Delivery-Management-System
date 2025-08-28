@@ -146,27 +146,30 @@ const Orders = () => {
             <div className="ordersView" style={isActive ? {display: "flex"} : {display: "none"}}>
               <button className="closeBtn3" onClick={openOrders}>x</button>
               <ul>
+                 {or.orderItems.map(oi => (
               <li className="order-summary-details-div">
-                <img className="order-summary-img" src={`http://localhost:8083/images/${or.orderItems.order_catalog.catalog_image}`}/>
+                <img className="order-summary-img" src={`http://localhost:8083/images/${oi.order_catalog.catalog_image}`}/>
                 <div className="order-summary-details">
                     <div className="order-summary-division">
-                        <p className="order-summary-name">{or.orderItems.order_catalog.catalog_name}</p>
-                        <p className="order-summary-price">Price: PHP {or.orderItems.order_catalog.catalog_price}</p>
-                        <p className="order-summary-quantity">Quantity: {or.orderItems.quantity}</p>
+                        <p className="order-summary-name">{oi.order_catalog.catalogName}</p>
+                        <p className="order-summary-price">Price: PHP {oi.order_catalog.catalog_price}</p>
+                        <p className="order-summary-quantity">Quantity: {oi.quantity}</p>
                     </div>
                    
-                    <p className="order-summary-subtotal">PHP {or.orderItems.subtotal}</p>
+                    <p className="order-summary-subtotal">PHP {oi.subtotal}</p>
                   
                    <div className="order-summary-total">
                     
-                    <p className="order-summary-total-txt">Total:</p>
-                    <p className="order-summary-total-amount-txt"> PHP {or.orders.order_price}</p>
+                    
                     </div>
+                    
                 </div>
                 
               </li>
+                 ))}
               </ul>
-              
+              <p className="order-summary-total-txt">Total:</p>
+                    <p className="order-summary-total-amount-txt"> PHP {or.orders.order_price}</p>
             </div>
 
 

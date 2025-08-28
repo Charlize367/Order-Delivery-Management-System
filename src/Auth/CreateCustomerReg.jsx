@@ -9,6 +9,7 @@ export const CreateCustomerReg = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
     const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -40,6 +41,8 @@ export const CreateCustomerReg = () => {
                     }
                 });
                 console.log(response);
+                window.alert("Account creation successful. You may now login");
+                navigate('/login');
                 return true;
 
             } catch (error) {
@@ -57,7 +60,7 @@ export const CreateCustomerReg = () => {
     return(
         <section className="login-body">
         <div className="form-container">
-            <h2>Login</h2>
+            <h2>Create Account</h2>
             <form onSubmit={handleSubmit}>
             <input className="fields" type="text" placeholder="Username" value={username} onChange={handleUsernameChange}  />
             <input className="fields" type="password" placeholder="Password" value={password} onChange={handlePasswordChange}/>

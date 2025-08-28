@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BrowseCatalog from "./BrowseCategory.jsx"
+import { useAuth } from '../Auth/AuthContext';
 
 const CustomerLogin = () => {
 
@@ -32,11 +33,7 @@ const CustomerLogin = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                const token = response.data.token;
-                localStorage.setItem('jwtToken', token);
-                localStorage.setItem('username', username);
-                console.log(token);
-                console.log(response);
+                login({username: response.data.username, role: response.data.role}, response.data.role)
                 navigate('/browse');
                 return true;
 
