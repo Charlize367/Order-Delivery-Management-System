@@ -53,14 +53,14 @@ public class CatalogController {
     }
 
     @PostMapping
-    public ResponseEntity<Catalog> addCatalog( @RequestParam("catalog_name") String catalog_name,
+    public ResponseEntity<Catalog> addCatalog( @RequestParam("catalogName") String catalogName,
                                               @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
         String originalFilename = catalog_image.getOriginalFilename();
         Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
         Files.write(fileNameAndPath, catalog_image.getBytes());
 
         Catalog catalog = new Catalog();
-        catalog.setCatalog_name(catalog_name);
+        catalog.setCatalogName(catalogName);
         catalog.setCatalog_price(catalog_price);
         catalog.setCatalog_description(catalog_description);
         catalog.setCatalog_image(originalFilename);
@@ -70,7 +70,7 @@ public class CatalogController {
     }
 
     @PostMapping("/category/{category_ID}")
-    public ResponseEntity<Catalog> addCatalogWithCategory( @PathVariable int category_ID, @RequestParam("catalog_name") String catalog_name,
+    public ResponseEntity<Catalog> addCatalogWithCategory( @PathVariable int category_ID, @RequestParam("catalogName") String catalogName,
                                                @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
         Category category = categoryRepository.findById(category_ID).get();
 
@@ -81,7 +81,7 @@ public class CatalogController {
         Files.write(fileNameAndPath, catalog_image.getBytes());
 
         Catalog catalog = new Catalog();
-        catalog.setCatalog_name(catalog_name);
+        catalog.setCatalogName(catalogName);
         catalog.setCatalog_price(catalog_price);
         catalog.setCatalog_description(catalog_description);
         catalog.setCatalog_image(originalFilename);
@@ -93,7 +93,7 @@ public class CatalogController {
     
 
     @PutMapping("/{catalogId}/category/{category_ID}")
-    public ResponseEntity<Catalog> updateCatalog(@PathVariable int catalogId, @PathVariable int category_ID, @RequestParam("catalog_name") String catalog_name,
+    public ResponseEntity<Catalog> updateCatalog(@PathVariable int catalogId, @PathVariable int category_ID, @RequestParam("catalogName") String catalogName,
                                                  @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
 
         Category category = categoryRepository.findById(category_ID).get();
@@ -104,7 +104,7 @@ public class CatalogController {
 
         Catalog catalog = catalogRepository.findById(catalogId).get();
         catalog.setCatalogId(catalogId);
-        catalog.setCatalog_name(catalog_name);
+        catalog.setCatalogName(catalogName);
         catalog.setCatalog_price(catalog_price);
         catalog.setCatalog_description(catalog_description);
         catalog.setCatalog_image(originalFilename);
@@ -119,5 +119,11 @@ public class CatalogController {
     public ResponseEntity<Catalog> deleteCatalog(@PathVariable Integer catalogId) {
         catalogService.deleteCatalog(catalogId);
         return null;
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Catalog>> searchCatalog(@RequestParam String query) {
+        List<Catalog> results = catalogRepository.findByCatalogNameContainingIgnoreCase(query);
+        return ResponseEntity.ok(results);
     }
 }

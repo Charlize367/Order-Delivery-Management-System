@@ -101,6 +101,7 @@ public class DeliveryController {
         Users deliveryMen = usersRepository.findById(userId).get();
         Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
         deliveries.setDeliveryMen(deliveryMen);
+        deliveryRepository.save(deliveries);
         return new ResponseEntity<>(deliveries, HttpStatus.OK);
     }
 

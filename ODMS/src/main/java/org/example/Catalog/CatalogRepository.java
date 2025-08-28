@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface CatalogRepository extends JpaRepository<Catalog, Integer> {
    List<Catalog> getCatalogByCategory(Category category);
+   List<Catalog> findByCatalogNameContainingIgnoreCase(String catalogName);
 }

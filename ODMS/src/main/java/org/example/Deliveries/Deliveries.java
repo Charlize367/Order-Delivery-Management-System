@@ -6,6 +6,7 @@ import org.example.Orders.Orders;
 import org.example.Users.Users;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Objects;
 
 @Entity
@@ -25,8 +26,8 @@ public class Deliveries {
     private Orders orders;
     private String delivery_status;
     private String address;
-    private Time estimated_time;
-    private Time delivered_time;
+    private LocalTime estimated_time;
+    private LocalTime delivered_time;
 
     public Integer getDelivery_ID() {
         return delivery_ID;
@@ -60,19 +61,19 @@ public class Deliveries {
         this.delivery_status = delivery_status;
     }
 
-    public Time getEstimated_time() {
+    public LocalTime getEstimated_time() {
         return estimated_time;
     }
 
-    public void setEstimated_time(Time estimated_time) {
+    public void setEstimated_time(LocalTime estimated_time) {
         this.estimated_time = estimated_time;
     }
 
-    public Time getDelivered_time() {
+    public LocalTime getDelivered_time() {
         return delivered_time;
     }
 
-    public void setDelivered_time(Time delivered_time) {
+    public void setDelivered_time(LocalTime delivered_time) {
         this.delivered_time = delivered_time;
     }
     public String getAddress() {
