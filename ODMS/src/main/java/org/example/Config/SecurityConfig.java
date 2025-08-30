@@ -102,9 +102,9 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/users/register", "/images/**").permitAll()
-                        .requestMatchers("/catalog/**", "/basket/**", "/orderItems/**", "/orders/**", "/delivery/**", "/users/**").hasRole("ADMIN")
-                        .requestMatchers("/catalog", "/basket", "/orderItems", "/orders", "/delivery").hasAnyRole("CUSTOMER")
-                        .requestMatchers("/delivery").hasRole("DELIVERY")
+
+                        .requestMatchers("/catalog/**", "/basket/**", "/orderItems/**", "/orders/**", "/delivery/**", "/users/**", "/categories/**").hasAnyRole("CUSTOMER", "ADMIN", "DELIVERY")
+
 
                         .anyRequest().authenticated()
 

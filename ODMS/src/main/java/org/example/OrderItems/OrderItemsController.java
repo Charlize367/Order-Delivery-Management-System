@@ -37,7 +37,7 @@ public class OrderItemsController {
     }
 
     @GetMapping("/orders/{order_ID}")
-    public OrderItems getOrderItemsByOrders(@PathVariable int order_ID) {
+    public List<OrderItems> getOrderItemsByOrders(@PathVariable int order_ID) {
         return orderItemsService.getOrderItemsByOrder(order_ID);
     }
 

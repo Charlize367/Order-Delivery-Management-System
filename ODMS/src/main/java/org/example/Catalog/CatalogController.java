@@ -94,12 +94,12 @@ public class CatalogController {
 
     @PutMapping("/{catalogId}/category/{category_ID}")
     public ResponseEntity<Catalog> updateCatalog(@PathVariable int catalogId, @PathVariable int category_ID, @RequestParam("catalogName") String catalogName,
-                                                 @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
+                                                 @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") String catalog_image) throws IOException {
 
         Category category = categoryRepository.findById(category_ID).get();
 
-        String originalFilename = catalog_image.getOriginalFilename();
-        Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
+
+        Path fileNameAndPath = Paths.get(uploadDirectory, catalog_image);
         Files.write(fileNameAndPath, catalog_image.getBytes());
 
         Catalog catalog = catalogRepository.findById(catalogId).get();
@@ -107,7 +107,7 @@ public class CatalogController {
         catalog.setCatalogName(catalogName);
         catalog.setCatalog_price(catalog_price);
         catalog.setCatalog_description(catalog_description);
-        catalog.setCatalog_image(originalFilename);
+        catalog.setCatalog_image(catalog_image);
         catalog.setCategory(category);
 
         catalogService.updateCatalog(catalog, catalogId);
@@ -117,7 +117,7 @@ public class CatalogController {
 
     @DeleteMapping("/{catalogId}")
     public ResponseEntity<Catalog> deleteCatalog(@PathVariable Integer catalogId) {
-        catalogService.deleteCatalog(catalogId);
+        catalogService.deleteCatalogById(catalogId);
         return null;
     }
 

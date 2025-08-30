@@ -53,8 +53,8 @@ public class OrderItemsService {
                 .orElseThrow(() -> new IllegalStateException(id + "not found"));
     }
 
-    public OrderItems getOrderItemsByOrder(Integer order_ID) {
-        Orders orders = ordersRepository.findById(order_ID).get();
+    public List<OrderItems> getOrderItemsByOrder(Integer order_ID) {
+        Orders orders  = ordersRepository.findById(order_ID).get();
         return orderItemsRepository.findByOrders(orders);
     }
 }

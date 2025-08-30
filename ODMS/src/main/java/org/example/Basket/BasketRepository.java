@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public interface BasketRepository extends JpaRepository<Basket, Integer> {
     List<Basket> findByCustomer(Users customer);
+    List<Basket> findByCatalog(Catalog catalog);
     Optional<Basket> findByCustomer_UserIdAndCatalog_CatalogId(Integer userId, Integer catalogId);
 
 }

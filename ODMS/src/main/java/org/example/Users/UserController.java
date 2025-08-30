@@ -60,7 +60,9 @@ public class UserController {
     public ResponseEntity<Users> register(@RequestBody Users users) {
         String encodedPassword = passwordEncoder.encode(users.getPassword());
         users.setPassword(encodedPassword);
+        users.setEnabled(true);
         userService.addUsers(users);
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -71,9 +73,15 @@ public class UserController {
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{user_ID}")
-    public ResponseEntity<Users> deleteUsers(@PathVariable Integer user_ID, Users users) {
-        userService.deleteUsers(users, user_ID);
+    @DeleteMapping("/customers/{user_ID}")
+    public ResponseEntity<Users> deleteCustomers(@PathVariable Integer user_ID) {
+        userService.deleteCustomerById(user_ID);
+        return null;
+    }
+
+    @DeleteMapping("/delivery/{user_ID}")
+    public ResponseEntity<Users> deleteDeliveryDriver(@PathVariable Integer user_ID) {
+        userService.deleteDeliveryDriverById(user_ID);
         return null;
     }
 }
