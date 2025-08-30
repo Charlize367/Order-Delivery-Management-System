@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios';
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import { useNavigate, Link, useParams, useLocation} from 'react-router-dom';
 import Header from '../components/CustomerHeader';
 import { useState, useEffect } from 'react'
 
@@ -12,6 +12,22 @@ const OrderDetails = () => {
   const [orderDetails, setOrderDetails] = useState([]);
   const [order_ID, setOrderID] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup2, setShowPopup2] = useState(false);
+
+
+
+  useEffect(() => {
+    if (location.state?.showPopup) {
+      setShowPopup(true);
+
+      
+      const timer = setTimeout(() => setShowPopup(false), 3000);
+      
+    }
+  }, [location.state]);
+
 
   const getOrderDetails = async () => {
     try {
@@ -88,15 +104,12 @@ const OrderDetails = () => {
                     }});
 
                     console.log(response);
-         setOrderDetails(or =>
-          or.map(orders =>
-            orders.orders.order_ID === order_ID
-              ? { ...orders, orders : {...orders.orders, order_status: response.data.orders.order_status}
-          }
-            : orders
-        )
 
-            );
+                    setShowPopup2(true);
+
+   
+                setTimeout(() => setShowPopup2(false), 3000);
+        
       getOrderDetails();
       console.log(putData);
         }
@@ -112,6 +125,18 @@ const OrderDetails = () => {
       <h1 className="my-order-text">My Orders</h1>
       <button className="orderHistoryBtn" onClick={goToHistory}>Order History</button>
       
+       {showPopup && (
+            <div className="order-popup">
+              Order placed successfully!
+            </div>
+              )}
+
+              {showPopup2 && (
+            <div className="cancel-popup">
+              Order cancelled successfully!
+            </div>
+              )}
+
       {orderDetails.length > 0 && ongoingOrders.map((or) => {
 
       let mergedStatus = "Order Placed";

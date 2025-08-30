@@ -42,6 +42,7 @@ const SearchResults = () => {
       <Header />
       <section className="dashboard">
       <h1 className="search-results-txt"> Search results for "{query}"</h1>
+      <div className="searchResults" style={{display:'flex'}}>
       {!found && query.trim() !== "" && <h2 className="no-results-txt">No results found.</h2>}
       {results.map((items) => {
             
@@ -49,17 +50,20 @@ const SearchResults = () => {
 
 
             return(
-      <ul className="itemDisplay">
+      
+      <ul className="itemDisplay" >
           
             
-    <ItemCard items={items}/>
+    <ItemCard  items={items}/>
             
          
           
           
           </ul>
+         
            )
           })}
+           </div>
       </section>
     </div>
   )

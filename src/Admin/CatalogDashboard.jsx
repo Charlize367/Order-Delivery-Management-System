@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 import Category from '../components/Category.jsx'
 import { useNavigate, Link } from 'react-router-dom';
+import SearchResults from '../components/SearchResults.jsx';
 
 const CatalogDashboard = () => {
 
@@ -13,6 +14,7 @@ const CatalogDashboard = () => {
   const navigate = new useNavigate();
   const [isActive, setIsActive] = useState(false);
   const [inputData, setInputData] = useState([]);
+  const [query, setQuery] = useState("");
 
 
 
@@ -76,6 +78,11 @@ const CatalogDashboard = () => {
       fetchCategories();
     }
 
+    const searchCatalog = (e) => {
+      e.preventDefault();
+      navigate(`/search?query=${encodeURIComponent(query)}`);
+    }
+
 
 
 
@@ -86,7 +93,9 @@ const CatalogDashboard = () => {
         <div className="hero">
           <img src="./main-hero.jpg" className="hero-image" />
           <h1 className="hero-text">Deliciousness at your doorstep.</h1>
-          <input type="text" className="search" placeholder="What are you craving for?"/>
+          <input type="text" name="search" className="search" placeholder="What are you craving for?" value={query} 
+          onChange={(e) => setQuery(e.target.value)}/>
+          <button className="search-btn" onClick={searchCatalog} ><img src="./search.svg" className="search-icon"/></button>
         </div>
 
         <button className="addCategoryBtn" onClick={openAddForm}>Add Category</button>

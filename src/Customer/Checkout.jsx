@@ -60,7 +60,7 @@ const token = localStorage.getItem('jwtToken');
 
                 }})
 
-                navigate('/order')
+                navigate('/order', {state: {showPopup: true}});
             } catch {
                 console.log("Error");
             }

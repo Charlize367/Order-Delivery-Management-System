@@ -25,8 +25,14 @@ const Basket = () => {
                     }});
 
 
-          console.log(response);
-          setBasket(response.data);
+          const basketData = response.data;
+          const sortedBasket = basketData.sort(
+      (a, b) => a.basketId - b.basketId
+    );
+
+    setBasket(sortedBasket);
+
+
           } catch {
             console.error("Error");
             console.log(response);
@@ -42,7 +48,7 @@ const Basket = () => {
     const updateQuantity = async(basket_ID, quantity) => {
       try {
     
-
+        if (quantity < 1) return;  
 
         const response = await axios.put(`http://localhost:8083/basket/${basket_ID}/quantity/${quantity}`, {}, {
           headers: {

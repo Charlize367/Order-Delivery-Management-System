@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import DeliveriesList from './DeliveriesList'
+import { useAuth } from '../Auth/AuthContext';
 
 const DeliveryLogin = () => {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -31,10 +33,7 @@ const DeliveryLogin = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                const token = response.data;
-                localStorage.setItem('jwtToken', token);
-                console.log(token);
-                console.log(response);
+                 login({username: response.data.username, role: response.data.role, id: response.data.id}, response.data.token)
                 navigate('/deliveries_list');
                 return true;
 

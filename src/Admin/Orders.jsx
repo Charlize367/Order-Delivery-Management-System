@@ -12,33 +12,30 @@ const Orders = () => {
   const [isActive, setIsActive] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
   const [status, setStatus] = useState("");
-
-
+  const [orderItems, setOrderItems] = useState([]);
+  const [orderPrice, setOrderPrice] = useState(0);
+  const [selectedOrder, setSelectedOrder] = useState(0);
   
 
-  const openOrders = () => {
+
+  console.log(selectedOrder);
+  console.log(orderItems);
+
+  const openOrders = (order_ID, orders) => {
     setIsActive(!isActive);
+    setSelectedOrder(order_ID);
+    setOrderPrice(orders);
   };
 
-  const openEditStatusForm = () => {
+  const openEditStatusForm = (order_ID) => {
     setIsActive2(!isActive2);
+    setOrderID(order_ID);
   };
 
 
   const getOrderDetails = async () => {
     try {
-            const response = await axios.get(`http://localhost:8083/delivery/users/customer/${user_ID}`, {
-              headers: {
-                        'Authorization' : `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }});
-
-
-          
-          const firstOrderID = response.data[0].orders.order_ID;
-          setOrderID(firstOrderID); 
-
-          const response2 = await axios.get(`http://localhost:8083/orderItems/orders/${firstOrderID}`, {
+            const response = await axios.get(`http://localhost:8083/delivery`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -47,11 +44,14 @@ const Orders = () => {
           
           const deliveries = response.data;
 
-          const combinedArray = deliveries.map(delivery => ({
-            ...delivery,
-            orderItems:response2.data
-          }))
-          setOrderDetails(combinedArray);
+        
+          const sortedOrders = deliveries.sort(
+      (a, b) => a.orders.order_ID - b.orders.order_ID
+    );
+
+          setOrderDetails(sortedOrders);
+          
+          
           
           } catch {
             console.error("Error");
@@ -65,9 +65,32 @@ const Orders = () => {
     }, []);
 
 
+    const getOrderItemsByOrder = async() => {
+      try {
+
+        const response = await axios.get(`http://localhost:8083/orderItems/orders/${selectedOrder}`, {
+              headers: {
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }});
+
+                    setOrderItems(response.data);
+      } catch {
+        console.log("Error")
+      }
+    }
+
+
+    useEffect(() => {
+        getOrderItemsByOrder();
+    }, [selectedOrder]);
+    
         const handleChange = (e) => {
           setStatus(e.target.value); 
         };
+
+
+      
 
 
 
@@ -76,7 +99,7 @@ const Orders = () => {
       }
 
       console.log(putData);
-        const handleSubmit = async(order_ID) => {
+        const handleSubmit = async() => {
          
           console.log("Selected status:", status);
         try {
@@ -113,40 +136,46 @@ const Orders = () => {
   return (
     <div className="body">
       <Header />
-      {orderDetails.map(or => (
+      
       <div className="orders-list-table">
         
           <table className="adminOrderTable">
             <thead>
             <tr>
               <th className="order-th">Order ID</th>
-              <th>Customer</th>
-              <th>Date Ordered</th>
-              <th>Status</th>
-              <th>Address</th>
-              <th>Order</th>
+              <th className="order-th">Customer</th>
+              <th className="order-th">Date Ordered</th>
+              <th className="order-th">Status</th>
+              <th className="order-th">Address</th>
+              <th className="order-th">Order</th>
       
             </tr>
             </thead>
+            {orderDetails.map((or) => {
+             
+            
+              
+          return(
             <tbody>
               
               <tr key={or.orders.order_ID}>
                 <td>{or.orders.order_ID}</td>
                 <td>{or.orders.customer.username}</td>
                 <td>{or.orders.order_date}</td>
-                <td><button className="updateBtn" onClick={openEditStatusForm}>{or.orders.order_status}</button></td>
+                <td><button className="updateBtn" onClick={() => openEditStatusForm(or.orders.order_ID)}>{or.orders.order_status}</button></td>
                 <td>{or.address}</td>
-                <td><button className="viewOrderItems" onClick={openOrders}>View Order</button></td>
+                <td><button className="viewOrderItems" onClick={() => openOrders(or.orders.order_ID, or.orders)}>View Order</button></td>
                 
             </tr>
           
             </tbody>
+            )})}
             </table>
 
             <div className="ordersView" style={isActive ? {display: "flex"} : {display: "none"}}>
               <button className="closeBtn3" onClick={openOrders}>x</button>
               <ul>
-                 {or.orderItems.map(oi => (
+                 {orderItems.map(oi => (
               <li className="order-summary-details-div">
                 <img className="order-summary-img" src={`http://localhost:8083/images/${oi.order_catalog.catalog_image}`}/>
                 <div className="order-summary-details">
@@ -168,8 +197,11 @@ const Orders = () => {
               </li>
                  ))}
               </ul>
+              {orderPrice && (
+                <>
               <p className="order-summary-total-txt">Total:</p>
-                    <p className="order-summary-total-amount-txt"> PHP {or.orders.order_price}</p>
+                    <p className="order-summary-total-amount-txt"> PHP {orderPrice.order_price}</p></>
+              )}
             </div>
 
 
@@ -186,12 +218,12 @@ const Orders = () => {
                 <option value="Cancelled">Cancelled</option>
               </select>
 
-              <button type="submit" className="submitOrderStatusBtn" onClick={() => handleSubmit(or.orders.order_ID)}>Update</button>
+              <button type="submit" className="submitOrderStatusBtn" onClick={handleSubmit}>Update</button>
               </form>
               </div>  
-             
+              
     </div>
-    ))} 
+   
     </div>
   )
 }

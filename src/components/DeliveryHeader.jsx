@@ -24,11 +24,8 @@ const Header = () => {
       <div className="sidebar" style={isActive ? {width: "250px"} : {width: "0px"}}>
         <button className="closeBtn" onClick={openNav}>x</button>
         <ul className="link-list">
-          <li className="navlink"><Link to = "/browse">Browse Menu</Link></li>
-        <li className="navlink"><Link to = "/basket">Basket</Link></li>
-        <li className="navlink"><Link to = "/order">Orders</Link></li>
-        <li className="navlink"><Link to = "/order_history">Order History</Link></li>
-        <li className="navlink"><Link onClick={logout}>Logout</Link></li>
+          <li className="navlink"><Link to = "/browse">Assigned Deliveries</Link></li>
+        <li className="navlink"><Link onClick={logout} />Logout</li>
         </ul>
       </div>
     </div>

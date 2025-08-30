@@ -34,7 +34,7 @@ const AdminLogin = () => {
                     }
                 });
                
-                login({username: response.data.username, role: response.data.role}, response.data.token)
+                login({username: response.data.username, role: response.data.role, id: response.data.id}, response.data.token)
                 navigate('/catalog_dashboard');
                 return true;
 

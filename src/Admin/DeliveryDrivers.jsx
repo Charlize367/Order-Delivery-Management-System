@@ -16,6 +16,9 @@ const DeliveryDrivers = () => {
    })
    const [deliveryDrivers, setDeliveryDrivers] = useState([]);
    const [resource_ID, setResource_ID] = useState(null);
+   const [showPopup, setShowPopup] = useState(false);
+  const [showPopup2, setShowPopup2] = useState(false);
+  const [showPopup3, setShowPopup3] = useState(false);
 
    
    const openForm = () => {
@@ -52,8 +55,6 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
   }
 
 
-  
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -69,6 +70,11 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
                 const dt = response.config.data;
                 fetchData();
                 openForm(isActive);
+
+                setShowPopup(true);
+
+   
+                setTimeout(() => setShowPopup(false), 3000);
                 console.log(inputData);
                 return true;
 
@@ -98,14 +104,19 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
     }, []);
 
 
-      const deleteData = async (id) => {
-
+      const deleteData = async (e, id) => {
+        e.preventDefault();
         try {
-          const response = await axios.delete(`http://localhost:8083/users/${id}`, {
+          const response = await axios.delete(`http://localhost:8083/users/delivery/${id}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
+
+                    setShowPopup2(true);
+
+   
+                setTimeout(() => setShowPopup2(false), 3000);
           console.log("Deleted");
           fetchData();
         } catch {
@@ -126,6 +137,10 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
+                    setShowPopup3(true);
+
+   
+                setTimeout(() => setShowPopup3(false), 3000);
           console.log("Updated");
           fetchData();
           openUpdateForm(isActive2);
@@ -154,7 +169,24 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
             <input className="loginBtn" type="submit" value="Add"/>
             </form>
         </div>
-        
+         {showPopup && (
+            <div className="add-user-popup">
+              Driver added successfully.
+            </div>
+              )}
+
+              {showPopup2 && (
+            <div className="del-user-popup">
+              Driver deleted successfully.
+            </div>
+              )}
+
+              {showPopup3 && (
+            <div className="upd-user-popup">
+              Driver details updated successfully.
+            </div>
+              )}
+
         <div className="delivery-table">
           <table className="u-table">
             <thead>
@@ -169,8 +201,8 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
               <tr key={driver.userId}>
                 <td>{driver.username}</td>
                 <td>{driver.password}</td>
-                <td><center><button className="editBtn"><img className="edit-icon" src="/edit-icon.svg" onClick={() => openUpdateForm(driver.userId)}/></button>
-                <button className="deleteBtn"><img className="delete-icon" src="/delete-icon.svg" onClick={() => deleteData(driver.userId)} /></button></center>
+                <td className="action-td"><center><button className="editBtn"><img className="edit-icon" src="/edit-icon.svg" onClick={() => openUpdateForm(driver.userId)}/></button>
+                <button className="deleteBtn"><img className="delete-icon" src="/delete-icon.svg" onClick={(e) => deleteData(e, driver.userId)} /></button></center>
                 </td>
             </tr>
             ))}

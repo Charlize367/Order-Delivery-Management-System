@@ -12,6 +12,7 @@ const ItemDetails = () => {
     const user_ID = localStorage.getItem('user_ID');
     const [quantity, setQuantity] = useState(1);
     const customer = localStorage.getItem('username');
+    const [showPopup, setShowPopup] = useState(false);
     
     
     console.log(item);
@@ -64,6 +65,11 @@ const ItemDetails = () => {
                     }
                 });
                 const dt = response.config.data;
+
+                setShowPopup(true);
+
+   
+                setTimeout(() => setShowPopup(false), 3000);
                 
                
                 console.log(response);
@@ -108,6 +114,11 @@ const ItemDetails = () => {
             <div className="item_buttons">
               <button className="addToCart" onClick={addToBasket}>Add to Basket</button>
 
+              {showPopup && (
+            <div className="basket-popup">
+              Item added to basket!
+            </div>
+              )}
               <div className="quantityButton">
                 <button className="minusQuantity" onClick={minusFromQuantity}>-</button>
                 <div className="quantity"><h3 className="quantity-text">{quantity}</h3></div>

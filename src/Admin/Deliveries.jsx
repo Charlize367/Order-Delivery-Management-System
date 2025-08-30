@@ -16,11 +16,14 @@ const Deliveries = () => {
     const [selectedDriverId, setSelectedDriverId] = useState(0);
     const [deliveryId, setDeliveryId] = useState(0);
     const [estimatedTime, setEstimatedTime] = useState("00:00");
+    const [drivers, setDrivers] = useState([]);
+  
     
     
     console.log(deliveryDetails);
-    const openEditStatusForm = () => {
+    const openEditStatusForm = (delivery_ID) => {
     setIsActive(!isActive);
+    setDeliveryId(delivery_ID);
     };
 
     const openEditDriverForm = (delivery_ID) => {
@@ -28,37 +31,29 @@ const Deliveries = () => {
       setDeliveryId(delivery_ID);
     }
 
-    const openEditETAForm = () => {
+    const openEditETAForm = (delivery_ID) => {
       setIsActive3(!isActive3);
+      setDeliveryId(delivery_ID);
     }
 
   const getDeliveryDetails = async () => {
     try {
-            const response = await axios.get(`http://localhost:8083/delivery/users/customer/${user_ID}`, {
+            const response = await axios.get(`http://localhost:8083/delivery`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
 
-
-        
-          
-        
-          
-          const response2 = await axios.get(`http://localhost:8083/users/role/DELIVERY`, {
-              headers: {
-                        'Authorization' : `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }});
           
           const deliveries = response.data;
          
 
-          const combinedArray = deliveries.map(delivery => ({
-            ...delivery,
-            drivers:response2.data
-          }))
-          setDeliveryDetails(combinedArray);
+        
+          const sortedDeliveries = deliveries.sort(
+      (a, b) => a.delivery_ID - b.delivery_ID
+    );
+
+    setDeliveryDetails(sortedDeliveries);
           
           } catch {
             console.error("Error");
@@ -70,6 +65,27 @@ const Deliveries = () => {
   useEffect(() => {
         getDeliveryDetails();
     }, []);
+
+
+  
+    const getDriver = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8083/users/role/DELIVERY`, {
+              headers: {
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }});
+
+              setDrivers(response.data);
+      } catch {
+        console.log("Error");
+      }
+    }
+
+    useEffect(() => {
+      getDriver();
+
+    }, [])
 
 
 
@@ -84,12 +100,12 @@ const Deliveries = () => {
       }
 
      console.log(status);
-        const handleSubmit = async(e, delivery_ID) => {
+        const handleSubmit = async(e) => {
          e.preventDefault();
           console.log("Selected status:", status);
         try {
 
-        const response = await axios.put(`http://localhost:8083/delivery/deliveryStatus/${delivery_ID}`, putData , {
+        const response = await axios.put(`http://localhost:8083/delivery/deliveryStatus/${deliveryId}`, putData , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -98,7 +114,7 @@ const Deliveries = () => {
                     console.log(response);
          setDeliveryDetails(d =>
           d.map(dd =>
-            dd.delivery_ID === delivery_ID
+            dd.delivery_ID === deliveryId
               ? { ...dd, delivery_status:response.data.delivery_status
           }
             : dd
@@ -135,7 +151,7 @@ const Deliveries = () => {
 
       
      
-        const handleSubmit2 = async(e, delivery_ID) => {
+        const handleSubmit2 = async(e) => {
          e.preventDefault();
           console.log("Selected status:", status);
         try {
@@ -149,16 +165,7 @@ const Deliveries = () => {
                     }});
 
                     console.log(response);
-         setDeliveryDetails(d =>
-          d.map(dd =>
-            dd.delivery_ID === deliveryId
-              ? { ...dd, deliveryMen:response.data.deliveryMen
-          }
-            : dd
-        
-        )
-
-            );
+         setDriver(response.data);
           
      getDeliveryDetails();
       
@@ -183,12 +190,12 @@ const Deliveries = () => {
       }
 
      
-        const handleSubmit3 = async(e, delivery_ID) => {
+        const handleSubmit3 = async(e) => {
          e.preventDefault();
           
         try {
 
-        const response = await axios.put(`http://localhost:8083/delivery/estimatedTime/${delivery_ID}`, putData2 , {
+        const response = await axios.put(`http://localhost:8083/delivery/estimatedTime/${deliveryId}`, putData2 , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -197,7 +204,7 @@ const Deliveries = () => {
                     console.log(response);
          setDeliveryDetails(d =>
           d.map(dd =>
-            dd.delivery_ID === delivery_ID
+            dd.delivery_ID === deliveryId
               ? { ...dd, estimated_time:response.data.estimated_time
           }
             : dd
@@ -222,7 +229,25 @@ const Deliveries = () => {
   return (
     <div className="body">
       <Header />
-      {deliveryDetails.map((d) => {
+      
+      <div className="delivery-list-table">
+        
+          <table className="adminDeliveryTable">
+            <thead>
+            <tr>
+              <th className="delivery-th">Delivery ID</th>
+              <th className="delivery-th">Driver</th>
+              <th className="delivery-th">Date</th>
+              <th className="delivery-th">Status</th>
+              <th className="delivery-th">Address</th>
+              <th className="delivery-th">Estimated Time</th>
+              <th className="delivery-th">Delivered Time</th>
+      
+            </tr>
+            </thead>
+            {deliveryDetails.map((d) => {
+
+             
       
       let deliveryDriver = "";
       if(d.deliveryMen === null) deliveryDriver = "Add Driver";
@@ -234,44 +259,35 @@ const Deliveries = () => {
 
       let delTime = "";
       if(d.delivered_time === null) delTime = "Not yet delivered";
-      else if(d.delivered_time != null) delTime = d.estimated_time;
+      else if(d.delivered_time != null) delTime = d.delivered_time;
+
+
+      
       
       return(
-      <div className="delivery-list-table">
-        
-          <table className="adminDeliveryTable">
-            <thead>
-            <tr>
-              <th >Delivery ID</th>
-              <th>Driver</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Address</th>
-              <th>Estimated Time</th>
-              <th>Delivered Time</th>
-      
-            </tr>
-            </thead>
             <tbody>
               
               <tr key={d.delivery_ID}>
                 <td>{d.delivery_ID}</td>
                 <td><button className="updateBtn" onClick={() => openEditDriverForm(d.delivery_ID)}>{deliveryDriver}</button></td>
                 <td>{d.orders.order_date}</td>
-                <td><button className="updateBtn" onClick={openEditStatusForm}>{d.delivery_status}</button></td>
+                <td><button className="updateBtn" onClick={() => openEditStatusForm(d.delivery_ID)}>{d.delivery_status}</button></td>
                 <td>{d.address}</td>
-                <td><button className="updateBtn" onClick={openEditETAForm}>{ETA}</button></td>
+                <td><button className="updateBtn" onClick={() => openEditETAForm(d.delivery_ID)}>{ETA}</button></td>
                 <td>{delTime}</td>
+
+                
                 
             </tr>
           
             </tbody>
+             )})}
             </table>
 
             <div className="editOrderStatusForm" style={isActive ? {display: "flex"} : {display: "none"}}>
               <button className="closeBtn4" onClick={openEditStatusForm}>x</button>
               <h2>Edit Delivery Status </h2>
-               <form method="post" onSubmit={(e) => handleSubmit(e, d.delivery_ID)} className="orStatusForm">
+               <form method="post" onSubmit={handleSubmit} className="orStatusForm">
               <select id="status" value={status} onChange={handleChange} className="selectOrderStatus">
                 <option value="">Update Status...</option>
                 <option value="Pending Assignment">Pending Assignment</option>
@@ -286,12 +302,12 @@ const Deliveries = () => {
 
 
               <div className="editOrderStatusForm" style={isActive2 ? {display: "flex"} : {display: "none"}}>
-              <button className="closeBtn4" onClick={() => openEditDriverForm(d.delivery_ID)}>x</button>
+              <button className="closeBtn4" onClick={openEditDriverForm}>x</button>
               <h2>Assign a Driver</h2>
-               <form method="post" onSubmit={(e) => handleSubmit2(e)} className="orStatusForm">
+               <form method="post" onSubmit={handleSubmit2} className="orStatusForm">
               <select id="driver" value={selectedDriverId} onChange={handleChange2} className="selectOrderStatus">
                 <option value="">Assign a driver...</option>
-                {d.drivers.map(dd => (
+                {drivers.map(dd => (
                 <option key={dd.userId} value={dd.userId}>{dd.username}</option>
                 ))}
               </select>
@@ -302,7 +318,7 @@ const Deliveries = () => {
                <div className="editOrderStatusForm" style={isActive3 ? {display: "flex"} : {display: "none"}}>
               <button className="closeBtn4" onClick={openEditETAForm}>x</button>
               <h2>Edit Delivery Status </h2>
-               <form method="post" onSubmit={(e) => handleSubmit3(e, d.delivery_ID)} className="orStatusForm">
+               <form method="post" onSubmit={handleSubmit3} className="orStatusForm">
                 <p>Select ETA:</p>
                 <input type="time" id="eta" name="estimatedTime" value={estimatedTime} onChange={handleChange3}/>
               <button type="submit" className="submitOrderStatusBtn">Select</button>
@@ -311,7 +327,7 @@ const Deliveries = () => {
 
 
           </div>
-      )})}
+     
     </div>
     
   )

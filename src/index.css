@@ -9,6 +9,7 @@ body{
   font-family: "Montserrat", sans-serif;
 }
 
+
 ul{
   list-style-type: none;
 }
@@ -229,11 +230,12 @@ a{
 	background-color:white;
 	text-align:left;
 	overflow:hidden;
-  width:50%;
+  width:70%;
 	position:relative;
-	margin-left:20%;
+	margin-left:15%;
   margin-top:5%;
   align-items:center;
+  table-layout: fixed;
 }
 
 
@@ -242,7 +244,9 @@ table{
 }
 
 
-
+.action-td{
+  padding-left:1px;
+}
 
 th{
 	padding:30px;
@@ -262,6 +266,9 @@ td{
   background-color:#404040;
   color:white;
   font-size:15px;
+  white-space: normal;   
+  word-break: break-word; 
+  width:150px;
 }
 
 .deleteBtn{
@@ -271,6 +278,9 @@ td{
   width:10%;
   margin-left:8%;
 }
+
+
+
 
 .editBtn{
   background-color:transparent;
@@ -408,6 +418,12 @@ td{
   margin-left:50%;
   text-align:center;
 }
+
+.addCatalog:hover{
+  
+  background-color:#186318;
+}
+
 
 .addCatalogTxt{
   top:1%;
@@ -630,6 +646,10 @@ input[type="file"]::file-selector-button {
  
 }
 
+.addCategoryBtn:hover{
+  background-color:#186318;
+}
+
 .addCatForm{
   display: flex;
   flex-direction: column;
@@ -649,6 +669,123 @@ input[type="file"]::file-selector-button {
   border-color:#4a4d4a;
   z-index:3;
   top:18%;
+}
+
+.basket-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:40%;
+}
+
+.order-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:40%;
+  top:40%;
+}
+
+.cancel-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:38%;
+  top:40%;
+}
+
+
+.add-menu-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:38%;
+  top:40%;
+}
+
+.del-menu-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:38%;
+  top:40%;
+}
+
+.upd-menu-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:36%;
+  top:40%;
+}
+
+.add-user-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:38%;
+  top:40%;
+}
+
+.upd-user-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:36%;
+  top:40%;
+}
+
+.del-user-popup{
+  background-color: #1b1c1b;
+  border-color:#4a4d4a;
+  padding:55px;
+  z-index:3;
+  position:fixed;
+  color:white;
+  border-style:double;
+  border-radius:20px;
+  left:38%;
+  top:40%;
 }
 
 .editIcon{
@@ -734,6 +871,11 @@ input[type="file"]::file-selector-button {
   margin-top:38%;
 }
 
+
+.addToCart:hover{
+  background-color:#186318;
+}
+
 .quantityButton{
   display:flex;
   width:30%;
@@ -782,33 +924,34 @@ hr{
 
 
 .b-table{
-  width:80%;
-  margin-left:9%;
+  width:90%;
+  margin-left:5%;
   background-color: transparent;
+  table-layout:fixed;
   
 }
 
 .basketItemImg{
   width:90%;
   height:50%;
+  margin-left:6%;
 }
 
 .basket-td{
-  margin:10%;
-  width:20%;
+  text-align:center;
   font-size:15px;
   background-color: transparent;
-  padding-left:4%;
+  
  
 }
 
 .quantity-td{
-  padding-top:48%;
+  padding-top:25%;
   margin:10%;
   width:20%;
   font-size:15px;
   background-color: transparent;
-  padding-left:9%;
+  padding-left:22%;
   display:flex;
  
 }
@@ -817,7 +960,7 @@ hr{
   width:30%;
   font-size:15px;
   background-color: transparent;
-  padding-left:9%;
+  padding-left:8%;
  
 }
 
@@ -826,18 +969,20 @@ hr{
   width:20%;
   font-size:15px;
   background-color: transparent;
-  padding-left:3%;
+  padding-left:6%;
  
 }
 
 .image-td{
   width:40%;
   background-color: transparent;
-  padding-left:5%;
+  padding-left:1px;
 }
 
 .basket-th{
   background-color:transparent;
+  padding-top:30px;
+  padding-left:40px;
 }
 
 .deleteBasketBtn{
@@ -847,8 +992,8 @@ hr{
   height:60%;
 }
 .deleteBasket{
-  width:100%;
-  height:100%;
+  width:40%;
+  height:40%;
 }
 
 .minusBasketQuantity{
@@ -879,7 +1024,7 @@ hr{
 }
 
 .total-text{
-  margin-left:25%;
+  margin-left:32%;
 }
 
 .checkoutBtn{
@@ -895,6 +1040,10 @@ hr{
   margin-left:10%;
   margin-top:1%;
   margin-bottom:10%;
+}
+
+.checkoutBtn:hover{
+  background-color:#186318;
 }
 
 .summary-container{
@@ -933,6 +1082,7 @@ hr{
   display:flex;
   padding:0;
   margin:0;
+  width: 38%;
 }
 
 .summary-img{
@@ -962,11 +1112,8 @@ hr{
 }
 
 .summary-subtotal{
-  margin-left:100%;
-  width:max-content;
-  padding:0;
-  display: flex;
-  margin-top:18%;
+  
+  
 }
 
 
@@ -1001,7 +1148,7 @@ hr{
   border-width:0.1px;
   background-color:#878786;
   border-color:white;
-  margin-left:7%;
+  margin-left:10%;
   margin-top:3%;
   margin-bottom:5%;
   background-color: transparent;
@@ -1103,6 +1250,7 @@ hr{
 .order-details-div{
   display:block;
   margin-left:1%;
+  width:10%;
 }
 
 .order-item-name{
@@ -1119,7 +1267,7 @@ hr{
 .order-total{
   font-size:20px;
   font-weight:bold;
-  margin-left:8%;
+  margin-left:75%;
 }
 
 .cancelOrderBtn{
@@ -1132,6 +1280,10 @@ hr{
   color:white;
   font-family: "Montserrat", sans-serif;
   margin-bottom:5%;
+}
+
+.cancelOrderBtn:hover{
+  background-color: #404040;
 }
 
 
@@ -1153,14 +1305,15 @@ hr{
 	overflow:hidden;
   width:80%;
 	position:relative;
-	margin-left:10%;
+	margin-left:9.5%;
   margin-top:5%;
   align-items:center;
   
 }
 
 .order-th{
-  padding:0;
+  padding-top:30px;
+  padding-left:48px;
   text-align:center;
   margin:1px;
 }
@@ -1271,6 +1424,7 @@ hr{
    border-color:white;
   border-style:groove;
   width:90%;
+  height:50px;
   background-color:transparent;
   color:white;
   font-family: "Montserrat", sans-serif;
@@ -1351,19 +1505,45 @@ hr{
   
 }
 
+.delivery-list-table-table{
+  border-collapse:collapse;
+	background-color:white;
+	text-align:center;
+	overflow:hidden;
+  width:95%;
+	position:relative;
+	margin-left:2.5%;
+  margin-top:5%;
+  align-items:center;
+}
+
+.delivery-list-th{
+  padding-top:30px;
+  padding-left:48px;
+}
+
+.delivery-items-td{
+  font-size:10px;
+}
+
+.delivery-th{
+  padding-top:30px;
+  padding-left:48px;
+}
+
 .order-items-td{
   display:block;
-  width:100%;
+  text-align:left;
   padding:0;
+  padding-right:20px;
 }
 
 .td-oi{
   display:flex;
+  padding:0;
 }
 
-.td-oi-spacing{
-  margin-left:3%;
-}
+
 
 .orderHistoryBtn{
   position:absolute;
@@ -1409,4 +1589,42 @@ hr{
 .no-results-txt{
   margin-left:3%;
   margin-top:5%;
+}
+
+.goToRegister{
+  margin-bottom:4%;
+  margin-right:2%;
+}
+
+.otherLogin{
+  position:absolute;
+  top:3%;
+  left:3%;
+  display:flex;
+  width:40%;
+}
+
+.goToAdminLogin{
+   width:30%;
+  background-image: linear-gradient(to right, #56C789, #096E22);
+  border-style: none;
+  border-radius:30px;
+  height:30px;
+  font-family: "Montserrat", sans-serif;
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.goToDeliveryLogin{
+   width:40%;
+  background-image: linear-gradient(to right, #56C789, #096E22);
+  border-style: none;
+  border-radius:30px;
+  height:30px;
+  font-family: "Montserrat", sans-serif;
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+  margin-left:3%;
 }

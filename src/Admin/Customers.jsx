@@ -16,6 +16,9 @@ const Customers = () => {
    })
    const [customers, setCustomers] = useState([]);
    const [resource_ID, setResource_ID] = useState(null);
+   const [showPopup, setShowPopup] = useState(false);
+   const [showPopup2, setShowPopup2] = useState(false);
+   const [showPopup3, setShowPopup3] = useState(false);
 
    
 
@@ -70,6 +73,11 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
                 const dt = response.config.data;
                 fetchData();
                
+
+                setShowPopup(true);
+
+   
+                setTimeout(() => setShowPopup(false), 3000);
                 console.log(inputData);
                 return true;
 
@@ -89,7 +97,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
                         'Content-Type': 'application/json'
                     }});
             setCustomers(response.data);
-            openForm(isActive);
+            
           } catch {
             console.error("Error");
           }
@@ -103,11 +111,15 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
       const deleteData = async (id) => {
 
         try {
-          const response = await axios.delete(`http://localhost:8083/users/${id}`, {
+          const response = await axios.delete(`http://localhost:8083/users/customers/${id}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
+                    setShowPopup2(true);
+
+   
+                setTimeout(() => setShowPopup2(false), 3000);
           console.log("Deleted");
         
           fetchData();
@@ -129,6 +141,11 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
+
+                    setShowPopup3(true);
+
+   
+                setTimeout(() => setShowPopup3(false), 3000);
           console.log("Updated");
           fetchData();
           openUpdateForm(isActive2);
@@ -147,7 +164,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
       <Header />
       <div className="users">
         <button className="addUsers" onClick={openForm}>Add Customers/Users</button>
-        <div className="add-form" style={isActive ? {display: "none"} : {display: "flex"}}>
+        <div className="add-form" style={isActive ? {display: "flex"} : {display: "none"}}>
           <h2>Add Customers</h2>
           <button className="closeBtn2" onClick={openForm}>x</button>
           <form onSubmit={handleSubmit}>
@@ -157,7 +174,24 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
             <input className="loginBtn" type="submit" value="Add"/>
             </form>
         </div>
-        
+        {showPopup && (
+            <div className="add-user-popup">
+              Customer added successfully.
+            </div>
+              )}
+
+              {showPopup2 && (
+            <div className="del-user-popup">
+              Customer deleted successfully.
+            </div>
+              )}
+
+              {showPopup3 && (
+            <div className="upd-user-popup">
+              Customer details updated successfully.
+            </div>
+              )}
+
         <div className="customers-table">
           <table className="u-table">
             <thead>
@@ -172,8 +206,8 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
               <tr key={customer.user_ID}>
                 <td>{customer.username}</td>
                 <td>{customer.password}</td>
-                <td><center><button className="editBtn"><img className="edit-icon" src="/edit-icon.svg" onClick={() => openUpdateForm(customer.user_ID)}/></button>
-                <button className="deleteBtn"><img className="delete-icon" src="/delete-icon.svg" onClick={() => deleteData(customer.user_ID)} /></button></center>
+                <td className="action-td"><center><button className="editBtn"><img className="edit-icon" src="/edit-icon.svg" onClick={() => openUpdateForm(customer.user_ID)}/></button>
+                <button className="deleteBtn"><img className="delete-icon" src="/delete-icon.svg" onClick={() => deleteData(customer.userId)} /></button></center>
                 </td>
             </tr>
             ))}

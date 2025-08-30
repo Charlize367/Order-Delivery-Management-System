@@ -15,7 +15,7 @@ const normalizedAllowedRoles = allowedRoles.map(r => String(r).trim().toUpperCas
 
 const hasAccess = normalizedAllowedRoles.includes(userRoleString);
 
-if (!hasAccess) return <Navigate to="/admin_login" />;
+if (!hasAccess) return <Navigate to="/login" />;
 
 
 

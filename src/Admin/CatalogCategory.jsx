@@ -13,6 +13,7 @@ const CatalogCategory = () => {
   const [isActive, setIsActive] = useState(false);
   const [inputData, setInputData] = useState([]);
   const [resource_ID, setResource_ID] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
 
   console.log(inputData);
@@ -66,6 +67,11 @@ const CatalogCategory = () => {
                     }
                 });
 
+                setShowPopup(true);
+
+   
+                setTimeout(() => setShowPopup(false), 3000);
+
               
                 const dt = response.data;
                 fetchCatalogByCategory();
@@ -103,9 +109,16 @@ const CatalogCategory = () => {
           </div>
         </div>
 
+
+              {showPopup && (
+            <div className="add-menu-popup">
+              Menu added successfully.
+            </div>
+              )}
+
                   <ul className="item-display">
           {item.map((items) => (
-            <AdminItem items={items} category_ID={param.id} />
+            <AdminItem items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}
           </ul>
       </section>
