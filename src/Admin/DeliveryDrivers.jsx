@@ -23,6 +23,11 @@ const DeliveryDrivers = () => {
    
    const openForm = () => {
     setIsActive(!isActive);
+    setInputData({
+    username: "",
+    password: "",
+    role: "DELIVERY"
+  });
   };
 
   const openUpdateForm = (id) => {
@@ -69,6 +74,7 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
                 });
                 const dt = response.config.data;
                 fetchData();
+                 event.target.reset();
                 openForm(isActive);
 
                 setShowPopup(true);
@@ -143,6 +149,7 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
                 setTimeout(() => setShowPopup3(false), 3000);
           console.log("Updated");
           fetchData();
+           event.target.reset();
           openUpdateForm(isActive2);
         } catch {
           console.log("Failed to Update.");

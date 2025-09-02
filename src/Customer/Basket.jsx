@@ -91,7 +91,11 @@ getAllBasketItems();
 
       const goToCheckout = () => {
 
+      if (basket == 0) {
+        window.alert("Please add items to basket first");
+      } else {
         navigate(`/checkout/${user_ID}`);
+      }
 
       }
     

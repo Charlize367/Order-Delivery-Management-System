@@ -100,8 +100,8 @@ const Deliveries = () => {
       }
 
      console.log(status);
-        const handleSubmit = async(e) => {
-         e.preventDefault();
+        const handleSubmit = async() => {
+        
           console.log("Selected status:", status);
         try {
 
@@ -237,6 +237,7 @@ const Deliveries = () => {
             <tr>
               <th className="delivery-th">Delivery ID</th>
               <th className="delivery-th">Driver</th>
+              <th className="delivery-th">Customer</th>
               <th className="delivery-th">Date</th>
               <th className="delivery-th">Status</th>
               <th className="delivery-th">Address</th>
@@ -254,12 +255,25 @@ const Deliveries = () => {
       else if(d.deliveryMen != null) deliveryDriver = d.deliveryMen.username;
 
       let ETA = "";
-      if(d.estimated_time === null) ETA = "Add ETA";
-      else if(d.estimated_time != null) ETA = d.estimated_time;
+      if (!d.estimated_time) {
+        ETA = "Add ETA";
+      } else {
+        const [hours, minutes, seconds] = d.estimated_time.split(":").map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, seconds);
+        ETA = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
+      }
+
 
       let delTime = "";
-      if(d.delivered_time === null) delTime = "Not yet delivered";
-      else if(d.delivered_time != null) delTime = d.delivered_time;
+      if (!d.delivered_time) {
+        delTime = "Not delivered yet";
+      } else {
+        const [hours, minutes, seconds] = d.delivered_time.split(":").map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, seconds);
+        delTime = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
+      }
 
 
       
@@ -270,7 +284,12 @@ const Deliveries = () => {
               <tr key={d.delivery_ID}>
                 <td>{d.delivery_ID}</td>
                 <td><button className="updateBtn" onClick={() => openEditDriverForm(d.delivery_ID)}>{deliveryDriver}</button></td>
-                <td>{d.orders.order_date}</td>
+                <td>{d.orders.customer.username}</td>
+                <td>{new Date(d.orders.order_date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}</td>
                 <td><button className="updateBtn" onClick={() => openEditStatusForm(d.delivery_ID)}>{d.delivery_status}</button></td>
                 <td>{d.address}</td>
                 <td><button className="updateBtn" onClick={() => openEditETAForm(d.delivery_ID)}>{ETA}</button></td>
@@ -287,7 +306,7 @@ const Deliveries = () => {
             <div className="editOrderStatusForm" style={isActive ? {display: "flex"} : {display: "none"}}>
               <button className="closeBtn4" onClick={openEditStatusForm}>x</button>
               <h2>Edit Delivery Status </h2>
-               <form method="post" onSubmit={handleSubmit} className="orStatusForm">
+               <form  onSubmit={handleSubmit} className="orStatusForm">
               <select id="status" value={status} onChange={handleChange} className="selectOrderStatus">
                 <option value="">Update Status...</option>
                 <option value="Pending Assignment">Pending Assignment</option>
@@ -296,7 +315,7 @@ const Deliveries = () => {
                 <option value="Delivered">Delivered</option>
                 <option value="Cancelled">Cancelled</option>
               </select>
-              <button type="submit" className="submitOrderStatusBtn">Update</button>
+              <button type="submit" className="submitOrderStatusBtn" onClick={handleSubmit}>Update</button>
               </form>
               </div>
 

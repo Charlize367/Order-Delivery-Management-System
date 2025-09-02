@@ -20,6 +20,13 @@ const CatalogCategory = () => {
 
   const openAddForm = () => {
     setIsActive(!isActive);
+    setInputData({
+    catalogName: "",
+    catalog_description: "",
+    catalog_price: "",
+    catalog_image: null,
+    category: param.id
+  });
   };
 
 
@@ -66,7 +73,7 @@ const CatalogCategory = () => {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-
+                handleReloadData();
                 setShowPopup(true);
 
    
@@ -74,8 +81,10 @@ const CatalogCategory = () => {
 
               
                 const dt = response.data;
-                fetchCatalogByCategory();
+                
+                event.target.reset();
                 openAddForm(isActive);
+                
                 return true;
 
             } catch (error) {

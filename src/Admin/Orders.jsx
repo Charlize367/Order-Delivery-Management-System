@@ -161,7 +161,11 @@ const Orders = () => {
               <tr key={or.orders.order_ID}>
                 <td>{or.orders.order_ID}</td>
                 <td>{or.orders.customer.username}</td>
-                <td>{or.orders.order_date}</td>
+                <td>{new Date(or.orders.order_date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}</td>
                 <td><button className="updateBtn" onClick={() => openEditStatusForm(or.orders.order_ID)}>{or.orders.order_status}</button></td>
                 <td>{or.address}</td>
                 <td><button className="viewOrderItems" onClick={() => openOrders(or.orders.order_ID, or.orders)}>View Order</button></td>
@@ -173,7 +177,7 @@ const Orders = () => {
             </table>
 
             <div className="ordersView" style={isActive ? {display: "flex"} : {display: "none"}}>
-              <button className="closeBtn3" onClick={openOrders}>x</button>
+              <button className="closeBtn5" onClick={openOrders}>x</button>
               <ul>
                  {orderItems.map(oi => (
               <li className="order-summary-details-div">

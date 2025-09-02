@@ -9,6 +9,10 @@ body{
   font-family: "Montserrat", sans-serif;
 }
 
+button{
+  cursor: pointer;
+}
+
 
 ul{
   list-style-type: none;
@@ -52,7 +56,7 @@ h2{
   flex-wrap: wrap;
   align-content: space-around;
   position:fixed;
-  left:30%;
+  left:28.5%;
   max-width:600px;
   height:700;
   margin:1px auto;
@@ -98,7 +102,6 @@ h2{
   border-style: solid;
   border-radius:30px;
   border-width:0.1px;
-  background-color:#878786;
   border-color:white;
   margin:30px;
   background-color: transparent;
@@ -549,7 +552,7 @@ td{
   position:fixed;
   left:30%;
   max-width:600px;
-  height:700;
+  
   margin:1px auto;
   background-color:#222324;
   align-items:center;
@@ -561,12 +564,15 @@ td{
   top:1%;
 }
 
-.editImage{
-  width:10%;
-  height:10%;
+.edit_image{
+  width:25%;
+  height:25%;
+  margin-left:36%;
+  margin-top:-1%;
+  
 }
 .addBtn{
-  width:80%;
+  width:82%;
   background-image: linear-gradient(to right, #56C789, #096E22);
   border-style: none;
   border-radius:30px;
@@ -680,6 +686,7 @@ input[type="file"]::file-selector-button {
   color:white;
   border-style:double;
   border-radius:20px;
+  top:42%;
   left:40%;
 }
 
@@ -692,7 +699,7 @@ input[type="file"]::file-selector-button {
   color:white;
   border-style:double;
   border-radius:20px;
-  left:40%;
+  left:39%;
   top:40%;
 }
 
@@ -705,7 +712,7 @@ input[type="file"]::file-selector-button {
   color:white;
   border-style:double;
   border-radius:20px;
-  left:38%;
+  left:37%;
   top:40%;
 }
 
@@ -869,11 +876,13 @@ input[type="file"]::file-selector-button {
   text-align:center;
   width:80%;
   margin-top:38%;
+  cursor: pointer;
 }
 
 
+
 .addToCart:hover{
-  background-color:#186318;
+  background-color: #186318;
 }
 
 .quantityButton{
@@ -953,14 +962,16 @@ hr{
   background-color: transparent;
   padding-left:22%;
   display:flex;
+  word-break: keep-all;
  
 }
 .price-td{
   margin:10%;
-  width:30%;
+  width:50%;
   font-size:15px;
   background-color: transparent;
-  padding-left:8%;
+  padding-left:1%;
+  text-align:center;
  
 }
 
@@ -1024,7 +1035,9 @@ hr{
 }
 
 .total-text{
-  margin-left:32%;
+  margin-left:25%;
+  width:50%;
+  text-align:center;
 }
 
 .checkoutBtn{
@@ -1331,6 +1344,7 @@ hr{
   display:flex;
   padding:0;
   margin:0;
+  width:50%;
 }
 
 .order-summary-img{
@@ -1360,49 +1374,70 @@ hr{
 }
 
 .order-summary-subtotal{
-  margin-top:13%;
-  margin-left:13%;
+  margin-top:24%;
+  margin-left:60%;
 }
 
 
 .order-summary-total{
-  margin-top:180px; 
+  margin-top:10%; 
   display:flex;
   margin-left:-28%;
   width:100%;
   font-weight:bold;
+  margin-bottom:10%;
 }
 .order-summary-total-txt{
-  
+  margin-left:-14%;
+  margin-top:50%;
+  font-weight:bold;
+  margin-bottom:5%;
 }
 
 .order-summary-total-amount-txt{
   margin-left:10%;
   width:100px;
+  margin-top:50%;
+  font-weight:bold;
+  margin-bottom:5%;
 
 }
 
 .ordersView{
   width:60%;
-  margin-top:5%;
+  top:30%;
   margin-left:20%;
   background-color:#222324;
   align-items:center;
   border-radius:30px;
   color:white;
-  padding-top:30px;
+  padding-top:1px;
   border-style:double;
   border-color:#4a4d4a;
   z-index:3;
+  position:fixed;
   display:block;
 
 }
+
+
 
 .closeBtn3{
   position: absolute;
   top: 50%;
   left:75%;
 
+  font-size: 36px;
+  background-color:transparent;
+  color:white;
+  border-style: none;
+
+}
+
+.closeBtn5{
+  position: absolute;
+  top: 5%;
+  left:87%;
   font-size: 36px;
   background-color:transparent;
   color:white;
@@ -1428,6 +1463,10 @@ hr{
   background-color:transparent;
   color:white;
   font-family: "Montserrat", sans-serif;
+}
+
+.updateBtn:hover{
+  background-color:#323336;
 }
 
 .editOrderStatusForm{
@@ -1499,7 +1538,7 @@ hr{
 	overflow:hidden;
   width:80%;
 	position:relative;
-	margin-left:10%;
+	margin-left:7%;
   margin-top:5%;
   align-items:center;
   

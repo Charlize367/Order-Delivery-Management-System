@@ -24,6 +24,11 @@ const Customers = () => {
 
    const openForm = () => {
     setIsActive(!isActive);
+    setInputData({
+    username: "",
+    password: "",
+    role: "CUSTOMER"
+  });
   };
 
   const openUpdateForm = (id) => {
@@ -79,6 +84,9 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
    
                 setTimeout(() => setShowPopup(false), 3000);
                 console.log(inputData);
+                 event.target.reset();
+                 
+                 openForm(isActive);
                 return true;
 
             } catch (error) {
@@ -148,7 +156,9 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
                 setTimeout(() => setShowPopup3(false), 3000);
           console.log("Updated");
           fetchData();
+           e.target.reset();
           openUpdateForm(isActive2);
+          
         } catch {
           console.log("Failed to Update.");
           console.log(inputData);

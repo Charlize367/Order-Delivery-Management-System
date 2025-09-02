@@ -8,6 +8,8 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
   const [isActive, setIsActive] = useState(false);
    const [inputData, setInputData] = useState([]);
    const token = localStorage.getItem('jwtToken');
+   const [showPopup, setShowPopup] = useState(false);
+    const [showPopup2, setShowPopup2] = useState(false);
 
 
    const openUpdateForm = () => {
@@ -15,7 +17,7 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
       setInputData({
       category_ID : category_ID,
       category_name: category_name,
-      category_image: null
+      category_image: category_image
       });
     
     
@@ -44,7 +46,13 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data' 
                     }});
+
+                    setShowPopup(true);
+
+   
+                setTimeout(() => setShowPopup(false), 3000);
           console.log("Updated");
+           e.target.reset();
           openUpdateForm(isActive);
           onReload();
         } catch {
@@ -63,6 +71,10 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
+                    setShowPopup2(true);
+
+   
+          setTimeout(() => setShowPopup2(false), 3000);
           console.log("Deleted");
           onReload();
         } catch {
@@ -79,6 +91,17 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
         <button className="editCatalog" onClick={openUpdateForm}><img src="./edit-icon.svg" className="editIcon"/></button>
         <button className="deleteCatalog" onClick={deleteCategory}><img src="./delete-icon.svg" className="deleteIcon"/></button>
         </div>
+        {showPopup && (
+            <div className="upd-menu-popup">
+              Category details updated successfully.
+            </div>
+              )}
+
+              {showPopup2 && (
+            <div className="del-menu-popup">
+              Category deleted successfully.
+            </div>
+              )}
 
         <Link to = {`/catalog/${category_ID}/${category_name}`}>
         <img className="category_image" src={`http://localhost:8083/images/${category_image}`}/>
@@ -101,6 +124,7 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
               </form>
           </div>
     </div>
+    
   )
 }
 

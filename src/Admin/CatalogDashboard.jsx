@@ -15,11 +15,18 @@ const CatalogDashboard = () => {
   const [isActive, setIsActive] = useState(false);
   const [inputData, setInputData] = useState([]);
   const [query, setQuery] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+  
 
 
 
   const openAddForm = () => {
     setIsActive(!isActive);
+    setInputData({
+    category_name: "",
+    category_image: null,
+   
+  });
   };
 
   const handleChange = (e) => {
@@ -62,8 +69,18 @@ const CatalogDashboard = () => {
                 });
 
               
+                setShowPopup(true);
+
+   
+                setTimeout(() => setShowPopup(false), 3000);
+
+
+                
                 const dt = response.data;
                 fetchCategories();
+                 
+
+                event.target.reset();
                 openAddForm(isActive);
                 return true;
 
@@ -98,6 +115,11 @@ const CatalogDashboard = () => {
           <button className="search-btn" onClick={searchCatalog} ><img src="./search.svg" className="search-icon"/></button>
         </div>
 
+        {showPopup && (
+            <div className="add-menu-popup">
+              Category added successfully.
+            </div>
+              )}
         <button className="addCategoryBtn" onClick={openAddForm}>Add Category</button>
         <div className="addCatForm" style={isActive ? {display: "flex"} : {display: "none"}}>
             <h2>Add Category</h2>

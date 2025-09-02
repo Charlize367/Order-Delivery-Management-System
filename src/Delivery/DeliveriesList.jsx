@@ -220,13 +220,25 @@ const DeliveriesList = () => {
       {deliveryDetails.map((d) => {
 
       let ETA = "";
-      if(d.estimated_time === null) ETA = "Add ETA";
-      else if(d.estimated_time != null) ETA = d.estimated_time;
+      if (!d.estimated_time) {
+        ETA = "Add ETA";
+      } else {
+        const [hours, minutes, seconds] = d.estimated_time.split(":").map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, seconds);
+        ETA = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
+      }
+
 
       let delTime = "";
-      if(d.delivered_time === null) delTime = "Not yet delivered";
-      else if(d.delivered_time != null) delTime = d.delivered_time;
-
+      if (!d.delivered_time) {
+        delTime = "Not delivered yet";
+      } else {
+        const [hours, minutes, seconds] = d.delivered_time.split(":").map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, seconds);
+        delTime = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
+      }
       return(
       <div className="delivery-list-table">
         

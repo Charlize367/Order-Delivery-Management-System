@@ -64,6 +64,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
                 setTimeout(() => setShowPopup(false), 3000);
 
           console.log("Updated");
+           e.target.reset();
           openUpdateForm(isActive);
           onReload();
         } catch {

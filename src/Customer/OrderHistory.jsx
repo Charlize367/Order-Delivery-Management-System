@@ -77,10 +77,11 @@ const OrderHistory = () => {
 
       let mergedStatus = "";
       if (or.orders.order_status === "Order Placed") mergedStatus = "Order Placed";
+      else if (or.orders.order_status === "Cancelled") mergedStatus = "Cancelled"; 
       else if (or.orders.order_status === "Preparing" || or.orders.order_status === "Confirmed"  ) mergedStatus = "Preparing";
       else if (or.delivery_status === "Driver Assigned" || or.delivery_status === "On the Way") mergedStatus = "On the Way";
       else if (or.orders.order_status === "Completed" || or.delivery_status === "Delivered") mergedStatus = "Delivered";
-      else if (or.orders.order_status === "Cancelled") mergedStatus = "Cancelled"; 
+      
      
      
 
