@@ -52,7 +52,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
         try {
 
           
-          const response = await axios.put(`http://localhost:8083/catalog/${catalogId}/category/${category_ID}`, inputData, {
+          const response = await axios.put(`${API_BASE_URL}/catalog/${catalogId}/category/${category_ID}`, inputData, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
@@ -77,7 +77,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
   const deleteItem = async (e) => {
 
         try {
-          const response = await axios.delete(`http://localhost:8083/catalog/${catalogId}`, {
+          const response = await axios.delete(`${API_BASE_URL}/catalog/${catalogId}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
@@ -96,7 +96,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
 
   return (
     <div className="item_card">
-        <img className="catalog_image" src={`http://localhost:8083/images/${catalog_image}`}/>
+        <img className="catalog_image" src={`${API_BASE_URL}/images/${catalog_image}`}/>
         <p className="catalog_name">{catalogName}</p>
         <p className="catalog_price">PHP {catalog_price}</p>
         <button className="editCatalog" onClick={() => openUpdateForm({catalogId})}><img src="/edit-icon.svg" className="editIcon2"/></button>

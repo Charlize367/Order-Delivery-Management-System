@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useState, useEffect } from 'react'
 import ItemCard from '../components/ItemCard';
 import Header from '../components/CustomerHeader';
-
 import React from 'react'
 
 const SearchResults = () => {
@@ -14,28 +13,27 @@ const SearchResults = () => {
     const token = localStorage.getItem('jwtToken');
 
     const getSearchResults = async () => {
-          try {
-            const response = await axios.get(`http://localhost:8083/catalog/search?query=${query}`, {
-              headers: {
-                        'Authorization' : `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }});
+      try {
+        const response = await axios.get(`${API_BASE_URL}/catalog/search?query=${query}`, {
+          headers : {
+            'Authorization' : `Bearer ${token}`,
+            'Content-Type' :'application/json'
+          }
+        })
+        setResults(response.data);
+      } catch {
+        console.log("Error");
+      }
+    }
 
-            setResults(response.data);
-                } catch{
-                    console.log("Error");
-                }
-            }
-
-            useEffect(() => {
-        getSearchResults();
+    useEffect(() => {
+      getSearchResults();
     }, [query]);
 
-
-    const found = results.some(item =>
-  item.catalogName.toLowerCase().includes(query.toLowerCase().trim())
-);
-
+    const found = results.some(item => 
+      item.catalogName.toLowerCase().includes(query.toLowerCase().trim())
+    );
+    
 
   return (
     <div className="body">

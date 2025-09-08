@@ -28,7 +28,7 @@ const DeliveryLogin = () => {
                     "password" : password,
                     "role" : "DELIVERY"
                 }
-                const response = await axios.post('http://localhost:8083/login', postData, {
+                const response = await axios.post(`${API_BASE_URL}/login`, postData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }

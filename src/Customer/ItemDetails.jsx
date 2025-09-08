@@ -21,7 +21,7 @@ const ItemDetails = () => {
 
     const fetchCatalogByCategory = async () => {
           try {
-            const response = await axios.get(`http://localhost:8083/catalog/${param.id}`, {
+            const response = await axios.get(`${API_BASE_URL}/catalog/${param.id}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -58,7 +58,7 @@ const ItemDetails = () => {
       
             try {
               
-                const response = await axios.post(`http://localhost:8083/basket/users/${user_ID}/catalog/${item.catalogId}`, postData, {
+                const response = await axios.post(`${API_BASE_URL}/basket/users/${user_ID}/catalog/${item.catalogId}`, postData, {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -102,7 +102,7 @@ const ItemDetails = () => {
       <Header />
 
       <div className="item-details">
-        <img className="itemPicture" src={`http://localhost:8083/images/${item.catalog_image}`}/>
+        <img className="itemPicture" src={`${API_BASE_URL}/images/${item.catalog_image}`}/>
         <div className="details">
             <h2 className="itemName">{item.catalogName}</h2> <p className="itemPrice"> PHP {item.catalog_price}</p> 
 

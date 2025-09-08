@@ -5,9 +5,7 @@ import axios from 'axios';
 
 const Deliveries = () => {
     const token = localStorage.getItem('jwtToken');
-    const user_ID = localStorage.getItem('user_ID');
     const [deliveryDetails, setDeliveryDetails] = useState([]);
-    const [order_ID, setOrderID] = useState(0);
     const [isActive, setIsActive] = useState(false);
     const [isActive2, setIsActive2] = useState(false);
     const [isActive3, setIsActive3] = useState(false);
@@ -38,7 +36,7 @@ const Deliveries = () => {
 
   const getDeliveryDetails = async () => {
     try {
-            const response = await axios.get(`http://localhost:8083/delivery`, {
+            const response = await axios.get(`${API_BASE_URL}/delivery`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -70,7 +68,7 @@ const Deliveries = () => {
   
     const getDriver = async () => {
       try {
-        const response = await axios.get(`http://localhost:8083/users/role/DELIVERY`, {
+        const response = await axios.get(`${API_BASE_URL}/users/role/DELIVERY`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -105,7 +103,7 @@ const Deliveries = () => {
           console.log("Selected status:", status);
         try {
 
-        const response = await axios.put(`http://localhost:8083/delivery/deliveryStatus/${deliveryId}`, putData , {
+        const response = await axios.put(`${API_BASE_URL}/delivery/deliveryStatus/${deliveryId}`, putData , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -158,7 +156,7 @@ const Deliveries = () => {
     
 
 
-        const response = await axios.put(`http://localhost:8083/delivery/${deliveryId}/drivers/${selectedDriverId}`, {}, {
+        const response = await axios.put(`${API_BASE_URL}/delivery/${deliveryId}/drivers/${selectedDriverId}`, {}, {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -195,7 +193,7 @@ const Deliveries = () => {
           
         try {
 
-        const response = await axios.put(`http://localhost:8083/delivery/estimatedTime/${deliveryId}`, putData2 , {
+        const response = await axios.put(`${API_BASE_URL}/delivery/estimatedTime/${deliveryId}`, putData2 , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'

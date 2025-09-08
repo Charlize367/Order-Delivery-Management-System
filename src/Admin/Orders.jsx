@@ -35,7 +35,7 @@ const Orders = () => {
 
   const getOrderDetails = async () => {
     try {
-            const response = await axios.get(`http://localhost:8083/delivery`, {
+            const response = await axios.get(`${API_BASE_URL}/delivery`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ const Orders = () => {
     const getOrderItemsByOrder = async() => {
       try {
 
-        const response = await axios.get(`http://localhost:8083/orderItems/orders/${selectedOrder}`, {
+        const response = await axios.get(`${API_BASE_URL}/orderItems/orders/${selectedOrder}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -106,7 +106,7 @@ const Orders = () => {
     
 
 
-        const response = await axios.put(`http://localhost:8083/orders/orderStatus/${order_ID}`, putData , {
+        const response = await axios.put(`${API_BASE_URL}/orders/orderStatus/${order_ID}`, putData , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -181,7 +181,7 @@ const Orders = () => {
               <ul>
                  {orderItems.map(oi => (
               <li className="order-summary-details-div">
-                <img className="order-summary-img" src={`http://localhost:8083/images/${oi.order_catalog.catalog_image}`}/>
+                <img className="order-summary-img" src={`${API_BASE_URL}/images/${oi.order_catalog.catalog_image}`}/>
                 <div className="order-summary-details">
                     <div className="order-summary-division">
                         <p className="order-summary-name">{oi.order_catalog.catalogName}</p>

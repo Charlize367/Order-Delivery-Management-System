@@ -4,13 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Auth/AuthContext';
 
 
-const AdminLogin = () => {
 
+const AdminLogin = () => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
     const { login } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
+    console.log(API_BASE_URL);
     const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -28,7 +30,7 @@ const AdminLogin = () => {
                     "password" : password,
                     "role" : "ADMIN"
                 }
-                const response = await axios.post('http://localhost:8083/login', postData, {
+                const response = await axios.post(`${API_BASE_URL}/login`, postData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }

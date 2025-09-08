@@ -66,7 +66,7 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
         
             try {
               
-                const response = await axios.post('http://localhost:8083/users', inputData, {
+                const response = await axios.post(`${API_BASE_URL}/users`, inputData, {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -94,7 +94,7 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
 
         const fetchData = async () => {
           try {
-            const response = await axios.get('http://localhost:8083/users/role/DELIVERY', {
+            const response = await axios.get(`${API_BASE_URL}/users/role/DELIVERY`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -113,7 +113,7 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
       const deleteData = async (e, id) => {
         e.preventDefault();
         try {
-          const response = await axios.delete(`http://localhost:8083/users/delivery/${id}`, {
+          const response = await axios.delete(`${API_BASE_URL}/users/delivery/${id}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -138,7 +138,7 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
       
         try {
 
-          const response = await axios.put(`http://localhost:8083/users/${updateID}`, inputData, {
+          const response = await axios.put(`${API_BASE_URL}/users/${updateID}`, inputData, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'

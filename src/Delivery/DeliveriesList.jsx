@@ -40,7 +40,7 @@ const DeliveriesList = () => {
 
     const getDeliveryDetails = async () => {
     try {
-            const response = await axios.get(`http://localhost:8083/delivery/users/delivery/${user_ID}`, {
+            const response = await axios.get(`${API_BASE_URL}/delivery/users/delivery/${user_ID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -52,7 +52,7 @@ const DeliveriesList = () => {
             deliveries.map(async (delivery) => {
               const orderId = delivery.orders.order_ID;
 
-              const response2 = await axios.get(`http://localhost:8083/orderItems/orders/${orderId}`, {
+              const response2 = await axios.get(`${API_BASE_URL}/orderItems/orders/${orderId}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -96,7 +96,7 @@ const DeliveriesList = () => {
           console.log("Selected status:", status);
         try {
 
-        const response = await axios.put(`http://localhost:8083/delivery/deliveryStatus/${deliveryId}`, putData , {
+        const response = await axios.put(`${API_BASE_URL}/delivery/deliveryStatus/${deliveryId}`, putData , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -140,7 +140,7 @@ const DeliveriesList = () => {
           
         try {
 
-        const response = await axios.put(`http://localhost:8083/delivery/deliveredTime/${deliveryId}`, putData2 , {
+        const response = await axios.put(`${API_BASE_URL}/delivery/deliveredTime/${deliveryId}`, putData2 , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -185,7 +185,7 @@ const DeliveriesList = () => {
           
         try {
 
-        const response = await axios.put(`http://localhost:8083/delivery/estimatedTime/${deliveryId}`, putData3 , {
+        const response = await axios.put(`${API_BASE_URL}/delivery/estimatedTime/${deliveryId}`, putData3 , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'

@@ -39,7 +39,7 @@ const CatalogCategory = () => {
 
   const fetchCatalogByCategory = async () => {
           try {
-            const response = await axios.get(`http://localhost:8083/catalog/category/${param.id}`, {
+            const response = await axios.get(`${API_BASE_URL}/catalog/category/${param.id}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ const CatalogCategory = () => {
         
             try {
               
-                const response = await axios.post(`http://localhost:8083/catalog/category/${param.id}`, inputData, {
+                const response = await axios.post(`${API_BASE_URL}/catalog/category/${param.id}`, inputData, {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'

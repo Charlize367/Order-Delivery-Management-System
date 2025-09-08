@@ -18,7 +18,7 @@ const Basket = () => {
   console.log(user_ID);
   const getAllBasketItems = async () => {
     try {
-            const response = await axios.get(`http://localhost:8083/basket/users/${user_ID}`, {
+            const response = await axios.get(`${API_BASE_URL}/basket/users/${user_ID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ const Basket = () => {
     
         if (quantity < 1) return;  
 
-        const response = await axios.put(`http://localhost:8083/basket/${basket_ID}/quantity/${quantity}`, {}, {
+        const response = await axios.put(`${API_BASE_URL}/basket/${basket_ID}/quantity/${quantity}`, {}, {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ getAllBasketItems();
       const deleteBasketItem = async(catalog_ID) => {
         
         try{
-          const response = await axios.delete(`http://localhost:8083/basket/users/${user_ID}/catalog/${catalog_ID}`, {
+          const response = await axios.delete(`${API_BASE_URL}/basket/users/${user_ID}/catalog/${catalog_ID}`, {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -120,7 +120,7 @@ getAllBasketItems();
             {basket.map(b => (
               <tr key={b.basketId}>
                 <td className="basket-td">{b.catalog.catalogName}</td>
-                <td className="image-td"> <img className="basketItemImg" src={`http://localhost:8083/images/${b.catalog.catalog_image}`}/></td>
+                <td className="image-td"> <img className="basketItemImg" src={`${API_BASE_URL}/images/${b.catalog.catalog_image}`}/></td>
                 <td className="quantity-td"><button className="minusBasketQuantity" onClick={() => updateQuantity(b.basketId, b.quantity - 1)}>-</button><div className="basket-quantity">{b.quantity}</div>
                 <button className="addBasketQuantity" onClick={() => updateQuantity(b.basketId, b.quantity + 1)}>+</button></td>
                 <td className="price-td">PHP {b.subtotal}</td>

@@ -14,18 +14,9 @@ const token = localStorage.getItem('jwtToken');
     address: address
 
   }
-
-
-  
-
-  
-
-
-  
-
     const getAllBasketItems = async () => {
     try {
-            const response = await axios.get(`http://localhost:8083/basket/users/${user_ID}`, {
+            const response = await axios.get(`${API_BASE_URL}/basket/users/${user_ID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -48,23 +39,21 @@ const token = localStorage.getItem('jwtToken');
     const total = items.reduce((sum, basket) => sum + basket.subtotal, 0);
 
 
-  
-
-    const placeOrder = async () => {
-     
-        try{
-            const response = await axios.post(`http://localhost:8083/orders/users/${user_ID}`, orderData, {
-                headers: {
-                    'Authorization' : `Bearer ${token}`,
-                    'Content-Type' : 'application/json'
-
-                }})
-
-                navigate('/order', {state: {showPopup: true}});
-            } catch {
-                console.log("Error");
-            }
+  const placeOrder = async() => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/orders/users/${user_ID}`, orderData, {
+        headers : {
+          'Authorization' : `Bearer ${token}`,
+          'Content-Type' : 'application/json'
         }
+      })
+
+      navigate('/order', {state: {showPopup: true}});
+    } catch {
+      console.log("Error");
+    }
+  }
+   
     
 
   return (
@@ -76,7 +65,7 @@ const token = localStorage.getItem('jwtToken');
         <ul className="item-summary">
             {items.map(b => (
               <li className="item-summary-details">
-                <img className="summary-img" src={`http://localhost:8083/images/${b.catalog.catalog_image}`}/>
+                <img className="summary-img" src={`${API_BASE_URL}/images/${b.catalog.catalog_image}`}/>
                 <div className="summary-details">
                     <div className="summary-division">
                         <p className="summary-name">{b.catalog.catalogName}</p>

@@ -16,7 +16,7 @@ const BrowseCategory = () => {
 
     const fetchCategories = async () => {
           try {
-            const response = await axios.get('http://localhost:8083/categories', {
+            const response = await axios.get(`${API_BASE_URL}/categories`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'

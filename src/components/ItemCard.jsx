@@ -14,7 +14,7 @@ const ItemCard = ({items : {catalogId, catalogName, catalog_price, catalog_descr
   return (
     <div className="itemCard">
       <Link to = {`/food_details/${catalogId}`}>
-        <img className="catalogImage" src={`http://localhost:8083/images/${catalog_image}`}/>
+        <img className="catalogImage" src={`${API_BASE_URL}/images/${catalog_image}`}/>
         <p className="catalogName">{catalogName}</p>
         <p className="catalogPrice">PHP {catalog_price}</p>
       </Link>

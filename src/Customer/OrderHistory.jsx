@@ -14,7 +14,7 @@ const OrderHistory = () => {
 
   const getOrderDetails = async () => {
     try {
-            const response = await axios.get(`http://localhost:8083/delivery/users/customer/${user_ID}`, {
+            const response = await axios.get(`${API_BASE_URL}/delivery/users/customer/${user_ID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -25,7 +25,7 @@ const OrderHistory = () => {
           const firstOrderID = response.data[0].orders.order_ID;
           setOrderID(firstOrderID); 
 
-          const response2 = await axios.get(`http://localhost:8083/orderItems/orders/${firstOrderID}`, {
+          const response2 = await axios.get(`${API_BASE_URL}/orderItems/orders/${firstOrderID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ const OrderHistory = () => {
        <ul className="order-summary">
             {or.orderItems.map(oi => (
         <li className="order-items-div">
-          <img className="order-img" src={`http://localhost:8083/images/${oi.order_catalog.catalog_image}`}/>
+          <img className="order-img" src={`${API_BASE_URL}/images/${oi.order_catalog.catalog_image}`}/>
           <div className="order-details-div">
           <p className="order-item-name">{oi.order_catalog.catalogName}</p>
           <p className="order-quantity">x{oi.quantity}</p>

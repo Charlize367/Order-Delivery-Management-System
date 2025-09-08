@@ -69,7 +69,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
         
             try {
               
-                const response = await axios.post('http://localhost:8083/users', inputData, {
+                const response = await axios.post(`${API_BASE_URL}/users`, inputData, {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -99,7 +99,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
 
         const fetchData = async () => {
           try {
-            const response = await axios.get('http://localhost:8083/users/role/CUSTOMER', {
+            const response = await axios.get(`${API_BASE_URL}/users/role/CUSTOMER`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
       const deleteData = async (id) => {
 
         try {
-          const response = await axios.delete(`http://localhost:8083/users/customers/${id}`, {
+          const response = await axios.delete(`${API_BASE_URL}/users/customers/${id}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -144,7 +144,7 @@ const updateID = customers.find(c => c.user_ID === resource_ID)?.user_ID;
       
         try {
 
-          const response = await axios.put(`http://localhost:8083/users/${updateID}`, inputData, {
+          const response = await axios.put(`${API_BASE_URL}/users/${updateID}`, inputData, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'

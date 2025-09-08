@@ -35,7 +35,7 @@ export const CreateCustomerReg = () => {
                     "enabled" : true,
                     "role" : "CUSTOMER"
                 }
-                const response = await axios.post('http://localhost:8083/users/register', postData, {
+                const response = await axios.post(`${API_BASE_URL}/users/register`, postData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }

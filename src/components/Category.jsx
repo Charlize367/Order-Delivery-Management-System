@@ -66,7 +66,7 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
   const deleteCategory = async (e) => {
 
         try {
-          const response = await axios.delete(`http://localhost:8083/categories/${category_ID}`, {
+          const response = await axios.delete(`${API_BASE_URL}/categories/${category_ID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -104,7 +104,7 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
               )}
 
         <Link to = {`/catalog/${category_ID}/${category_name}`}>
-        <img className="category_image" src={`http://localhost:8083/images/${category_image}`}/>
+        <img className="category_image" src={`${API_BASE_URL}/images/${category_image}`}/>
        
         <p className="overlay">{category_name} 
 

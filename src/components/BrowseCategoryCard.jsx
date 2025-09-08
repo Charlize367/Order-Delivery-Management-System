@@ -19,7 +19,7 @@ const BrowseCategoryCard = ({category : {category_ID, category_name, category_im
 
 
         <Link to = {`/browse_food/${category_ID}/${category_name}`}>
-        <img className="category_image" src={`http://localhost:8083/images/${category_image}`}/>
+        <img className="category_image" src={`${API_BASE_URL}/images/${category_image}`}/>
        
         <p className="overlay">{category_name} 
 

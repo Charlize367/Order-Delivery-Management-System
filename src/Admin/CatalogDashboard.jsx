@@ -38,7 +38,7 @@ const CatalogDashboard = () => {
 
     const fetchCategories = async () => {
           try {
-            const response = await axios.get('http://localhost:8083/categories', {
+            const response = await axios.get(`${API_BASE_URL}/categories`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ const CatalogDashboard = () => {
         
             try {
               
-                const response = await axios.post(`http://localhost:8083/categories`, inputData, {
+                const response = await axios.post(`${API_BASE_URL}/categories`, inputData, {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'

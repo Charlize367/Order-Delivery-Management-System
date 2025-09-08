@@ -30,7 +30,7 @@ const BrowseCatalog = () => {
 
   const fetchCatalogByCategory = async () => {
           try {
-            const response = await axios.get(`http://localhost:8083/catalog/category/${param.id}`, {
+            const response = await axios.get(`${API_BASE_URL}/catalog/category/${param.id}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
