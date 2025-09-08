@@ -6,6 +6,7 @@ import Header from '../components/CustomerHeader';
 import React from 'react'
 
 const SearchResults = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const query = params.get('query');

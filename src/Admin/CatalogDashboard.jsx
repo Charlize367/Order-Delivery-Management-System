@@ -8,7 +8,7 @@ import SearchResults from '../components/SearchResults.jsx';
 
 const CatalogDashboard = () => {
 
-  
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('jwtToken');
   const [categories, setCategories] = useState([]);
   const navigate = new useNavigate();

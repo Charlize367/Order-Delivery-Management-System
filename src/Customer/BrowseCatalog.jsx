@@ -5,7 +5,7 @@ import ItemCard from '../components/ItemCard';
 import Header from '../components/CustomerHeader';
 
 const BrowseCatalog = () => {
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const param = useParams();
   const [item, setItem] = useState([]);
   const token = localStorage.getItem('jwtToken');

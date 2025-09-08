@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 
 const Orders = () => {
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [orderDetails, setOrderDetails] = useState([]);

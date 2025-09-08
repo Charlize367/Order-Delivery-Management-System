@@ -5,6 +5,7 @@ import axios from 'axios';
 
 
 const Customers = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
    const [isActive, setIsActive] = useState(false);
    const [isActive2, setIsActive2] = useState(false);
    const token = localStorage.getItem('jwtToken')

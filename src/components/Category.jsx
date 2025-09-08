@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Category = ({category : {category_ID, category_name, category_image}, onReload}) => {
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [isActive, setIsActive] = useState(false);
    const [inputData, setInputData] = useState([]);
    const token = localStorage.getItem('jwtToken');

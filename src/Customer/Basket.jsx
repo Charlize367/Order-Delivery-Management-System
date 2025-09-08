@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 
 
 const Basket = () => {
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [basket, setBasket] = useState([]);

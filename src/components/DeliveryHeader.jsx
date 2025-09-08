@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../Auth/AuthContext';
 
 const Header = () => {
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const { logout } = useAuth();
   const [isActive, setIsActive] = useState(false);
 

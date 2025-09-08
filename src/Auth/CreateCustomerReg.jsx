@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const CreateCustomerReg = () => {
 
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

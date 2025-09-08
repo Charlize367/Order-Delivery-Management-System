@@ -5,7 +5,7 @@ import Header from '../components/CustomerHeader';
 import { useState, useEffect } from 'react'
 
 const ItemDetails = () => {
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
     const param = useParams();
     const [item, setItem] = useState([]);
     const token = localStorage.getItem('jwtToken');

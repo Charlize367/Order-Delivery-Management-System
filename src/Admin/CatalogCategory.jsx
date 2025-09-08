@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react'
 
 const CatalogCategory = () => {
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const param = useParams();
   const [item, setItem] = useState([]);
   const token = localStorage.getItem('jwtToken');

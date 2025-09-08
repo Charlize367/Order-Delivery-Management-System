@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 
 const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_description, catalog_image}, onReload, category_ID } ) => {
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
    const [isActive, setIsActive] = useState(false);
    const [inputData, setInputData] = useState([]);
    const token = localStorage.getItem('jwtToken');

@@ -6,7 +6,7 @@ import { useAuth } from '../Auth/AuthContext';
 import { Link } from "react-router-dom";
 
 const CustomerLogin = () => {
-
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
