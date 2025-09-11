@@ -102,10 +102,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/users/register", "/images/**").permitAll()
-
                         .requestMatchers("/catalog/**", "/basket/**", "/orderItems/**", "/orders/**", "/delivery/**", "/users/**", "/categories/**").hasAnyRole("CUSTOMER", "ADMIN", "DELIVERY")
-
-
                         .anyRequest().authenticated()
 
                 )
