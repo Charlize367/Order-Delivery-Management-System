@@ -109,10 +109,12 @@ const CatalogDashboard = () => {
       <section className="dashboard">
         <div className="hero">
           <img src="./main-hero.jpg" className="hero-image" />
+          <div className="hero-group">
           <h1 className="hero-text">Deliciousness at your doorstep.</h1>
           <input type="text" name="search" className="search" placeholder="What are you craving for?" value={query} 
           onChange={(e) => setQuery(e.target.value)}/>
           <button className="search-btn" onClick={searchCatalog} ><img src="./search.svg" className="search-icon"/></button>
+          </div>
         </div>
 
         {showPopup && (
