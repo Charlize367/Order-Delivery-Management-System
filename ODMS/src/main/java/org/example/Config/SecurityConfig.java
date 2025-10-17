@@ -59,14 +59,18 @@ public class SecurityConfig {
     @Bean
     CommandLineRunner init(UsersRepository usersRepository, PasswordEncoder encoder) {
         return args -> {
-
+            Users existingAdmin = usersRepository.findByUsername("Admin");
+            if (existingAdmin == null) {
                 Users admin = new Users();
                 admin.setUsername("Admin");
                 admin.setPassword(encoder.encode("admin-odms-123"));
                 admin.setEnabled(true);
                 admin.setRole("ADMIN");
                 usersRepository.save(admin);
-
+                System.out.println("✅ Admin user created successfully.");
+            } else {
+                System.out.println("ℹ️ Admin user already exists. Skipping creation.");
+            }
         };
     }
 
@@ -102,10 +106,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/users/register", "/images/**").permitAll()
-
                         .requestMatchers("/catalog/**", "/basket/**", "/orderItems/**", "/orders/**", "/delivery/**", "/users/**", "/categories/**").hasAnyRole("CUSTOMER", "ADMIN", "DELIVERY")
-
-
                         .anyRequest().authenticated()
 
                 )

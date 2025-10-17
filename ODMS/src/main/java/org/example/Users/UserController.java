@@ -56,6 +56,18 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PostMapping("/admin")
+    public ResponseEntity<Users> createAdmin(@RequestBody Users users) {
+        String encodedPassword = passwordEncoder.encode(users.getPassword());
+        users.setPassword(encodedPassword);
+        users.setEnabled(true);
+        users.setRole("ADMIN");
+        userService.addUsers(users);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
+
     @PostMapping("/register")
     public ResponseEntity<Users> register(@RequestBody Users users) {
         String encodedPassword = passwordEncoder.encode(users.getPassword());

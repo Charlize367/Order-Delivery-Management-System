@@ -60,15 +60,15 @@ public class CategoryController {
 
     @PutMapping("/{category_ID}")
     public ResponseEntity<Category> updateCategory(@PathVariable int category_ID, @RequestParam("category_name") String category_name,
-                                                   @RequestParam("category_image") MultipartFile category_image) throws IOException {
-        String originalFilename = category_image.getOriginalFilename();
-        Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
+                                                   @RequestParam("category_image") String category_image) throws IOException {
+
+        Path fileNameAndPath = Paths.get(uploadDirectory, category_image);
         Files.write(fileNameAndPath, category_image.getBytes());
 
         Category category = categoryRepository.findById(category_ID).get();
         category.setCategory_ID(category_ID);
         category.setCategory_name(category_name);
-        category.setCategory_image(originalFilename);
+        category.setCategory_image(category_image);
 
         categoryService.updateCategory(category, category_ID);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -77,6 +77,6 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public void deleteCategory(@PathVariable Integer id) {
         categoryService.deleteByCategoryId(id);
-        
+
     }
 }
