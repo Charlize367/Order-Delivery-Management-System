@@ -1,5 +1,5 @@
 # Build stage: valid image
-FROM maven:3.9.3-eclipse-temurin-17 AS build
+FROM maven:3.9.3-eclipse-temurin-20 AS build
 WORKDIR /app
 
 COPY pom.xml .
