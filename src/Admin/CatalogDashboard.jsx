@@ -124,7 +124,7 @@ const CatalogDashboard = () => {
               )}
         <button className="addCategoryBtn" onClick={openAddForm}>Add Category</button>
         <div className="addCatForm" style={isActive ? {display: "flex"} : {display: "none"}}>
-            <h2>Add Category</h2>
+            <h2 className="form-title">Add Category</h2>
             <button className="closeBtn2" onClick={openAddForm}>x</button>
               <form onSubmit={addCategory}>
                 <input className="fields" type="text" placeholder="Category Name" name="category_name" value={inputData.category_name} onChange={handleChange} />

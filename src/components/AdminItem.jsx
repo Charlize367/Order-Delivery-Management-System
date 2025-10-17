@@ -113,7 +113,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
             </div>
               )}
         <div className="editItemForm" style={isActive ? {display: "flex"} : {display: "none"}}>
-            <h2>Edit Item</h2>
+            <h2 className="form-title">Edit Item</h2>
             <button className="closeBtn2" onClick={openUpdateForm}>x</button>
               <form onSubmit={updateItem}>
                 <input className="fields" type="text" placeholder="Item Name" name="catalogName" value={inputData.catalogName} onChange={handleChange} required/>
@@ -123,7 +123,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
 
 
                
-                <input className="addBtn" type="submit" value="Edit"/>
+                <input className="editAddBtn" type="submit" value="Edit"/>
               </form>
           </div>
     </div>

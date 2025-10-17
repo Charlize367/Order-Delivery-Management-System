@@ -115,7 +115,7 @@ const Category = ({category : {category_ID, category_name, category_image}, onRe
       
     </div>
     <div className="editCategoryForm" style={isActive ? {display: "flex"} : {display: "none"}}>
-            <h2>Edit Category</h2>
+            <h2 className="form-title">Edit Category</h2>
             <button className="closeBtn2" onClick={openUpdateForm}>x</button>
               <form onSubmit={updateCategory}>
                  <input className="fields" type="text" placeholder="Category Name" name="category_name" value={inputData.category_name} onChange={handleChange} />

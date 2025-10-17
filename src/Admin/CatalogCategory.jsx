@@ -105,7 +105,7 @@ const CatalogCategory = () => {
           <h1 className="cat-label">{param.name}</h1>
           <button className="addCatalog" onClick={openAddForm}>Add Item</button>
           <div className="addItemForm" style={isActive ? {display: "flex"} : {display: "none"}}>
-            <h2>Add Item</h2>
+            <h2 className="form-title">Add Item</h2>
             <button className="closeBtn2" onClick={openAddForm}>x</button>
               <form onSubmit={addItem}>
                 <input className="fields" type="text" placeholder="Item Name" name="catalogName" value={inputData.catalogName} onChange={handleChange} />

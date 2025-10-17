@@ -44,7 +44,7 @@ const BrowseCategory = () => {
   return (
     <div className="body">
       <Header />
-      <section className="dashboard">
+     <section className="dashboard">
         <div className="hero">
           <img src="./main-hero.jpg" className="hero-image" />
           <div className="hero-group">
