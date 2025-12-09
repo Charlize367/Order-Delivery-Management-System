@@ -11,9 +11,9 @@ import java.util.Objects;
 public class Catalog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer catalogId;
+    private Long catalogId;
     private String catalogName;
-    private Integer catalog_price;
+    private Double catalog_price;
     private String catalog_description;
     private String catalog_image;
 
@@ -26,7 +26,7 @@ public class Catalog {
     private Category category;
 
 
-    public Catalog(Integer catalogId, String catalogName, Integer catalog_price, String catalog_description, String catalog_image, Category category) {
+    public Catalog(Long catalogId, String catalogName, Double catalog_price, String catalog_description, String catalog_image, Category category) {
         this.catalogId = catalogId;
         this.catalogName = catalogName;
         this.catalog_price = catalog_price;
@@ -36,12 +36,12 @@ public class Catalog {
     }
 
 
-    public Integer getCatalogId() {
+    public Long getCatalogId() {
         return catalogId;
     }
 
-    public void setCatalogId(Integer catalog_ID) {
-        this.catalogId = catalog_ID;
+    public void setCatalogId(Long catalogId) {
+        this.catalogId = catalogId;
     }
 
     public String getCatalogName() {
@@ -52,11 +52,11 @@ public class Catalog {
         this.catalogName = catalogName;
     }
 
-    public Integer getCatalog_price() {
+    public Double getCatalog_price() {
         return catalog_price;
     }
 
-    public void setCatalog_price(Integer catalog_price) {
+    public void setCatalog_price(Double catalog_price) {
         this.catalog_price = catalog_price;
     }
 

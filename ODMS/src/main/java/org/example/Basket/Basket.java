@@ -11,12 +11,11 @@ import java.util.Objects;
 public class Basket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer basketId;
+    private Long basketId;
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "user_ID", nullable = false)
     private Users customer;
-
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "catalog_ID", nullable = false)
@@ -24,7 +23,16 @@ public class Basket {
 
     private Integer quantity;
 
-    private Integer subtotal;
+    private Double subtotal;
+
+
+    public Basket(Long basketId, Users customer, Catalog catalog, Integer quantity, Double subtotal) {
+        this.basketId = basketId;
+        this.customer = customer;
+        this.catalog = catalog;
+        this.quantity = quantity;
+        this.subtotal = subtotal;
+    }
 
 
     public Basket(){}
@@ -38,12 +46,12 @@ public class Basket {
         this.quantity = quantity;
     }
 
-    public Integer getBasketId() {
+    public Long getBasketId() {
         return basketId;
     }
 
-    public void setBasketId(Integer basket_ID) {
-        this.basketId = basket_ID;
+    public void setBasketId(Long basketId) {
+        this.basketId = basketId;
     }
 
     public Catalog getCatalog() {
@@ -61,11 +69,11 @@ public class Basket {
     public void setCustomer(Users customer) {
         this.customer = customer;
     }
-    public Integer getSubtotal() {
+    public Double getSubtotal() {
         return subtotal;
     }
 
-    public void setSubtotal(Integer subtotal) {
+    public void setSubtotal(Double subtotal) {
         this.subtotal = subtotal;
     }
 

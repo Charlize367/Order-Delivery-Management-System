@@ -19,14 +19,14 @@ import java.util.Objects;
 public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer order_ID;
+    private Long orderId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name = "user_ID")
     private Users customer;
 
     private LocalDate order_date;
-    private double order_price;
+    private Double order_price;
     private String order_status;
 
     @OneToMany(mappedBy = "orders", fetch=FetchType.EAGER)
@@ -39,12 +39,12 @@ public class Orders {
 
 
 
-    public Integer getOrder_ID() {
-        return order_ID;
+    public Long getOrderId() {
+        return orderId;
     }
 
-    public void setOrder_ID(Integer order_ID) {
-        this.order_ID = order_ID;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public Users getCustomer() {
@@ -85,12 +85,12 @@ public class Orders {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Orders orders = (Orders) o;
-        return Objects.equals(order_ID, orders.order_ID) && Objects.equals(customer, orders.customer) && Objects.equals(order_date, orders.order_date) && Objects.equals(order_price, orders.order_price) && Objects.equals(order_status, orders.order_status);
+        return Objects.equals(orderId, orders.orderId) && Objects.equals(customer, orders.customer) && Objects.equals(order_date, orders.order_date) && Objects.equals(order_price, orders.order_price) && Objects.equals(order_status, orders.order_status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(order_ID, customer, order_date, order_price, order_status);
+        return Objects.hash(orderId, customer, order_date, order_price, order_status);
     }
 
 

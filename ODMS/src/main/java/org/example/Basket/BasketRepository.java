@@ -12,9 +12,9 @@ import org.springframework.security.core.userdetails.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface BasketRepository extends JpaRepository<Basket, Integer> {
+public interface BasketRepository extends JpaRepository<Basket, Long> {
     List<Basket> findByCustomer(Users customer);
     List<Basket> findByCatalog(Catalog catalog);
-    Optional<Basket> findByCustomer_UserIdAndCatalog_CatalogId(Integer userId, Integer catalogId);
+    Optional<Basket> findByCustomer_UserIdAndCatalog_CatalogId(Long userId, Long catalogId);
 
 }

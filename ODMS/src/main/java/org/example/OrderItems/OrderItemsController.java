@@ -32,13 +32,13 @@ public class OrderItemsController {
     }
 
     @GetMapping("{id}")
-    public OrderItems getOrderItemsById(@PathVariable int id) {
+    public OrderItems getOrderItemsById(@PathVariable long id) {
         return orderItemsService.getOrderItemsById(id);
     }
 
     @GetMapping("/orders/{order_ID}")
-    public List<OrderItems> getOrderItemsByOrders(@PathVariable int order_ID) {
-        return orderItemsService.getOrderItemsByOrder(order_ID);
+    public List<OrderItems> getOrderItemsByOrders(@PathVariable long orderId) {
+        return orderItemsService.getOrderItemsByOrder(orderId);
     }
 
     @PostMapping
@@ -47,22 +47,10 @@ public class OrderItemsController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{orderItems_ID}")
-    public ResponseEntity<OrderItems> updateOrderItems(@PathVariable int orderItems_ID, @RequestBody OrderItems orderItems) {
-        OrderItems updateOrderItems = orderItemsService.updateOrderItems(orderItems, orderItems_ID);
-        return new ResponseEntity<>(updateOrderItems, HttpStatus.OK);
-    }
-
-    @PutMapping("orders/{orders_ID}")
-    public OrderItems addOrderItemsToOrder(@PathVariable int orders_ID, @RequestBody OrderItems orderItems) {
-        Orders orders = ordersRepository.findById(orders_ID).get();
-        orderItems.setOrders(orders);
-        return orderItemsRepository.save(orderItems);
-    }
 
     @DeleteMapping("/{orderItems_ID}")
-    public ResponseEntity<OrderItems> deleteOrderItems(@PathVariable Integer orderItems_ID, OrderItems orderItems) {
-        orderItemsService.deleteOrderItems(orderItems, orderItems_ID);
+    public ResponseEntity<OrderItems> deleteOrderItems(@PathVariable Long orderItemsId, OrderItems orderItems) {
+        orderItemsService.deleteOrderItems(orderItems, orderItemsId);
         return null;
     }
 }

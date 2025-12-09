@@ -12,7 +12,7 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer category_ID;
+    private Long categoryId;
     private String category_name;
     private String category_image;
 
@@ -22,18 +22,18 @@ public class Category {
 
     public Category(){}
 
-    public Category(Integer category_ID, String category_name, String category_image) {
-        this.category_ID = category_ID;
+    public Category(Long categoryId, String category_name, String category_image) {
+        this.categoryId = categoryId;
         this.category_name = category_name;
         this.category_image = category_image;
     }
 
-    public Integer getCategory_ID() {
-        return category_ID;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory_ID(Integer category_ID) {
-        this.category_ID = category_ID;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getCategory_name() {
@@ -56,11 +56,11 @@ public class Category {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return Objects.equals(category_ID, category.category_ID) && Objects.equals(category_name, category.category_name) && Objects.equals(catalog, category.catalog) && Objects.equals(category_image, category.category_image);
+        return Objects.equals(categoryId, category.categoryId) && Objects.equals(category_name, category.category_name) && Objects.equals(catalog, category.catalog) && Objects.equals(category_image, category.category_image);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(category_ID, category_name, catalog, category_image);
+        return Objects.hash(categoryId, category_name, catalog, category_image);
     }
 }

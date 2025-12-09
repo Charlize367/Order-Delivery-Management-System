@@ -34,48 +34,27 @@ public class CategoryController {
     }
 
     @GetMapping("{id}")
-    public Category getCategoryById(@PathVariable Integer id) {
+    public Category getCategoryById(@PathVariable Long id) {
         return categoryService.getCategoryById(id);
     }
 
     @PostMapping
     public ResponseEntity<Category> addCategory(@RequestParam("category_name") String category_name,
                                                 @RequestParam("category_image") MultipartFile category_image) throws IOException {
-
-
-        String originalFilename = category_image.getOriginalFilename();
-        Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
-        Files.write(fileNameAndPath, category_image.getBytes());
-
-        Category category = new Category();
-        category.setCategory_name(category_name);
-        category.setCategory_image(originalFilename);
-
-        categoryService.addCategory(category);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Category category = categoryService.addCategory(category_name, category_image);
+        return new ResponseEntity<>(category, HttpStatus.CREATED);
 
     }
 
-
-
-    @PutMapping("/{category_ID}")
-    public ResponseEntity<Category> updateCategory(@PathVariable int category_ID, @RequestParam("category_name") String category_name,
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<Category> updateCategory(@PathVariable long categoryId, @RequestParam("category_name") String category_name,
                                                    @RequestParam("category_image") String category_image) throws IOException {
-
-        Path fileNameAndPath = Paths.get(uploadDirectory, category_image);
-        Files.write(fileNameAndPath, category_image.getBytes());
-
-        Category category = categoryRepository.findById(category_ID).get();
-        category.setCategory_ID(category_ID);
-        category.setCategory_name(category_name);
-        category.setCategory_image(category_image);
-
-        categoryService.updateCategory(category, category_ID);
+        Category category = categoryService.updateCategory(categoryId, category_name, category_image);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable Integer id) {
+    public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteByCategoryId(id);
 
     }

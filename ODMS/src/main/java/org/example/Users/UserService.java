@@ -8,6 +8,8 @@ import org.example.Deliveries.Deliveries;
 import org.example.Deliveries.DeliveryRepository;
 import org.example.Orders.Orders;
 import org.example.Orders.OrdersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,33 +18,44 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final UsersRepository usersRepository;
+    @Autowired
+    private UsersRepository usersRepository;
 
-    private final OrdersRepository ordersRepository;
+    @Autowired
+    private OrdersRepository ordersRepository;
 
-    private final DeliveryRepository deliveryRepository;
+    @Autowired
+    private DeliveryRepository deliveryRepository;
 
-    private final BasketRepository basketRepository;
+    @Autowired
+    private BasketRepository basketRepository;
 
-    public UserService(UsersRepository usersRepository, OrdersRepository ordersRepository, DeliveryRepository deliveryRepository, BasketRepository basketRepository) {
-        this.usersRepository = usersRepository;
-        this.ordersRepository = ordersRepository;
-        this.deliveryRepository = deliveryRepository;
-        this.basketRepository = basketRepository;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
 
     public List<Users> getAllUsers() {
         return usersRepository.findAll();
     }
 
-    public void addUsers(Users users) {
-        usersRepository.save(users);
+    public Users createUser(Users users) {
+        String encodedPassword = passwordEncoder.encode(users.getPassword());
+        users.setPassword(encodedPassword);
+        users.setEnabled(true);
+        return usersRepository.save(users);
+    }
+
+    public Users createAdmin(Users users) {
+        String encodedPassword = passwordEncoder.encode(users.getPassword());
+        users.setPassword(encodedPassword);
+        users.setEnabled(true);
+        users.setRole("ADMIN");
+        return usersRepository.save(users);
     }
 
 
-
-
-    public Users updateUsers(Users users, Integer id) {
+    public Users updateUsers(Users users, Long id) {
         Optional<Users> user = usersRepository.findById(id);
         if (user.isPresent()) {
             usersRepository.save(users);
@@ -65,7 +78,7 @@ public class UserService {
 
 
     @Transactional
-    public void deleteCustomerById(Integer userId) {
+    public void deleteCustomerById(Long userId) {
         Users customer = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -86,7 +99,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteDeliveryDriverById(Integer userId) {
+    public void deleteDeliveryDriverById(Long userId) {
         Users deliveryDriver = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -99,7 +112,7 @@ public class UserService {
         usersRepository.delete(deliveryDriver);
     }
 
-    public Users getUsersById(Integer id) {
+    public Users getUsersById(Long id) {
         return usersRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + "not found"));
     }

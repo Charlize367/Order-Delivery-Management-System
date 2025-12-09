@@ -11,7 +11,7 @@ import java.util.Objects;
 public class OrderItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderItems_ID;
+    private Long orderItemsId;
 
     @ManyToOne( fetch=FetchType.EAGER)
     @JoinColumn(name = "order_ID")
@@ -20,18 +20,18 @@ public class OrderItems {
     @ManyToOne
     private Catalog order_catalog;
     private Integer quantity;
-    private Integer subtotal;
+    private Double subtotal;
 
 
     public OrderItems(){}
 
 
-    public Integer getOrderItems_ID() {
-        return orderItems_ID;
+    public Long getOrderItemsId() {
+        return orderItemsId;
     }
 
-    public void setOrderItems_ID(Integer orderItems_ID) {
-        this.orderItems_ID = orderItems_ID;
+    public void setOrderItemsId(Long orderItemsId) {
+        this.orderItemsId = orderItemsId;
     }
 
     public Orders getOrders() {
@@ -58,11 +58,11 @@ public class OrderItems {
         this.quantity = quantity;
     }
 
-    public Integer getSubtotal() {
+    public Double getSubtotal() {
         return subtotal;
     }
 
-    public void setSubtotal(Integer subtotal) {
+    public void setSubtotal(Double subtotal) {
         this.subtotal = subtotal;
     }
 
@@ -72,11 +72,11 @@ public class OrderItems {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         OrderItems that = (OrderItems) o;
-        return Objects.equals(orderItems_ID, that.orderItems_ID) && Objects.equals(orders, that.orders) && Objects.equals(order_catalog, that.order_catalog) && Objects.equals(quantity, that.quantity) && Objects.equals(subtotal, that.subtotal);
+        return Objects.equals(orderItemsId, that.orderItemsId) && Objects.equals(orders, that.orders) && Objects.equals(order_catalog, that.order_catalog) && Objects.equals(quantity, that.quantity) && Objects.equals(subtotal, that.subtotal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderItems_ID, orders, order_catalog, quantity, subtotal);
+        return Objects.hash(orderItemsId, orders, order_catalog, quantity, subtotal);
     }
 }

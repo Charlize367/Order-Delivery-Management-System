@@ -17,17 +17,12 @@ import java.util.List;
 @RequestMapping("users")
 public class UserController {
 
-    private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService;
-
     @Autowired
     UsersRepository usersRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(AuthenticationManager authenticationManager, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder) {
-        this.authenticationManager = authenticationManager;
-        this.tokenService = tokenService;
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -38,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public Users getUsersById(@PathVariable int id) {
+    public Users getUsersById(@PathVariable long id) {
         return userService.getUsersById(id);
     }
 
@@ -49,50 +44,36 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Users> createUser(@RequestBody Users users) {
-        String encodedPassword = passwordEncoder.encode(users.getPassword());
-        users.setPassword(encodedPassword);
-        users.setEnabled(true);
-        userService.addUsers(users);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Users newUser = userService.createUser(users);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     @PostMapping("/admin")
     public ResponseEntity<Users> createAdmin(@RequestBody Users users) {
-        String encodedPassword = passwordEncoder.encode(users.getPassword());
-        users.setPassword(encodedPassword);
-        users.setEnabled(true);
-        users.setRole("ADMIN");
-        userService.addUsers(users);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Users admin = userService.createAdmin(users);
+        return new ResponseEntity<>(admin, HttpStatus.CREATED);
     }
-
-
 
     @PostMapping("/register")
     public ResponseEntity<Users> register(@RequestBody Users users) {
-        String encodedPassword = passwordEncoder.encode(users.getPassword());
-        users.setPassword(encodedPassword);
-        users.setEnabled(true);
-        userService.addUsers(users);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Users newUser = userService.createUser(users);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
-
     @PutMapping("/{user_ID}")
-    public ResponseEntity<Users> updateUsers(@PathVariable int user_ID, @RequestBody Users users) {
-        Users updateUser = userService.updateUsers(users, user_ID);
+    public ResponseEntity<Users> updateUsers(@PathVariable long userId, @RequestBody Users users) {
+        Users updateUser = userService.updateUsers(users, userId);
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
     @DeleteMapping("/customers/{user_ID}")
-    public ResponseEntity<Users> deleteCustomers(@PathVariable Integer user_ID) {
+    public ResponseEntity<Users> deleteCustomers(@PathVariable Long user_ID) {
         userService.deleteCustomerById(user_ID);
         return null;
     }
 
     @DeleteMapping("/delivery/{user_ID}")
-    public ResponseEntity<Users> deleteDeliveryDriver(@PathVariable Integer user_ID) {
+    public ResponseEntity<Users> deleteDeliveryDriver(@PathVariable Long user_ID) {
         userService.deleteDeliveryDriverById(user_ID);
         return null;
     }

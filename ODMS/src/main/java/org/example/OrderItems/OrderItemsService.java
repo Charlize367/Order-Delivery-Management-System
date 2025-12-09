@@ -3,6 +3,7 @@ package org.example.OrderItems;
 import org.example.Catalog.Catalog;
 import org.example.Orders.Orders;
 import org.example.Orders.OrdersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,13 +11,13 @@ import java.util.Optional;
 
 @Service
 public class OrderItemsService {
-    private final OrderItemsRepository orderItemsRepository;
-    private final OrdersRepository ordersRepository;
 
-    public OrderItemsService(OrderItemsRepository orderItemsRepository, OrdersRepository ordersRepository) {
-        this.orderItemsRepository = orderItemsRepository;
-        this.ordersRepository = ordersRepository;
-    }
+    @Autowired
+    private OrderItemsRepository orderItemsRepository;
+
+    @Autowired
+    private OrdersRepository ordersRepository;
+
 
     public List<OrderItems> getAllOrderItems() {
         return orderItemsRepository.findAll();
@@ -27,7 +28,7 @@ public class OrderItemsService {
     }
 
 
-    public OrderItems updateOrderItems(OrderItems orderItems, Integer id) {
+    public OrderItems updateOrderItems(OrderItems orderItems, Long id) {
         Optional<OrderItems> orderItem = orderItemsRepository.findById(id);
         if (orderItem.isPresent()) {
             orderItemsRepository.save(orderItems);
@@ -38,7 +39,7 @@ public class OrderItemsService {
         return orderItems;
     }
 
-    public void deleteOrderItems(OrderItems orderItems, Integer id) {
+    public void deleteOrderItems(OrderItems orderItems, Long id) {
         Optional<OrderItems> orderItem = orderItemsRepository.findById(id);
         if (orderItem.isPresent()) {
             orderItemsRepository.delete(orderItems);
@@ -48,13 +49,13 @@ public class OrderItemsService {
         }
     }
 
-    public OrderItems getOrderItemsById(Integer id) {
+    public OrderItems getOrderItemsById(Long id) {
         return orderItemsRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + "not found"));
     }
 
-    public List<OrderItems> getOrderItemsByOrder(Integer order_ID) {
-        Orders orders  = ordersRepository.findById(order_ID).get();
+    public List<OrderItems> getOrderItemsByOrder(Long orderId) {
+        Orders orders  = ordersRepository.findById(orderId).get();
         return orderItemsRepository.findByOrders(orders);
     }
 }

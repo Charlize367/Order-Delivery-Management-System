@@ -13,13 +13,12 @@ import java.util.Objects;
 public class Deliveries {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer delivery_ID;
+    private Long deliveryId;
 
 
     @ManyToOne( fetch=FetchType.EAGER)
     @JoinColumn(name = "user_ID")
     private Users deliveryMen;
-
 
     @ManyToOne( fetch=FetchType.EAGER)
     @JoinColumn(name = "order_ID")
@@ -29,12 +28,27 @@ public class Deliveries {
     private LocalTime estimated_time;
     private LocalTime delivered_time;
 
-    public Integer getDelivery_ID() {
-        return delivery_ID;
+    public Deliveries(Long deliveryId, Users deliveryMen, Orders orders, String delivery_status, String address, LocalTime estimated_time, LocalTime delivered_time) {
+        this.deliveryId = deliveryId;
+        this.deliveryMen = deliveryMen;
+        this.orders = orders;
+        this.delivery_status = delivery_status;
+        this.address = address;
+        this.estimated_time = estimated_time;
+        this.delivered_time = delivered_time;
     }
 
-    public void setDelivery_ID(Integer delivery_ID) {
-        this.delivery_ID = delivery_ID;
+    public Deliveries() {
+
+    }
+
+
+    public Long getDeliveryId() {
+        return deliveryId;
+    }
+
+    public void setDeliveryId(Long deliveryId) {
+        this.deliveryId = deliveryId;
     }
 
     public Orders getOrders() {
@@ -89,12 +103,12 @@ public class Deliveries {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Deliveries that = (Deliveries) o;
-        return Objects.equals(delivery_ID, that.delivery_ID) && Objects.equals(orders, that.orders) && Objects.equals(deliveryMen, that.deliveryMen) && Objects.equals(delivery_status, that.delivery_status) && Objects.equals(estimated_time, that.estimated_time) && Objects.equals(delivered_time, that.delivered_time) && Objects.equals(address, that.address);
+        return Objects.equals(deliveryId, that.deliveryId) && Objects.equals(orders, that.orders) && Objects.equals(deliveryMen, that.deliveryMen) && Objects.equals(delivery_status, that.delivery_status) && Objects.equals(estimated_time, that.estimated_time) && Objects.equals(delivered_time, that.delivered_time) && Objects.equals(address, that.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(delivery_ID, orders, deliveryMen, delivery_status, estimated_time, delivered_time, address);
+        return Objects.hash(deliveryId, orders, deliveryMen, delivery_status, estimated_time, delivered_time, address);
     }
 
 

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface DeliveryRepository extends JpaRepository<Deliveries, Integer> {
+public interface DeliveryRepository extends JpaRepository<Deliveries, Long> {
     List<Deliveries> findByOrdersCustomer(Users userId);
     List<Deliveries> findByDeliveryMen(Users userId);
     void deleteByOrders(Orders orders);

@@ -19,16 +19,7 @@ import java.util.Optional;
 @RequestMapping("delivery")
 public class DeliveryController {
 
-    @Autowired
-    DeliveryRepository deliveryRepository;
     private final DeliveryService deliveryService;
-
-    @Autowired
-    OrdersRepository ordersRepository;
-
-    @Autowired
-    UsersRepository usersRepository;
-
 
     public DeliveryController(DeliveryService deliveryService) {
         this.deliveryService = deliveryService;
@@ -40,98 +31,84 @@ public class DeliveryController {
     }
 
     @GetMapping("{id}")
-    public Deliveries getDeliveriesById(@PathVariable int id) {
+    public Deliveries getDeliveriesById(@PathVariable long id) {
         return deliveryService.getDeliveriesById(id);
     }
 
 
-    @GetMapping("/users/customer/{user_ID}")
-    public ResponseEntity<List<Deliveries>> getUserDeliveries(@PathVariable Integer user_ID) {
-       Users customer = usersRepository.findById(user_ID).get();
-       List<Deliveries> deliveries = deliveryRepository.findByOrdersCustomer(customer);
+    @GetMapping("/users/customer/{userId}")
+    public ResponseEntity<List<Deliveries>> getUserDeliveries(@PathVariable Long userId) {
+       List<Deliveries> deliveries = deliveryService.getDeliveriesByUser(userId);
        return ResponseEntity.ok(deliveries);
     }
 
-    @GetMapping("/users/delivery/{user_ID}")
-    public ResponseEntity<List<Deliveries>> getDeliveriesForDeliveryMan(@PathVariable Integer user_ID) {
-        Users delivery_man = usersRepository.findById(user_ID).get();
-        List<Deliveries> deliveries = deliveryRepository.findByDeliveryMen(delivery_man);
-
+    @GetMapping("/users/delivery/{userId}")
+    public ResponseEntity<List<Deliveries>> getDeliveriesForDeliveryMan(@PathVariable Long userId) {
+        List<Deliveries> deliveries = deliveryService.getDeliveriesByDeliveryMen(userId);
         return ResponseEntity.ok(deliveries);
     }
 
     @PostMapping
     public ResponseEntity<Deliveries> addDeliveries(@RequestBody Deliveries deliveries) {
-        deliveryService.addDeliveries(deliveries);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Deliveries delivery = deliveryService.addDeliveries(deliveries);
+        return new ResponseEntity<>(delivery, HttpStatus.CREATED);
     }
 
     @PutMapping("/{delivery_ID}")
-    public ResponseEntity<Deliveries> updateDeliveries(@PathVariable int delivery_ID, @RequestBody Deliveries deliveries) {
-        Deliveries updateDelivery = deliveryService.updateDeliveries(deliveries, delivery_ID);
-        return new ResponseEntity<>(updateDelivery, HttpStatus.OK);
+    public ResponseEntity<Deliveries> updateDeliveries(@PathVariable long deliveryId, @RequestBody Deliveries deliveries) {
+        Deliveries updatedDelivery = deliveryService.updateDeliveries(deliveries, deliveryId);
+        return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
     }
 
     @PutMapping("/deliveryStatus/{delivery_ID}")
-    public ResponseEntity<Deliveries> updateDeliveryStatus(@PathVariable int delivery_ID, @RequestBody DeliveryStatus deliveryStatus) {
-        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
-        deliveries.setDelivery_status(deliveryStatus.getDelivery_status());
-        deliveryRepository.save(deliveries);
-        return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    public ResponseEntity<Deliveries> updateDeliveryStatus(@PathVariable long deliveryId, @RequestBody DeliveryStatus deliveryStatus) {
+        Deliveries updatedDelivery = deliveryService.updateDeliveryStatus(deliveryId, deliveryStatus);
+        return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
     }
 
     @PutMapping("/estimatedTime/{delivery_ID}")
-    public ResponseEntity<Deliveries> updateEstimatedTime(@PathVariable int delivery_ID, @RequestBody EstimatedTime estimatedTime) {
-        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
-        deliveries.setEstimated_time(estimatedTime.getEstimated_time());
-        deliveryRepository.save(deliveries);
-        return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    public ResponseEntity<Deliveries> updateEstimatedTime(@PathVariable long deliveryId, @RequestBody EstimatedTime estimatedTime) {
+        Deliveries updatedDelivery = deliveryService.updateEstimatedTime(deliveryId, estimatedTime);
+        return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
     }
 
     @PutMapping("/deliveredTime/{delivery_ID}")
-    public ResponseEntity<Deliveries> updateDeliveredTime(@PathVariable int delivery_ID, @RequestBody DeliveredTime deliveredTime) {
-        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
-        deliveries.setDelivered_time(deliveredTime.getDelivered_time());
-        deliveryRepository.save(deliveries);
-        return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    public ResponseEntity<Deliveries> updateDeliveredTime(@PathVariable long deliveryId, @RequestBody DeliveredTime deliveredTime) {
+        Deliveries updatedDelivery = deliveryService.updateDeliveredTime(deliveryId, deliveredTime);
+        return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
     }
 
     @PutMapping("/{delivery_ID}/drivers/{userId}")
-    public ResponseEntity<Deliveries> updatedDriver(@PathVariable int delivery_ID, @PathVariable int userId) {
-        Users deliveryMen = usersRepository.findById(userId).get();
-        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
-        deliveries.setDeliveryMen(deliveryMen);
-        deliveryRepository.save(deliveries);
-        return new ResponseEntity<>(deliveries, HttpStatus.OK);
+    public ResponseEntity<Deliveries> updatedDriver(@PathVariable long deliveryId, @PathVariable long userId) {
+        Deliveries updatedDelivery = deliveryService.updateDeliveryDriver(deliveryId, userId);
+        return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
     }
+//    @PostMapping("/users/{user_ID}")
+//    public Deliveries addUserToDeliveries(@PathVariable int user_ID, @RequestBody Deliveries deliveries) {
+//        Users users = usersRepository.findById(user_ID).get();
+//        deliveries.setDeliveryMen(users);
+//        return deliveryRepository.save(deliveries);
+//    }
 
-
-    @PostMapping("/users/{user_ID}")
-    public Deliveries addUserToDeliveries(@PathVariable int user_ID, @RequestBody Deliveries deliveries) {
-        Users users = usersRepository.findById(user_ID).get();
-        deliveries.setDeliveryMen(users);
-        return deliveryRepository.save(deliveries);
-    }
-
-    @PostMapping("/orders/{orders_ID}")
-    public Deliveries addOrderToDelivery(@PathVariable int orders_ID, @RequestBody Deliveries deliveries) {
-        Orders orders = ordersRepository.findById(orders_ID).get();
-        deliveries.setOrders(orders);
-        return deliveryRepository.save(deliveries);
-    }
-
-    @PutMapping("/{delivery_ID}/users/{userId}")
-    public Deliveries addUserToDeliveries(@PathVariable Integer delivery_ID, @PathVariable Integer userId) {
-        Users users = usersRepository.findById(userId).get();
-        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
-        deliveries.setDeliveryMen(users);
-
-        return deliveryRepository.save(deliveries);
-    }
+//    @PostMapping("/orders/{orders_ID}")
+//    public Deliveries addOrderToDelivery(@PathVariable int orders_ID, @RequestBody Deliveries deliveries) {
+//        Orders orders = ordersRepository.findById(orders_ID).get();
+//        deliveries.setOrders(orders);
+//        return deliveryRepository.save(deliveries);
+//    }
+//
+//    @PutMapping("/{delivery_ID}/users/{userId}")
+//    public Deliveries addUserToDeliveries(@PathVariable Integer delivery_ID, @PathVariable Integer userId) {
+//        Users users = usersRepository.findById(userId).get();
+//        Deliveries deliveries = deliveryRepository.findById(delivery_ID).get();
+//        deliveries.setDeliveryMen(users);
+//
+//        return deliveryRepository.save(deliveries);
+//    }
 
     @DeleteMapping("/{delivery_ID}")
-    public ResponseEntity<Deliveries> deleteDeliveries(@PathVariable Integer delivery_ID, Deliveries deliveries) {
-        deliveryService.deleteDeliveries(deliveries, delivery_ID);
+    public ResponseEntity<Deliveries> deleteDeliveries(@PathVariable Long deliveryId, Deliveries deliveries) {
+        deliveryService.deleteDeliveries(deliveries, deliveryId);
         return null;
     }
 }

@@ -43,80 +43,36 @@ public class CatalogController {
     }
 
     @GetMapping("{id}")
-    public Catalog getCatalogById(@PathVariable int id) {
+    public Catalog getCatalogById(@PathVariable long id) {
         return catalogService.getCatalogById(id);
     }
 
-    @GetMapping("/category/{category_ID}")
-    public List<Catalog> getCatalogByCategory(@PathVariable Integer category_ID){
-        return catalogService.getCatalogByCategory(category_ID);
+    @GetMapping("/category/{categoryId}")
+    public List<Catalog> getCatalogByCategory(@PathVariable Long categoryId){
+        return catalogService.getCatalogByCategory(categoryId);
     }
 
-    @PostMapping
-    public ResponseEntity<Catalog> addCatalog( @RequestParam("catalogName") String catalogName,
-                                              @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
-        String originalFilename = catalog_image.getOriginalFilename();
-        Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
-        Files.write(fileNameAndPath, catalog_image.getBytes());
-
-        Catalog catalog = new Catalog();
-        catalog.setCatalogName(catalogName);
-        catalog.setCatalog_price(catalog_price);
-        catalog.setCatalog_description(catalog_description);
-        catalog.setCatalog_image(originalFilename);
-
-        catalogService.addCatalog(catalog);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PostMapping("/category/{category_ID}")
-    public ResponseEntity<Catalog> addCatalogWithCategory( @PathVariable int category_ID, @RequestParam("catalogName") String catalogName,
-                                               @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
-        Category category = categoryRepository.findById(category_ID).get();
-
-
-
-        String originalFilename = catalog_image.getOriginalFilename();
-        Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
-        Files.write(fileNameAndPath, catalog_image.getBytes());
-
-        Catalog catalog = new Catalog();
-        catalog.setCatalogName(catalogName);
-        catalog.setCatalog_price(catalog_price);
-        catalog.setCatalog_description(catalog_description);
-        catalog.setCatalog_image(originalFilename);
-        catalog.setCategory(category);
-
-        catalogService.addCatalog(catalog);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping("/category/{categoryId}")
+    public ResponseEntity<Catalog> addCatalogWithCategory( @PathVariable long categoryId, @RequestParam("catalogName") String catalogName,
+                                               @RequestParam("catalog_price") Double catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") MultipartFile catalog_image) throws IOException {
+        Catalog catalog = catalogService.addCatalog(categoryId, catalogName, catalog_price, catalog_description, catalog_image );
+        return new ResponseEntity<>(catalog, HttpStatus.CREATED);
     }
     
 
     @PutMapping("/{catalogId}/category/{category_ID}")
-    public ResponseEntity<Catalog> updateCatalog(@PathVariable int catalogId, @PathVariable int category_ID, @RequestParam("catalogName") String catalogName,
-                                                 @RequestParam("catalog_price") Integer catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") String catalog_image) throws IOException {
-
-        Category category = categoryRepository.findById(category_ID).get();
+    public ResponseEntity<Catalog> updateCatalog(@PathVariable long catalogId, @PathVariable long categoryId, @RequestParam("catalogName") String catalogName,
+                                                 @RequestParam("catalog_price") Double catalog_price, @RequestParam("catalog_description") String catalog_description, @RequestParam("catalog_image") String catalog_image) throws IOException {
 
 
-        Path fileNameAndPath = Paths.get(uploadDirectory, catalog_image);
-        Files.write(fileNameAndPath, catalog_image.getBytes());
 
-        Catalog catalog = catalogRepository.findById(catalogId).get();
-        catalog.setCatalogId(catalogId);
-        catalog.setCatalogName(catalogName);
-        catalog.setCatalog_price(catalog_price);
-        catalog.setCatalog_description(catalog_description);
-        catalog.setCatalog_image(catalog_image);
-        catalog.setCategory(category);
-
-        catalogService.updateCatalog(catalog, catalogId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Catalog catalog = catalogService.updateCatalog(catalogId, categoryId, catalogName, catalog_price, catalog_description, catalog_image );
+        return new ResponseEntity<>(catalog, HttpStatus.CREATED);
     }
 
 
     @DeleteMapping("/{catalogId}")
-    public ResponseEntity<Catalog> deleteCatalog(@PathVariable Integer catalogId) {
+    public ResponseEntity<Catalog> deleteCatalog(@PathVariable Long catalogId) {
         catalogService.deleteCatalogById(catalogId);
         return null;
     }

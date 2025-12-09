@@ -7,55 +7,87 @@ import org.example.Basket.Basket;
 import org.example.Basket.BasketRepository;
 import org.example.Category.Category;
 import org.example.Category.CategoryRepository;
-import org.example.Category.CategoryService;
-import org.example.Deliveries.Deliveries;
-import org.example.Users.Users;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+
+import static org.example.Catalog.CatalogController.uploadDirectory;
 
 @Service
 public class CatalogService {
 
-    private final CatalogRepository catalogRepository;
-    private final CategoryRepository categoryRepository;
-    private final BasketRepository basketRepository;
+    @Autowired
+    private CatalogRepository catalogRepository;
 
-    public CatalogService(CatalogRepository catalogRepository, CategoryRepository categoryRepository, BasketRepository basketRepository) {
-        this.catalogRepository = catalogRepository;
-        this.categoryRepository = categoryRepository;
-        this.basketRepository = basketRepository;
-    }
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private BasketRepository basketRepository;
+
+
 
     public List<Catalog> getAllCatalog() {
         return catalogRepository.findAll();
     }
 
-    public List <Catalog> getCatalogByCategory(Integer category_ID) {
+    public List <Catalog> getCatalogByCategory(Long category_ID) {
         Category category = categoryRepository.findById(category_ID)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
         return catalogRepository.getCatalogByCategory(category);
     }
 
-    public void addCatalog(Catalog catalog) {
-        catalogRepository.save(catalog);
+    public Catalog addCatalog(Long categoryId, String catalogName, Double catalog_price, String catalog_description, MultipartFile catalog_image) throws IOException {
+
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
+
+            String originalFilename = catalog_image.getOriginalFilename();
+            Path fileNameAndPath = Paths.get(uploadDirectory, originalFilename);
+            Files.write(fileNameAndPath, catalog_image.getBytes());
+
+            Catalog catalog = new Catalog();
+            catalog.setCatalogName(catalogName);
+            catalog.setCatalog_price(catalog_price);
+            catalog.setCatalog_description(catalog_description);
+            catalog.setCatalog_image(originalFilename);
+            catalog.setCategory(category);
+            return catalogRepository.save(catalog);
+
     }
 
+    public Catalog updateCatalog(Long catalogId, Long categoryId, String catalogName, Double catalog_price, String catalog_description, String catalog_image) throws IOException {
+        try {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
 
-    public Catalog updateCatalog(Catalog catalog, Integer id) {
-        Optional<Catalog> catalogs = catalogRepository.findById(id);
-        if (catalogs.isPresent()) {
+            Path fileNameAndPath = Paths.get(uploadDirectory, catalog_image);
+            Files.write(fileNameAndPath, catalog_image.getBytes());
+
+            Catalog catalog = catalogRepository.findById(catalogId)
+                    .orElseThrow(() -> new RuntimeException("Catalog not found with id: " + catalogId));;
+            catalog.setCatalogId(catalogId);
+            catalog.setCatalogName(catalogName);
+            catalog.setCatalog_price(catalog_price);
+            catalog.setCatalog_description(catalog_description);
+            catalog.setCatalog_image(catalog_image);
+            catalog.setCategory(category);
             catalogRepository.save(catalog);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        else {
-            return null;
-        }
-        return catalog;
+        return null;
     }
 
     @Transactional
-    public void deleteCatalogById(Integer catalogId) {
+    public void deleteCatalogById(Long catalogId) {
         Catalog catalog = catalogRepository.findById(catalogId)
                 .orElseThrow(() -> new RuntimeException("Catalog not found"));
 
@@ -68,7 +100,7 @@ public class CatalogService {
         catalogRepository.delete(catalog);
     }
 
-    public Catalog getCatalogById(Integer id) {
+    public Catalog getCatalogById(Long id) {
         return catalogRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + "not found"));
     }
