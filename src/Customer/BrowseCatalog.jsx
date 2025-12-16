@@ -60,10 +60,10 @@ const BrowseCatalog = () => {
       <Header />
       <section className="dashboard">
         <div className="catalog-top">
-          <h1 className="cat-label">{param.name}</h1>
+         <h1 className="text-4xl m-9 font-bold text-white">{param.name}</h1>
         </div>
 
-                  <ul className="itemDisplay">
+                  <ul className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 p-10">
           {item.map((items) => (
             <ItemCard items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}

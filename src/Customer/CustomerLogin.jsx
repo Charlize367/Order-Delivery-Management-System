@@ -61,19 +61,28 @@ const CustomerLogin = () => {
     return(
         <section className="login-body">
             <div className="otherLogin">
-                <button className="goToAdminLogin" onClick={goToAdLogin}>Login As Admin</button>
-                <button className="goToDeliveryLogin" onClick={goToDelLogin}>Login As Delivery Driver</button>
+                <button className="block w-full  mt-3 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white" onClick={goToAdLogin}>Login As Admin</button>
+                <button className="block w-full  mt-3 ml-3 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white" onClick={goToDelLogin}>Login As Delivery Driver</button>
             </div>
-        <div className="form-container">
-            <h2>Sign In.</h2>
-            <form onSubmit={handleSubmit}>
-            <input className="fields" type="text" placeholder="Username" value={username} onChange={handleUsernameChange}  />
-            <input className="fields" type="password" placeholder="Password" value={password} onChange={handlePasswordChange}/>
-            <input className="loginBtn" type="submit" value="Login" />
-            </form>
-            <Link className="goToRegister" to ="/register">Don't have an account? Sign up here.</Link>
+        
             
+        <div class="w-full mx-auto max-w-md space-y-4 m-30 bg-[#222324] p-6 rounded-lg shadow-xs">
+    <form action="#" onSubmit={handleSubmit}>
+        <h5 class="text-xl font-semibold text-white text-heading mb-6">Sign in to your account.</h5>
+        <div class="mb-4">
+            <label for="username" class="block text-white mb-2.5 text-sm font-medium text-heading">Your username</label>
+            <input type="username" id="username" value={username} onChange={handleUsernameChange} class="bg-transparent text-white border border-[0.5px] rounded-lg border-gray-100 border-default-small text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Username" required />
         </div>
+        <div>
+            <label for="password" class="block text-white mb-2.5 text-sm font-medium text-heading">Your password</label>
+            <input type="password" id="password" value={password} onChange={handlePasswordChange} class="bg-transparent text-white border border-[0.5px] rounded-lg border-gray-100 border-default-small text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Password" required />
+        </div>
+        
+        <button type="submit" class="block w-full  mt-10 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white">Login</button>
+       <Link className="text-white" to ="/register">Don't have an account? Sign up here.</Link>
+    </form>
+</div>
+
 </section>
     )
 

@@ -10,7 +10,7 @@ const OrderDetails = () => {
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [orderDetails, setOrderDetails] = useState([]);
-  const [order_ID, setOrderID] = useState(0);
+  const [orderId, setOrderId] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const [showPopup, setShowPopup] = useState(false);
@@ -39,23 +39,28 @@ const OrderDetails = () => {
 
 
           
-          const firstOrderID = response.data[0].orders.order_ID;
-          setOrderID(firstOrderID); 
-
-          const response2 = await axios.get(`${API_BASE_URL}/orderItems/orders/${firstOrderID}`, {
-              headers: {
-                        'Authorization' : `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }});
-          
-          
           const deliveries = response.data;
 
-          const combinedArray = deliveries.map(delivery => ({
-            ...delivery,
-            orderItems:response2.data
-          }))
-          setOrderDetails(combinedArray);
+          const combined = await Promise.all(
+      deliveries.map(async delivery => {
+        const orderId = delivery.orders.orderId;
+
+        const itemsRes = await axios.get(
+          `${API_BASE_URL}/orderItems/orders/${orderId}`,
+          { headers: {
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    } }
+        );
+
+        return {
+          ...delivery,
+          orderItems: itemsRes.data
+        };
+      })
+    );
+
+    setOrderDetails(combined)
           
           } catch {
             console.error("Error");
@@ -90,14 +95,15 @@ const OrderDetails = () => {
         navigate('/order_history');
       }
 
-      const cancelOrder = async () => {
+      const cancelOrder = async (e, orderId) => {
+        e.preventDefault();
          try {
 
         const putData = {
           order_status: 'Cancelled'
         }
 
-        const response = await axios.put(`${API_BASE_URL}/orders/orderStatus/${order_ID}`, putData , {
+        const response = await axios.put(`${API_BASE_URL}/orders/orderStatus/${orderId}`, putData , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -124,9 +130,9 @@ const OrderDetails = () => {
   return (
     <div className="body">
       <Header />
-      <h1 className="my-order-text">My Orders</h1>
+      <h1 className="text-white text-4xl font-bold m-10">My Orders</h1>
      
-      <button className="orderHistoryBtn" onClick={goToHistory}>Order History</button>
+      
       
        {showPopup && (
             <div className="order-popup">
@@ -156,77 +162,180 @@ const OrderDetails = () => {
       return (
 
       
-      <div className="order-details-map" key={or.orders.order_ID}>
+//       <div className="order-details-map" key={or.orders.orderId}>
        
-       <div className="order-items-div">
+//        <div className="order-items-div">
         
-        <div className="order-detail-container" >
+//         <div className="order-detail-container" >
          
-        <div className="order-top">
+//         <div className="order-top">
         
-          <div className="order_id_txt"><p>Order</p><p className="order-id">{or.orders.order_ID}</p></div>
+//           <div className="orderId_txt"><p>Order</p><p className="order-id">{or.orders.orderId}</p></div>
           
          
-          <p className="order-date">{new Date(or.orders.order_date).toLocaleDateString("en-US", {
+//           <p className="order-date">{new Date(or.orders.order_date).toLocaleDateString("en-US", {
+//                       month: "short",
+//                       day: "numeric",
+//                       year: "numeric",
+//                     })}</p>
+//           <p className="order-status">{mergedStatus}</p>
+       
+//         </div>
+//         <hr className="orders-hr"/>
+//        <ul className="order-summary">
+//              {or.orderItems.map(oi => (
+//         <li className="order-items-div">
+         
+//           <img className="order-img" src={`${API_BASE_URL}/images/${oi.order_catalog.catalog_image}`}/>
+//           <div className="order-details-div">
+//           <p className="order-item-name">{oi.order_catalog.catalogName}</p>
+//           <p className="order-quantity">x{oi.quantity}</p>
+//           <p className="order-price">PHP {oi.order_catalog.catalog_price}</p>
+//           </div>
+//         <p className="order-subtotal">PHP {oi.subtotal} </p>
+        
+   
+//       </li>
+// ))}
+//       </ul>  
+//       <hr className="orders-hr"/>
+      
+//        <p className="order-total">Total: PHP {or.orders.order_price}</p>
+     
+//       <hr className="orders-hr"/>
+//       <div className="order-details-bottom">
+//       <div className="delivery-details-container">
+//        <p className="delivery_driver"><b>Driver:</b> {!or.deliveryMen || or.deliveryMen === null 
+//           ? "No driver assigned yet" : or.deliveryMen.username}</p>
+//         <p className="estimated_time"><b>Estimated Time of Delivery: </b> {!or.estimated_time || or.estimated_time === null
+//           ? "Pending" : (() => {
+//         const [hours, minutes, seconds] = or.estimated_time.split(":").map(Number);
+//         const date = new Date();
+//         date.setHours(hours, minutes, seconds);
+//         return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
+//       })()} </p>
+//         <p className="estimated_time"><b>Time Delivered:</b> {!or.delivered_time || or.delivered_time === null
+//           ? "Not delivered yet" : (() => {
+//         const [hours, minutes, seconds] = or.delivered_time.split(":").map(Number);
+//         const date = new Date();
+//         date.setHours(hours, minutes, seconds);
+//         return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
+//       })()} </p>
+
+//     </div>
+//       <button className="cancelOrderBtn" onClick ={cancelOrder}>Cancel Order</button>
+//       </div>
+      
+     
+      
+//       </div>
+      
+//       </div>
+   
+//     </div>
+<div class="p-4">
+  
+          <div class="max-w-6xl mx-auto text-white">
+              <div>
+                  <h1 class="text-2xl font-semibold text-white">Order Summary</h1>
+                  <p class="text-sm text-gray-200 mt-3">Your purchase was successful. Here’s a summary of your order details.</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 border-b border-gray-300 pb-2 mt-12">
+                      <div>
+                          <p class="mb-2 uppercase tracking-wide text-white text-xs font-medium">Delivery Date</p>
+                          <h6 class="text-base font-medium text-white">{new Date(or.orders.order_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
-                    })}</p>
-          <p className="order-status">{mergedStatus}</p>
-       
-        </div>
-        <hr className="orders-hr"/>
-       <ul className="order-summary">
-             {or.orderItems.map(oi => (
-        <li className="order-items-div">
-         
-          <img className="order-img" src={`${API_BASE_URL}/images/${oi.order_catalog.catalog_image}`}/>
-          <div className="order-details-div">
-          <p className="order-item-name">{oi.order_catalog.catalogName}</p>
-          <p className="order-quantity">x{oi.quantity}</p>
-          <p className="order-price">PHP {oi.order_catalog.catalog_price}</p>
-          </div>
-        <p className="order-subtotal">PHP {oi.subtotal} </p>
-        
-   
-      </li>
-))}
-      </ul>  
-      <hr className="orders-hr"/>
-      
-       <p className="order-total">Total: PHP {or.orders.order_price}</p>
-     
-      <hr className="orders-hr"/>
-      <div className="order-details-bottom">
-      <div className="delivery-details-container">
-       <p className="delivery_driver"><b>Driver:</b> {!or.deliveryMen || or.deliveryMen === null 
-          ? "No driver assigned yet" : or.deliveryMen.username}</p>
-        <p className="estimated_time"><b>Estimated Time of Delivery: </b> {!or.estimated_time || or.estimated_time === null
+                    })}</h6>
+                      </div>
+                      <div>
+                          <p class="mb-2 uppercase tracking-wide text-white text-xs font-medium">Order ID</p>
+                          <h6 class="text-base font-medium text-white">#{or.orders.orderId}</h6>
+                      </div>
+                      <div>
+                          <p class="mb-2 uppercase tracking-wide text-gray-200 text-xs font-medium">Order Status</p>
+                          <h6 class="text-base font-medium text-white">{mergedStatus}</h6>
+                      </div>
+                      <div>
+                          <p class="mb-2 uppercase tracking-wide text-gray-200 text-xs font-medium">Address</p>
+                          <h6 class="text-base font-medium text-white">{or.address}</h6>
+                      </div>
+                      
+                  </div>
+              </div>
+
+              <div class="grid lg:grid-cols-3 gap-10 mt-12 max-lg:max-w-2xl max-lg:mx-auto">
+                {or.orderItems.map(oi => (
+                  <div class="lg:col-span-2 space-y-4">
+                      <div class="grid sm:grid-cols-3 items-center gap-4">
+                          <div class="col-span-2 flex items-center gap-4">
+                              <div class="w-28 h-28 max-sm:w-24 max-sm:h-24 shrink-0 bg-gray-100 p-2 rounded-md">
+                                  <img src={`${API_BASE_URL}/images/${oi.order_catalog.catalog_image}`} class="w-full h-full object-contain" />
+                              </div>
+                              <div>
+                                  <h3 class="sm:text-base text-sm font-semibold text-white">{oi.order_catalog.catalogName}</h3>
+                                  <div class="mt-2">
+                                      <p class="text-xs font-medium text-gray-200 mt-1">Qty: {oi.quantity}</p>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="sm:ml-auto">
+                              <h4 class="sm:text-lg text-base font-semibold text-white">PHP {oi.subtotal}</h4>
+                          </div>
+                      </div>
+
+                      <hr class="border-gray-300" />
+
+                      </div>
+                ))}
+                <div>
+                  <div class="bg-gray-900 rounded-md p-4 h-max">
+                      <h3 class="text-base font-semibold text-white border-b border-gray-300 pb-2">Billing details</h3>
+                      <ul class="font-medium mt-6 space-y-4">
+                         
+                          
+                          
+                          <li class="flex flex-wrap gap-4 text-[15px]">Total <span class="ml-auto text-white font-semibold">PHP {or.orders.order_price}</span></li>
+                      </ul>
+                      <div class="mt-8 space-y-3">
+                          <button onClick ={(e) => cancelOrder(e, or.orders.orderId)} type="button" class="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-purple-600 hover:bg-purple-700 text-white rounded-md cursor-pointer">Cancel Order</button>
+                          <button type="button" class="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-transparent text-white border border-gray-300 rounded-md cursor-pointer">Continue Shopping  </button>
+                      </div>
+                  </div>
+
+                  <div class="bg-gray-900 rounded-md p-4 mt-4 h-max">
+                      <h3 class="text-base font-semibold text-white border-b border-gray-300 pb-2">Delivery Details</h3>
+                      <ul class="font-medium mt-6 space-y-4">
+                         
+                          
+                          
+                          <li class="flex flex-wrap gap-4 text-[15px]">Estimated Time <span class="ml-auto text-white font-semibold">{!or.estimated_time || or.estimated_time === null
           ? "Pending" : (() => {
         const [hours, minutes, seconds] = or.estimated_time.split(":").map(Number);
         const date = new Date();
         date.setHours(hours, minutes, seconds);
         return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
-      })()} </p>
-        <p className="estimated_time"><b>Time Delivered:</b> {!or.delivered_time || or.delivered_time === null
+      })()}</span></li>
+
+      <li class="flex flex-wrap gap-4 text-[15px]">Delivered Time <span class="ml-auto text-white font-semibold">{!or.delivered_time || or.delivered_time === null
           ? "Not delivered yet" : (() => {
         const [hours, minutes, seconds] = or.delivered_time.split(":").map(Number);
         const date = new Date();
         date.setHours(hours, minutes, seconds);
         return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
-      })()} </p>
+      })()}</span></li>
 
-    </div>
-      <button className="cancelOrderBtn" onClick ={cancelOrder}>Cancel Order</button>
+      <li class="flex flex-wrap gap-4 text-[15px]">Assigned Driver <span class="ml-auto text-white font-semibold">{!or.deliveryMen || or.deliveryMen === null 
+          ? "No driver assigned yet" : or.deliveryMen.username}</span></li>
+                      </ul>
+                      
+                  </div>
+                  </div>
+
+                  
+              </div>
+          </div>
       </div>
-      
-     
-      
-      </div>
-      
-      </div>
-   
-    </div>
       )})}
   </div>
     

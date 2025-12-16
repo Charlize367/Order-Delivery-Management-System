@@ -5,6 +5,7 @@ import axios from 'axios';
 
 
 const DeliveriesList = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
     const token = localStorage.getItem('jwtToken');
     const user_ID = localStorage.getItem('user_ID');
     const [deliveryDetails, setDeliveryDetails] = useState([]);
@@ -14,26 +15,26 @@ const DeliveriesList = () => {
     const [status, setStatus] = useState("");
     const [estimatedTime, setEstimatedTime] = useState("00:00");
     const [deliveredTime, setDeliveredTime] = useState("00:00");
-    const [orderID, setOrderID] = useState(0);
+    const [orderId, setOrderId] = useState(0);
     const [deliveryId, setDeliveryId] = useState(0);
     const [orderItems, setOrderItems] = useState()
 
 
     console.log(user_ID);
-    const openEditStatusForm = (delivery_ID) => {
+    const openEditStatusForm = (deliveryId) => {
     setIsActive(!isActive);
-    setDeliveryId(delivery_ID)
+    setDeliveryId(deliveryId)
     };
 
-    const openEditDelTimeForm = (delivery_ID) => {
+    const openEditDelTimeForm = (deliveryId) => {
       setIsActive2(!isActive2);
-      setDeliveryId(delivery_ID);
+      setDeliveryId(deliveryId);
       
     }
 
-    const openEditETAForm = (delivery_ID) => {
+    const openEditETAForm = (deliveryId) => {
       setIsActive3(!isActive3);
-      setDeliveryId(delivery_ID);
+      setDeliveryId(deliveryId);
     }
 
 
@@ -50,20 +51,22 @@ const DeliveriesList = () => {
           const deliveries = response.data;
           const deliveryWithOrderItems = await Promise.all(
             deliveries.map(async (delivery) => {
-              const orderId = delivery.orders.order_ID;
+              const orderId = delivery.orders.orderId;
 
-              const response2 = await axios.get(`${API_BASE_URL}/orderItems/orders/${orderId}`, {
-              headers: {
+              const itemsRes = await axios.get(
+          `${API_BASE_URL}/orderItems/orders/${orderId}`,
+          { headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
-                    }});
-           
-          return {
-            ...delivery,
-            orderItems:response2.data
-          }
-           })
-          )
+                    } }
+        );
+
+        return {
+          ...delivery,
+          orderItems: itemsRes.data
+        };
+      })
+    );
 
           setDeliveryDetails(deliveryWithOrderItems);
           } catch {
@@ -85,14 +88,15 @@ const DeliveriesList = () => {
         };
 
 
+        console.log(deliveryDetails);
 
-      const putData = {
-        delivery_status: status
-      }
+      
 
      console.log(status);
-        const handleSubmit = async(e) => {
-         e.preventDefault();
+        const handleSubmit = async(deliveryId, status) => {
+        const putData = {
+        delivery_status: status
+      }
           console.log("Selected status:", status);
         try {
 
@@ -105,7 +109,7 @@ const DeliveriesList = () => {
                     console.log(response);
          setDeliveryDetails(d =>
           d.map(dd =>
-            dd.delivery_ID === deliveryId
+            dd.deliveryId === deliveryId
               ? { ...dd, delivery_status:response.data.delivery_status
           }
             : dd
@@ -130,17 +134,17 @@ const DeliveriesList = () => {
 
 
 
-      const putData2 = {
-        delivered_time: deliveredTime
-      }
+      
 
      
-        const handleSubmit2 = async(e) => {
-         e.preventDefault();
+        const handleSubmit2 = async(deliveryId, deliveredTime) => {
+         const putData = {
+        delivered_time: deliveredTime
+      }
           
         try {
 
-        const response = await axios.put(`${API_BASE_URL}/delivery/deliveredTime/${deliveryId}`, putData2 , {
+        const response = await axios.put(`${API_BASE_URL}/delivery/deliveredTime/${deliveryId}`, putData , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -149,7 +153,7 @@ const DeliveriesList = () => {
                     console.log(response);
          setDeliveryDetails(d =>
           d.map(dd =>
-            dd.delivery_ID === deliveryId
+            dd.deliveryId === deliveryId
               ? { ...dd, delivered_time:response.data.delivered_time
           }
             : dd
@@ -175,17 +179,18 @@ const DeliveriesList = () => {
 
 
 
-      const putData3 = {
-        estimated_time: estimatedTime
-      }
+      
 
      
-        const handleSubmit3 = async(e) => {
-         e.preventDefault();
+        const handleSubmit3 = async(deliveryId, estimatedTime) => {
+
+        const putData = {
+        estimated_time: estimatedTime
+      }
           
         try {
 
-        const response = await axios.put(`${API_BASE_URL}/delivery/estimatedTime/${deliveryId}`, putData3 , {
+        const response = await axios.put(`${API_BASE_URL}/delivery/estimatedTime/${deliveryId}`, putData , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -194,7 +199,7 @@ const DeliveriesList = () => {
                     console.log(response);
          setDeliveryDetails(d =>
           d.map(dd =>
-            dd.delivery_ID === deliveryId
+            dd.deliveryId === deliveryId
               ? { ...dd, estimated_time:response.data.estimated_time
           }
             : dd
@@ -217,7 +222,25 @@ const DeliveriesList = () => {
   return (
     <div className="body">
       <Header />
-      {deliveryDetails.map((d) => {
+      
+      <div className="m-4 relative overflow-x-auto shadow-md sm:rounded-lg">
+        
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead>
+            <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white">
+              <th scope="col" className="px-6 py-3">Delivery ID</th>
+              <th scope="col" className="px-6 py-3">Customer</th>
+              <th scope="col" className="px-6 py-3">Order Items</th>
+              <th scope="col" className="px-6 py-3">Date</th>
+              <th scope="col" className="px-6 py-3">Status</th>
+              <th scope="col" className="px-6 py-3">Address</th>
+              <th scope="col" className="px-6 py-3">Estimated Time</th>
+              <th scope="col" className="px-6 py-3">Delivered Time</th>
+      
+            </tr>
+            </thead>
+            <tbody>
+              {deliveryDetails.map((d) => {
 
       let ETA = "";
       if (!d.estimated_time) {
@@ -240,83 +263,59 @@ const DeliveriesList = () => {
         delTime = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
       }
       return(
-      <div className="delivery-list-table">
-        
-          <table className="delivery-list-table-table">
-            <thead>
-            <tr>
-              <th className="delivery-list-th">Delivery ID</th>
-              <th className="delivery-list-th">Customer</th>
-              <th className="delivery-list-th">Order Items</th>
-              <th className="delivery-list-th">Date</th>
-              <th className="delivery-list-th">Status</th>
-              <th className="delivery-list-th">Address</th>
-              <th className="delivery-list-th">Estimated Time</th>
-              <th className="delivery-list-th">Delivered Time</th>
-      
-            </tr>
-            </thead>
-            <tbody>
 
-              <tr key={d.delivery_ID}>
-                <td>{d.delivery_ID}</td>
-                <td> {d.orders.customer.username}</td>
-                {d.orderItems.map(oi => (
-                  <td className="order-items-td">
+              <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white" key={d.deliveryId}>
+                <td className="px-6 py-4 max-w-xs break-words">{d.deliveryId}</td>
+                <td className="px-6 py-4 max-w-xs break-words"> {d.orders.customer.username}</td>
+                
+                  <td className="px-6 py-4 max-w-xs break-words">
+                    {d.orderItems.map(oi => (
                     <li className="td-oi">
                     <p>{oi.order_catalog.catalogName} ({oi.quantity})</p>
                     
                     </li>
+                    ))}
                   </td>
-                ))}
-                <td>{d.orders.order_date}</td>
-                <td><button className="updateBtn" onClick={() => openEditStatusForm(d.delivery_ID)}>{d.delivery_status}</button></td>
-                <td>{d.address}</td>
-                <td><button className="updateBtn" onClick={() => openEditETAForm(d.delivery_ID)}>{ETA}</button></td>
-                <td><button className="updateBtn" onClick={() => openEditDelTimeForm(d.delivery_ID)}>{delTime}</button></td>
-                </tr>
-            </tbody>
-            </table>
-
-            <div className="editOrderStatusForm" style={isActive ? {display: "flex"} : {display: "none"}}>
-              <button className="closeBtn4" onClick={openEditStatusForm}>x</button>
-              <h2>Edit Delivery Status </h2>
-               <form method="post" onSubmit={handleSubmit} className="orStatusForm">
-              <select id="status" value={status} onChange={handleChange} className="selectOrderStatus">
+                
+                <td className="px-6 py-4 max-w-xs break-words">{new Date(d.orders.order_date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}</td>
+                <td className="px-6 py-4 max-w-xs break-words"><select id="driver" value={d.delivery_status ? d.delivery_status : ""} onChange={(e) =>
+                  
+                    handleSubmit(d.deliveryId, e.target.value)
+                    } className="selectOrderStatus">
                 <option value="">Update Status...</option>
                 <option value="Pending Assignment">Pending Assignment</option>
                 <option value="Driver Assigned">Driver Assigned</option>
                 <option value="On the Way">On the Way</option>
                 <option value="Delivered">Delivered</option>
                 <option value="Cancelled">Cancelled</option>
-              </select>
-              <button type="submit" className="submitOrderStatusBtn">Update</button>
-              </form>
-              </div>
+              
+              </select></td>
+                <td className="px-6 py-4 max-w-xs break-words">{d.address}</td>
+                <td className="px-6 py-4 max-w-xs break-words"><input
+    type="time"
+    className="border rounded px-2 py-1 w-full text-sm"
+    value={estimatedTime}
+    onChange={(e) => handleSubmit3(d.deliveryId, e.target.value)}
+  /></td>
+                <td className="px-6 py-4 max-w-xs break-words"><input
+    type="time"
+    className="border rounded px-2 py-1 w-full text-sm"
+    value={deliveredTime}
+    onChange={(e) => handleSubmit2(d.deliveryId, e.target.value)}
+  /></td>
+                </tr>
+                 )})}
+            </tbody>
+            </table>
 
-              <div className="editOrderStatusForm" style={isActive2 ? {display: "flex"} : {display: "none"}}>
-              <button className="closeBtn4" onClick={openEditDelTimeForm}>x</button>
-              <h2>Edit Delivery Time </h2>
-               <form method="post" onSubmit={handleSubmit2} className="orStatusForm">
-                <p>Select Delivered Time:</p>
-                <input type="time" id="delTime" name="deliveredTime" value={deliveredTime} onChange={handleChange2}/>
-              <button type="submit" className="submitOrderStatusBtn">Select</button>
-              </form>
-              </div>
-
-              <div className="editOrderStatusForm" style={isActive3 ? {display: "flex"} : {display: "none"}}>
-              <button className="closeBtn4" onClick={openEditETAForm}>x</button>
-              <h2>Select Estimated Time </h2>
-               <form method="post" onSubmit={handleSubmit3} className="orStatusForm">
-                <p>Select ETA:</p>
-                <input type="time" id="eta" name="estimatedTime" value={estimatedTime} onChange={handleChange3}/>
-              <button type="submit" className="submitOrderStatusBtn">Select</button>
-              </form>
-              </div>
-      
+           
     </div>
 
-      )})}
+     
     </div>
   )
 }

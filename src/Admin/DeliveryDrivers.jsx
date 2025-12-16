@@ -166,17 +166,48 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
     <div className="body">
       <Header />
       <div className="users">
-        <button className="addUsers" onClick={openForm}>Add Delivery Drivers</button>
-        <div className="add-form" style={isActive ? {display: "flex"} : {display: "none"}}>
-          <h2>Add Delivery Driver</h2>
-          <button className="closeBtn2" onClick={openForm}>x</button>
-          <form onSubmit={handleSubmit}>
-          <input className="fields" type="text" placeholder="Username" name="username" value={inputData.username} onChange={handleChange} />
-            <input className="fields" type="password" placeholder="Password" name="password" value={inputData.password} onChange={handleChange} />
-             <input type="hidden" name="role" value="CUSTOMER" onChange={handleChange} />
-            <input className="loginBtn" type="submit" value="Add"/>
-            </form>
-        </div>
+        <button onClick={openForm} class="flex justify-center  m-10 rounded-sm bg-gradient-to-r from-[#56C789] to-[#096E22] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600" href="#">
+          Add Drivers +
+        </button>
+        {isActive && (
+            <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div className="relative p-4 w-full max-w-md max-h-full">
+            
+                <div className="relative bg-gray-100 rounded-lg shadow-sm ">
+                
+                    <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                            Add Driver
+                        </h3>
+                        <button type="button" onClick={openForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                            <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                            <span className="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                    
+                    <form onSubmit={handleSubmit} className="p-4 md:p-5">
+                        <div className="grid gap-4 mb-4 grid-cols-2">
+                        <div className="col-span-2">
+                          <label htmlFor="username" placeholder="Username" name="username"  className="block mb-2 text-sm font-medium text-gray-900">Name</label>
+                          <input type="text" name="username" id="username" value={inputData.username} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder="Name" required/>
+                        </div>
+                        <div className="col-span-2">
+                          <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
+                          <input type="password" name="password" id="password" value={inputData.password} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder=" Email" required/>
+                        </div>
+                      </div>
+                      <input type="hidden" name="role" value="CUSTOMER" onChange={handleChange} />
+                        <button type="submit" className="text-white inline-flex items-center bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                            <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
+                            Add
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div> 
+        )}
          {showPopup && (
             <div className="add-user-popup">
               Driver added successfully.
@@ -195,39 +226,66 @@ const updateID = deliveryDrivers.find(d => d.userId === resource_ID)?.userId;
             </div>
               )}
 
-        <div className="delivery-table">
-          <table className="u-table">
+         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead>
-            <tr>
-              <th>Driver Name</th>
-              <th>Account Password</th>
-              <th>Actions</th>
+            <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white">
+              <th scope="col" className="px-6 py-3">Driver Name</th>
+              <th scope="col" className="px-6 py-3">Account Password</th>
+              <th scope="col" className="px-6 py-3">Actions</th>
             </tr>
             </thead>
             <tbody>
             {deliveryDrivers.map(driver => (
-              <tr key={driver.userId}>
-                <td>{driver.username}</td>
-                <td>{driver.password}</td>
-                <td className="action-td"><center><button className="editBtn"><img className="edit-icon" src="/edit-icon.svg" onClick={() => openUpdateForm(driver.userId)}/></button>
-                <button className="deleteBtn"><img className="delete-icon" src="/delete-icon.svg" onClick={(e) => deleteData(e, driver.userId)} /></button></center>
+              <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white" key={driver.userId}>
+                <td className="px-6 py-4 max-w-xs break-words">{driver.username}</td>
+                <td className="px-6 py-4 max-w-xs break-words">{driver.password}</td>
+                <td className="px-6 py-4 max-w-xs break-words"><center><button className="editBtn"><img className="w-5 h-5" src="/edit-icon.svg" onClick={() => openUpdateForm(driver.userId)}/></button>
+                <button className="deleteBtn"><img className="w-5 h-5" src="/delete-icon.svg" onClick={(e) => deleteData(e, driver.userId)} /></button></center>
                 </td>
             </tr>
             ))}
             </tbody>
             
           </table>
-          <div className="edit-form" style={isActive2 ? {display: "flex"} : {display: "none"}}>
-             <h2>Edit Delivery Driver Information</h2>
-          <button className="closeBtn2" onClick={openUpdateForm}>x</button>
-          <form onSubmit={updateData}>
-          <input className="fields" type="text" placeholder="Username" name="username" value={inputData.username} onChange={handleChange} required/>
-            <input className="fields" type="password" placeholder="Password" name="password" value={inputData.password} onChange={handleChange} required />
-            <input className="loginBtn" type="submit" value="Edit" />
-            </form>
+          {isActive2 && (
+            <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div className="relative p-4 w-full max-w-md max-h-full">
             
-        
+                <div className="relative bg-gray-100 rounded-lg shadow-sm ">
+                
+                    <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                            Edit Customer Details
+                        </h3>
+                        <button type="button" onClick={openUpdateForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                            <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                            <span className="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                    
+                    <form onSubmit={updateData} className="p-4 md:p-5">
+                        <div className="grid gap-4 mb-4 grid-cols-2">
+                        <div className="col-span-2">
+                          <label htmlFor="username" placeholder="Username" name="username"  className="block mb-2 text-sm font-medium text-gray-900">Name</label>
+                          <input type="text" name="username" id="username" value={inputData.username} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder="Name" required/>
+                        </div>
+                        <div className="col-span-2">
+                          <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
+                          <input type="password" name="password" id="password" value={inputData.password} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder=" Email" required/>
+                        </div>
+                      </div>
+                        <button type="submit" className="text-white inline-flex items-center bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                            <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
+                            Update
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div> 
+        )}
         </div>
       </div>
     </div>
