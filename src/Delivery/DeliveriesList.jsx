@@ -222,24 +222,25 @@ const DeliveriesList = () => {
   return (
     <div className="body">
       <Header />
+      <h1 className="text-4xl m-9 font-bold text-white">Deliveries</h1>
       
-      <div className="m-4 relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="m-4 relative overflow-x-auto shadow-md sm:rounded-lg m-6">
         
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead>
-            <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white">
-              <th scope="col" className="px-6 py-3">Delivery ID</th>
-              <th scope="col" className="px-6 py-3">Customer</th>
-              <th scope="col" className="px-6 py-3">Order Items</th>
-              <th scope="col" className="px-6 py-3">Date</th>
-              <th scope="col" className="px-6 py-3">Status</th>
-              <th scope="col" className="px-6 py-3">Address</th>
-              <th scope="col" className="px-6 py-3">Estimated Time</th>
-              <th scope="col" className="px-6 py-3">Delivered Time</th>
+            <thead className="bg-[#232323] text-gray-200 border-b border-[#2f2f2f]">
+            <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white">
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Delivery ID</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Customer</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Order Items</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Date</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Status</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Address</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Estimated Time</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Delivered Time</th>
       
             </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-[#1f1f1f]">
               {deliveryDetails.map((d) => {
 
       let ETA = "";
@@ -264,11 +265,11 @@ const DeliveriesList = () => {
       }
       return(
 
-              <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white" key={d.deliveryId}>
-                <td className="px-6 py-4 max-w-xs break-words">{d.deliveryId}</td>
-                <td className="px-6 py-4 max-w-xs break-words"> {d.orders.customer.username}</td>
+              <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white" key={d.deliveryId}>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.deliveryId}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"> {d.orders.customer.username}</td>
                 
-                  <td className="px-6 py-4 max-w-xs break-words">
+                  <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">
                     {d.orderItems.map(oi => (
                     <li className="td-oi">
                     <p>{oi.order_catalog.catalogName} ({oi.quantity})</p>
@@ -277,12 +278,12 @@ const DeliveriesList = () => {
                     ))}
                   </td>
                 
-                <td className="px-6 py-4 max-w-xs break-words">{new Date(d.orders.order_date).toLocaleDateString("en-US", {
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{new Date(d.orders.order_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}</td>
-                <td className="px-6 py-4 max-w-xs break-words"><select id="driver" value={d.delivery_status ? d.delivery_status : ""} onChange={(e) =>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"><select id="driver" value={d.delivery_status ? d.delivery_status : ""} onChange={(e) =>
                   
                     handleSubmit(d.deliveryId, e.target.value)
                     } className="selectOrderStatus">
@@ -294,17 +295,22 @@ const DeliveriesList = () => {
                 <option value="Cancelled">Cancelled</option>
               
               </select></td>
-                <td className="px-6 py-4 max-w-xs break-words">{d.address}</td>
-                <td className="px-6 py-4 max-w-xs break-words"><input
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.address}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"><input
     type="time"
     className="border rounded px-2 py-1 w-full text-sm"
-    value={estimatedTime}
-    onChange={(e) => handleSubmit3(d.deliveryId, e.target.value)}
+    value={d.estimated_time ? d.estimated_time.substring(0,5) : ""}
+    onChange={(e) => {
+
+      
+      handleSubmit3(d.deliveryId, e.target.value)
+    }}
   /></td>
-                <td className="px-6 py-4 max-w-xs break-words"><input
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"><input
     type="time"
     className="border rounded px-2 py-1 w-full text-sm"
-    value={deliveredTime}
+    value={d.delivered_time ? d.delivered_time.substring(0,5) : ""}
+
     onChange={(e) => handleSubmit2(d.deliveryId, e.target.value)}
   /></td>
                 </tr>

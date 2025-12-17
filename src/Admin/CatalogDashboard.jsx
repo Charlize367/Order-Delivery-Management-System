@@ -123,12 +123,12 @@ const CatalogDashboard = () => {
       <form class="max-w-md mt-6 sm:mt-8 mx-auto">   
     <label for="search" class="block mb-2.5 text-sm font-medium text-heading sr-only ">Search</label>
     <div class="relative">
-        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+        <div class="absolute text-black inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
         </div>
         <input type="search" id="search" value={query} 
-          onChange={(e) => setQuery(e.target.value)} class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search" required />
-        <button type="button" onClick={searchCatalog} class="absolute end-1.5 bottom-1.5 text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>
+          onChange={(e) => setQuery(e.target.value)} class="block w-full p-5 ps-9 bg-white  text-heading text-sm rounded-4xl focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search" required />
+        <button type="button" onClick={searchCatalog} class="absolute end-2 bottom-3 text-white bg-gradient-to-r rounded-2xl from-[#56C789] to-[#096E22] hover:bg-brand-strong box-border  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>
     </div>
 </form>
 
@@ -138,12 +138,22 @@ const CatalogDashboard = () => {
 </section>
 
         {showPopup && (
-            <div className="add-menu-popup">
-              Category added successfully.
+                  <div>
+        <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-none divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg  top-5 right-5" role="alert">
+        <div id="toast-success" className="flex items-center w-full max-w-xs p-4 mb-4 text-white bg-gray-500 rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800" role="alert">
+            <div className="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+                <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>
+                <span className="sr-only">Check icon</span>
             </div>
+            <div className="ms-3 text-sm font-normal">Category added successfully.</div>
+        </div>
+        </div>
+        </div>
               )}
 
-        <button onClick={openAddForm} class="flex justify-center  m-10 rounded-sm bg-gradient-to-r from-[#56C789] to-[#096E22] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600" href="#">
+        <button onClick={openAddForm} class="flex justify-center  m-10 rounded-sm bg-gradient-to-r from-[#56C789] to-[#096E22] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-gray-200" href="#">
           Add Category +
         </button>
 
@@ -151,10 +161,10 @@ const CatalogDashboard = () => {
             <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div className="relative p-4 w-full max-w-md max-h-full">
             
-                <div className="relative bg-gray-100 rounded-lg shadow-sm ">
+                <div className="relative bg-[#242424] rounded-lg shadow-sm ">
                 
                     <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-white">
                             Add Category
                         </h3>
                         <button type="button" onClick={openAddForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
@@ -168,18 +178,20 @@ const CatalogDashboard = () => {
                     <form onSubmit={addCategory} className="p-4 md:p-5">
                         <div className="grid gap-4 mb-4 grid-cols-2">
                         <div className="col-span-2">
-                          <label htmlFor="category_name"  name="category_name"  className="block mb-2 text-sm font-medium text-gray-900">Name</label>
-                          <input type="text" id="category_name" name="category_name" placeholder="Category Name" value={inputData.category_name} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " required/>
+                          <label htmlFor="category_name"  name="category_name"  className="block mb-2 text-sm font-medium text-gray-100">Name</label>
+                          <input type="text" id="category_name" name="category_name" placeholder="Category Name" value={inputData.category_name} onChange={handleChange} className="bg-[#2a2a2a]
+ border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " required/>
                         </div>
                          <div className="col-span-2 ">
-                            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="file_input">Upload an image</label>
-                            <input onChange={handleChange} className="block w-full text-sm text-gray-700
+                            <label className="block text-sm font-medium text-gray-100 mb-1" htmlFor="file_input">Upload an image</label>
+                            <input onChange={handleChange} className="block w-full text-sm text-[#9a9a9a]
                file:mr-4 file:py-2 file:px-4
                file:rounded-lg file:border-0
                file:text-sm file:font-semibold
                file:bg-gray-100 file:text-gray-700
                hover:file:bg-gray-200
-               border border-gray-300 rounded-lg cursor-pointer bg-gray-50" type="file" placeholder="Category Image" name="category_image" aria-describedby="file_input_help" id="file_input"/>
+               bg-[#2a2a2a]
+ border border-[#2f2f2f] rounded-lg cursor-pointer " type="file" placeholder="Category Image" name="category_image" aria-describedby="file_input_help" id="file_input"/>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                         </div>
                       </div>

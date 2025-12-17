@@ -40,7 +40,7 @@ const SearchResults = () => {
     <div className="body">
       <Header />
       <section className="dashboard">
-      <h1 className="search-results-txt"> Search results for "{query}"</h1>
+       <h1 className="text-2xl m-9 font-bold text-white"> Search results for "{query}"</h1>
       <div className="searchResults" style={{display:'flex'}}>
       {!found && query.trim() !== "" && <h2 className="no-results-txt">No results found.</h2>}
       {results.map((items) => {
@@ -50,7 +50,7 @@ const SearchResults = () => {
 
             return(
       
-      <ul className="itemDisplay" >
+       <ul className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 p-10">
           
             
     <ItemCard  items={items}/>

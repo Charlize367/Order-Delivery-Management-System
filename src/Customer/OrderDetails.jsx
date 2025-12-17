@@ -135,15 +135,33 @@ const OrderDetails = () => {
       
       
        {showPopup && (
-            <div className="order-popup">
-              Order placed successfully!
+            <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-none divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg  top-5 right-5" role="alert">
+        <div id="toast-success" className="flex items-center w-full max-w-xs p-4 mb-4 text-white bg-gray-500 rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800" role="alert">
+            <div className="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+                <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>
+                <span className="sr-only">Check icon</span>
             </div>
+            <div className="ms-3 text-sm font-normal">Order placed successfully!</div>
+        </div>
+        </div>
+   
               )}
 
               {showPopup2 && (
-            <div className="cancel-popup">
-              Order cancelled successfully!
+            <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-none divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg  top-5 right-5" role="alert">
+        <div id="toast-success" className="flex items-center w-full max-w-xs p-4 mb-4 text-white bg-gray-500 rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800" role="alert">
+            <div className="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+                <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>
+                <span className="sr-only">Check icon</span>
             </div>
+            <div className="ms-3 text-sm font-normal">Order cancelled successfully!</div>
+        </div>
+        </div>
+   
               )}
 
       {orderDetails.length > 0 && ongoingOrders.map((or) => {
@@ -235,7 +253,7 @@ const OrderDetails = () => {
 //     </div>
 <div class="p-4">
   
-          <div class="max-w-6xl mx-auto text-white">
+          <div class="max-w-6xl bg-[#232323] p-10 rounded-2xl mx-auto text-white">
               <div>
                   <h1 class="text-2xl font-semibold text-white">Order Summary</h1>
                   <p class="text-sm text-gray-200 mt-3">Your purchase was successful. Here’s a summary of your order details.</p>
@@ -264,6 +282,7 @@ const OrderDetails = () => {
                   </div>
               </div>
 
+              <div className="flex">
               <div class="grid lg:grid-cols-3 gap-10 mt-12 max-lg:max-w-2xl max-lg:mx-auto">
                 {or.orderItems.map(oi => (
                   <div class="lg:col-span-2 space-y-4">
@@ -288,8 +307,8 @@ const OrderDetails = () => {
 
                       </div>
                 ))}
-                <div>
-                  <div class="bg-gray-900 rounded-md p-4 h-max">
+                <div >
+                  <div class="bg-[#202020] border border-[#232323] rounded-md p-4 h-max">
                       <h3 class="text-base font-semibold text-white border-b border-gray-300 pb-2">Billing details</h3>
                       <ul class="font-medium mt-6 space-y-4">
                          
@@ -298,12 +317,12 @@ const OrderDetails = () => {
                           <li class="flex flex-wrap gap-4 text-[15px]">Total <span class="ml-auto text-white font-semibold">PHP {or.orders.order_price}</span></li>
                       </ul>
                       <div class="mt-8 space-y-3">
-                          <button onClick ={(e) => cancelOrder(e, or.orders.orderId)} type="button" class="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-purple-600 hover:bg-purple-700 text-white rounded-md cursor-pointer">Cancel Order</button>
+                          <button onClick ={(e) => cancelOrder(e, or.orders.orderId)} type="button" class="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-gradient-to-r from-[#56C789] to-[#096E22] text-white rounded-md cursor-pointer">Cancel Order</button>
                           <button type="button" class="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-transparent text-white border border-gray-300 rounded-md cursor-pointer">Continue Shopping  </button>
                       </div>
                   </div>
 
-                  <div class="bg-gray-900 rounded-md p-4 mt-4 h-max">
+                  <div class="bg-[#202020] border border-[#232323] rounded-md p-4 mt-4 h-max">
                       <h3 class="text-base font-semibold text-white border-b border-gray-300 pb-2">Delivery Details</h3>
                       <ul class="font-medium mt-6 space-y-4">
                          
@@ -328,7 +347,7 @@ const OrderDetails = () => {
       <li class="flex flex-wrap gap-4 text-[15px]">Assigned Driver <span class="ml-auto text-white font-semibold">{!or.deliveryMen || or.deliveryMen === null 
           ? "No driver assigned yet" : or.deliveryMen.username}</span></li>
                       </ul>
-                      
+                </div>
                   </div>
                   </div>
 

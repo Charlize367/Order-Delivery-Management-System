@@ -141,7 +141,7 @@ getAllBasketItems();
         </div>
       </div> */}
 
-      <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+      <section class=" py-8 antialiased md:py-16">
   <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
     <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Shopping Cart</h2>
 
@@ -149,7 +149,7 @@ getAllBasketItems();
       <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
         <div class="space-y-6">
            {basket.map(b => (
-          <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+          <div class="rounded-lg border border-[#2a2a2a] bg-[#232323] p-4 shadow-sm  md:p-6">
             <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
               <a href="#" class="shrink-0 md:order-1">
                 <img class="h-20 w-20 dark:hidden" src={`${API_BASE_URL}/images/${b.catalog.catalog_image}`} alt="imac image" />
@@ -200,7 +200,7 @@ getAllBasketItems();
       </div>
 
       <div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
-        <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+        <div class="space-y-4 rounded-lg border border-[#2a2a2a] bg-[#232323] p-4 shadow-sm  sm:p-6">
           <p class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</p>
 
           <div class="space-y-4">
@@ -216,12 +216,12 @@ getAllBasketItems();
 
           <div class="flex items-center justify-center gap-2">
             <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> or </span>
-            <a href="#" title="" class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500">
+            <Link to ="/browse" title="" class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500">
               Continue Shopping
               <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
 

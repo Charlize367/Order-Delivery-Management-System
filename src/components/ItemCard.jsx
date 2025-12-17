@@ -16,21 +16,21 @@ const ItemCard = ({items : {catalogId, catalogName, catalog_price, catalog_descr
       <Link to = {`/food_details/${catalogId}`}>
         
 
-  <div  class="group relative block overflow-hidden">
+  <div  class="group relative block rounded-2xl overflow-hidden">
   
 
   <img src={`${API_BASE_URL}/images/${catalog_image}`} alt="" class="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"/>
 
-  <div class="relative border border-gray-100 bg-white p-6">
-    <span class="bg-yellow-400 px-3 py-1.5 text-xs font-medium whitespace-nowrap"> New </span>
+  <div class="relative  bg-[#282928] p-6">
+    <span class="bg-gradient-to-r from-[#56C789] to-[#096E22] px-3 py-1.5  text-xs font-medium whitespace-nowrap"> New </span>
 
-    <h3 class="mt-4 text-lg font-medium text-gray-900">{catalogName}</h3>
+    <h3 class="mt-4 text-lg font-medium text-white">{catalogName}</h3>
 
-    <p class="mt-1.5 text-sm text-gray-700">PHP {catalog_price}</p>
+    <p class="mt-1.5 text-sm text-gray-300">PHP {catalog_price}</p>
 
     <form class="flex mt-4 space-x-10">
-      <button class="block w-full rounded-sm bg-yellow-400 p-4 text-sm font-medium transition hover:scale-105">
-        Add to Cart
+      <button class="block w-full rounded-sm text-white bg-gradient-to-r from-[#56C789] to-[#096E22] p-4 text-sm font-medium transition hover:scale-105">
+        View more
       </button>
     </form>
   </div>

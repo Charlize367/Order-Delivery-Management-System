@@ -195,19 +195,19 @@ const Deliveries = () => {
     <div className="body">
       <Header />
       
-       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+       <div className="relative overflow-x-auto  shadow-xl rounded-xl sm:rounded-lg m-6">
         
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead>
-            <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white">
-              <th scope="col" className="px-6 py-3">Delivery ID</th>
-              <th scope="col" className="px-6 py-3">Driver</th>
-              <th scope="col" className="px-6 py-3">Customer</th>
-              <th scope="col" className="px-6 py-3">Date</th>
-              <th scope="col" className="px-6 py-3">Status</th>
-              <th scope="col" className="px-6 py-3">Address</th>
-              <th scope="col" className="px-6 py-3">Estimated Time</th>
-              <th scope="col" className="px-6 py-3">Delivered Time</th>
+            <thead className="bg-[#232323] text-gray-200 border-b border-[#2f2f2f]">
+            <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white">
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Delivery ID</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Driver</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Customer</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Date</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Status</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Address</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Estimated Time</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Delivered Time</th>
       
             </tr>
             </thead>
@@ -245,11 +245,11 @@ const Deliveries = () => {
       
       
       return(
-            <tbody>
+            <tbody className="bg-[#1f1f1f]">
               
-              <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white" key={d.deliveryId}>
-                <td className="px-6 py-4 max-w-xs break-words">{d.deliveryId}</td>
-                <td className="px-6 py-4 max-w-xs break-words">
+              <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white" key={d.deliveryId}>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.deliveryId}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">
                   <select id="driver" value={d.deliveryMen ? d.deliveryMen.userId : ""} onChange={(e) =>
                   
                     handleSubmit2(d.deliveryId, e.target.value)
@@ -259,8 +259,8 @@ const Deliveries = () => {
                 <option key={dd.userId} value={dd.userId}>{dd.username}</option>
                 ))}
               </select></td>
-                <td className="px-6 py-4 max-w-xs break-words">{d.orders.customer.username}</td>
-                <td className="px-6 py-4 max-w-xs break-words">{new Date(d.orders.order_date).toLocaleDateString("en-US", {
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.orders.customer.username}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{new Date(d.orders.order_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
@@ -278,11 +278,11 @@ const Deliveries = () => {
                 <option value="Cancelled">Cancelled</option>
               
               </select></td>
-                <td className="px-6 py-4 max-w-xs break-words">{d.address}</td>
-                <td className="px-6 py-4 max-w-xs break-words"><input type="time" id="eta" name="estimatedTime" value={d.estimated_time} onChange={(e) =>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.address}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"><input type="time" id="eta" name="estimatedTime" value={d.estimated_time} onChange={(e) =>
                     handleSubmit3(d.deliveryId, e.target.value)
                     }/></td>
-                <td className="px-6 py-4 max-w-xs break-words">{delTime}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{delTime}</td>
 
                 
                 

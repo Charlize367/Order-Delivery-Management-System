@@ -140,17 +140,17 @@ const Orders = () => {
     <div className="body">
       <Header />
       
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-6">
         
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead>
-            <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white">
-              <th scope="col" className="px-6 py-3">Order ID</th>
-              <th scope="col" className="px-6 py-3">Customer</th>
-              <th scope="col" className="px-6 py-3">Date Ordered</th>
-              <th scope="col" className="px-6 py-3">Status</th>
-              <th scope="col" className="px-6 py-3">Address</th>
-              <th scope="col" className="px-6 py-3">Order</th>
+            <thead className="bg-[#232323] text-gray-200 border-b border-[#2f2f2f]">
+            <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white">
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Order ID</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Customer</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Date Ordered</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Status</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Address</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Order</th>
       
             </tr>
             </thead>
@@ -159,24 +159,24 @@ const Orders = () => {
             
               
           return(
-            <tbody>
+            <tbody className="bg-[#1f1f1f]">
               
-              <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white"  key={or.orders.orderId}>
-                <td className="px-6 py-4 max-w-xs break-words">{or.orders.orderId}</td>
-                <td className="px-6 py-4 max-w-xs break-words">{or.orders.customer.username}</td>
-                <td className="px-6 py-4 max-w-xs break-words">{new Date(or.orders.order_date).toLocaleDateString("en-US", {
+              <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white"  key={or.orders.orderId}>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{or.orders.orderId}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{or.orders.customer.username}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{new Date(or.orders.order_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}</td>
-                <td className="px-6 py-4 max-w-xs break-words">
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">
                   
                   <select
                     value={or.orders.order_status}
                     onChange={(e) =>
                     handleSubmit(or.orders.orderId, e.target.value)
                     }
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-[#232323] text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 >
                     <option value="Order Placed">Order Placed</option>
                     <option value="Preparing">Preparing</option>
@@ -186,8 +186,8 @@ const Orders = () => {
                     
                 </select>
                   </td>
-                <td className="px-6 py-4 max-w-xs break-words">{or.address}</td>
-                <td className="px-6 py-4 max-w-xs break-words"><button className="viewOrderItems" onClick={() => openOrders(or.orders.orderId, or.orders)}>View Order</button></td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{or.address}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"><button className="viewOrderItems" onClick={() => openOrders(or.orders.orderId, or.orders)}>View Order</button></td>
                 
             </tr>
           

@@ -101,35 +101,24 @@ const ItemDetails = () => {
     <div className="body">
       <Header />
 
-      {/* <div className="item-details">
-        <img className="itemPicture" src={`${API_BASE_URL}/images/${item.catalog_image}`}/>
-        <div className="details">
-            <h2 className="itemName">{item.catalogName}</h2> <p className="itemPrice"> PHP {item.catalog_price}</p> 
-
-
-           <hr />
-            <p className="itemDesc">{item.catalog_description}</p>
-            
-
-            <div className="item_buttons">
-              <button className="addToCart" onClick={addToBasket}>Add to Basket</button>
-
+      
               {showPopup && (
-            <div className="basket-popup">
-              Item added to basket!
+           <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-none divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg  top-5 right-5" role="alert">
+        <div id="toast-success" className="flex items-center w-full max-w-xs p-4 mb-4 text-white bg-gray-500 rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800" role="alert">
+            <div className="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+                <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>
+                <span className="sr-only">Check icon</span>
             </div>
+            <div className="ms-3 text-sm font-normal">Item added to basket.</div>
+        </div>
+        </div>
+   
               )}
-              <div className="quantityButton">
-                <button className="minusQuantity" onClick={minusFromQuantity}>-</button>
-                <div className="quantity"><h3 className="quantity-text">{quantity}</h3></div>
-                <button className="addQuantity" onClick={addToQuantity}>+</button>
-              </div>
-            </div>
-      </div>
-        
-     </div> */}
+              
 
-     <div class="p-4 m-10 bg-gray-100">
+     <div class="p-20 m-10 bg-[#282928] rounded-4xl">
       <div class="lg:max-w-6xl max-w-xl mx-auto">
         <div class="grid items-start grid-cols-1 lg:grid-cols-2 gap-8 max-lg:gap-12 max-sm:gap-8">
           <div class="w-full lg:sticky top-0">
@@ -142,27 +131,30 @@ const ItemDetails = () => {
             </div>
           </div>
 
-          <div class="w-full">
+          <div class="w-full md:mt-10">
             <div>
-              <h3 class="text-lg sm:text-xl font-semibold text-slate-900">{item.catalogName}</h3>
+              <h3 class="text-4xl sm:text-4xl font-semibold text-white">{item.catalogName}</h3>
               
               <div class="mt-4">
-                <p class="text-slate-500 mt-1 text-sm">{item.catalog_description}</p>
+                <p class="text-slate-100 mt-1 text-sm">{item.catalog_description}</p>
               </div>
 
               <div class="flex items-center flex-wrap gap-2 mt-6">
                 
-                <h4 class="text-purple-800 text-2xl sm:text-3xl font-semibold">PHP {item.catalog_price}</h4>
+                <h4 class="text-[#56C789] text-2xl sm:text-3xl font-semibold">PHP {item.catalog_price}</h4>
                 
               </div>
 
              
             </div>
 
-            <hr class="my-6 border-gray-300" />
+            <hr class="my-6 mt-30 border-gray-300" />
 
             <div>
-              <div class="flex gap-4 items-center border border-gray-300 bg-white px-4 py-2.5 w-max">
+              
+
+              <div class="mt-4 flex flex-wrap gap-4">
+                <div class="flex gap-4 items-center border border-gray-300 bg-white px-4 py-2.5 w-max">
                 <button onClick={minusFromQuantity} type="button" class="border-0 outline-0 cursor-pointer">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" viewBox="0 0 121.805 121.804">
                     <path
@@ -182,11 +174,8 @@ const ItemDetails = () => {
                   </svg>
                 </button>
               </div>
-
-              <div class="mt-4 flex flex-wrap gap-4">
-                
                 <button onClick={addToBasket} type="button"
-                  class="px-4 py-3 w-[45%] cursor-pointer border border-purple-600 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium">Add to basket</button>
+                  class="px-4 py-5 w-[60%]  cursor-pointer border border-green-600 bg-gradient-to-r from-[#56C789] to-[#096E22] hover:bg-gradient-to-r from-[#56C789] to-[#096E22] text-white text-md font-medium">Add to basket</button>
               </div>
             </div>
 

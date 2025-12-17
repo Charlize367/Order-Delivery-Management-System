@@ -184,10 +184,10 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
             <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div className="relative p-4 w-full max-w-md max-h-full">
             
-                <div className="relative bg-gray-100 rounded-lg shadow-sm ">
+                <div className="relative bg-[#242424] rounded-lg shadow-sm ">
                 
                     <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-white">
                             Add Customer
                         </h3>
                         <button type="button" onClick={openForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
@@ -201,12 +201,14 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
                     <form onSubmit={handleSubmit} className="p-4 md:p-5">
                         <div className="grid gap-4 mb-4 grid-cols-2">
                         <div className="col-span-2">
-                          <label htmlFor="username" placeholder="Username" name="username"  className="block mb-2 text-sm font-medium text-gray-900">Name</label>
-                          <input type="text" name="username" id="username" value={inputData.username} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder="Name" required/>
+                          <label htmlFor="username" placeholder="Username" name="username"  className="block mb-2 text-sm font-medium text-gray-100">Name</label>
+                          <input type="text" name="username" id="username" value={inputData.username} onChange={handleChange} className="bg-[#2a2a2a]
+ border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder="Name" required/>
                         </div>
                         <div className="col-span-2">
-                          <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                          <input type="password" name="password" id="password" value={inputData.password} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder=" Email" required/>
+                          <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-100">Password</label>
+                          <input type="password" name="password" id="password" value={inputData.password} onChange={handleChange} className="bg-[#2a2a2a]
+ border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder=" Email" required/>
                         </div>
                       </div>
                       <input type="hidden" name="role" value="CUSTOMER" onChange={handleChange} />
@@ -239,21 +241,21 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
             </div>
               )}
 
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-6">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead>
-            <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white">
-              <th scope="col" className="px-6 py-3">Customer Name</th>
-              <th scope="col" className="px-6 py-3">Account Password</th>
-              <th scope="col" className="px-6 py-3">Actions</th>
+            <thead className="bg-[#232323] text-gray-200 border-b border-[#2f2f2f]">
+            <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white">
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Customer Name</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Account Password</th>
+              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Actions</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-[#1f1f1f]">
             {customers.map(customer => (
-              <tr className="bg-white border-b border-gray-200 text-gray-500 hover:bg-gray-700 hover:text-white"  key={customer.userId}>
-                <td className="px-6 py-4 max-w-xs break-words">{customer.username}</td>
-                <td className="px-6 py-4 max-w-xs break-words">{customer.password}</td>
-                <td className="px-6 py-4 max-w-xs break-words"><center><button className="editBtn"><img className="w-5 h-5" src="/edit-icon.svg" onClick={() => openUpdateForm(customer.userId)}/></button>
+              <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white"  key={customer.userId}>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{customer.username}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{customer.password}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"><center><button className="editBtn"><img className="w-5 h-5" src="/edit-icon.svg" onClick={() => openUpdateForm(customer.userId)}/></button>
                 <button className="deleteBtn"><img className="w-5 h-5" src="/delete-icon.svg" onClick={() => deleteData(customer.userId)} /></button></center>
                 </td>
             </tr>
@@ -267,10 +269,10 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
             <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div className="relative p-4 w-full max-w-md max-h-full">
             
-                <div className="relative bg-gray-100 rounded-lg shadow-sm ">
+                <div  className="relative bg-[#242424] rounded-lg shadow-sm ">
                 
                     <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-white">
                             Edit Customer Details
                         </h3>
                         <button type="button" onClick={openUpdateForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
@@ -284,12 +286,14 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
                     <form onSubmit={updateData} className="p-4 md:p-5">
                         <div className="grid gap-4 mb-4 grid-cols-2">
                         <div className="col-span-2">
-                          <label htmlFor="username" placeholder="Username" name="username"  className="block mb-2 text-sm font-medium text-gray-900">Name</label>
-                          <input type="text" name="username" id="username" value={inputData.username} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder="Name" required/>
+                          <label htmlFor="username" placeholder="Username" name="username"  className="block mb-2 text-sm font-medium text-gray-100">Name</label>
+                          <input type="text" name="username" id="username" value={inputData.username} onChange={handleChange} className="bg-[#2a2a2a]
+ border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder="Name" required/>
                         </div>
                         <div className="col-span-2">
-                          <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                          <input type="password" name="password" id="password" value={inputData.password} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder=" Email" required/>
+                          <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-100">Password</label>
+                          <input type="password" name="password" id="password" value={inputData.password} onChange={handleChange} className="bg-[#2a2a2a]
+ border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder=" Email" required/>
                         </div>
                       </div>
                         <button type="submit" className="text-white inline-flex items-center bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
