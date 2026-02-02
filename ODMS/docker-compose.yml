@@ -27,7 +27,7 @@ services:
 
   backend:
     image: charlize367/order_backend:latest
-    container_name: order-backend-container-docker
+    container_name: order-backend-container
     depends_on:
       - postgres
       - redis
