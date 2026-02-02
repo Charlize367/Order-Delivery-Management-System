@@ -37,7 +37,7 @@ jobs:
       - name: Delete old container
         run:  docker rm -f order-backend-container
       - name: Run docker container
-        run: docker run -d -p 8080:8080 --name order-backend-container charlize367/movie_backend:latest
+        run: docker run -d -p 8080:8080 --name order-backend-container charlize367/order_backend:latest
       - name: Deploy with Docker Compose
         run: |
           docker compose -f docker-compose.yml pull
