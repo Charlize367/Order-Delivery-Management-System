@@ -1,18 +1,9 @@
-# Build stage: valid image
-FROM maven:3.9.3-eclipse-temurin-20 AS build
+
+FROM eclipse-temurin:20-jdk-alpine
 WORKDIR /app
 
-COPY pom.xml .
-COPY src ./src
-
-RUN mvn clean package -DskipTests
-
-# Runtime stage
-FROM eclipse-temurin:24-jdk-alpine
-WORKDIR /app
-
-COPY --from=build /app/target/*.jar ./app.jar
-COPY src/main/resources/certs ./certs
+COPY target/ODMS-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
