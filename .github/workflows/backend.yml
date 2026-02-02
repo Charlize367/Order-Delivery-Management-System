@@ -30,16 +30,16 @@ jobs:
       run: docker push charlize367/order_backend:latest
 
   deploy:
-  needs: build
-  runs-on: [self-hosted, backend]
-  steps:
-    - uses: actions/checkout@v4
-    - name: Pull latest images
-      run: docker compose -f ODMS/docker-compose.yml pull
-    - name: Stop and remove old containers
-      run: docker compose -f ODMS/docker-compose.yml down
-    - name: Start all services
-      run: docker compose -f ODMS/docker-compose.yml up -d --build
+    needs: build
+    runs-on: [self-hosted, backend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull latest images
+        run: docker compose -f ODMS/docker-compose.yml pull
+      - name: Stop and remove old containers
+        run: docker compose -f ODMS/docker-compose.yml down
+      - name: Start all services
+        run: docker compose -f ODMS/docker-compose.yml up -d --build
 
 
       
