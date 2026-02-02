@@ -1,21 +1,51 @@
+version: "3.9"
+
 services:
-  db:
-    container_name: postgres-spring-boot-ODMS
+  postgres:
     image: postgres:latest
+    container_name: postgres-spring-boot-ODMS
     environment:
+      POSTGRES_DB: odms
       POSTGRES_USER: liz
       POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
     volumes:
-      - db:/data/postgres
+      - db:/var/lib/postgresql/data
     ports:
       - "5442:5432"
     networks:
-      - db
+      - backend
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: redis-odms
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    image: charlize367/order_backend:latest
+    container_name: order-backend-container
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/odms
+      SPRING_DATASOURCE_USERNAME: liz
+      SPRING_DATASOURCE_PASSWORD: password
+
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    networks:
+      - backend
     restart: unless-stopped
 
 networks:
-  db:
+  backend:
     driver: bridge
 
 volumes:
