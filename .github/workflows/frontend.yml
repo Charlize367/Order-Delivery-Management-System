@@ -31,4 +31,4 @@ jobs:
       - name: Delete old container
         run: docker rm -f order-frontend-container 
       - name: Run Docker container
-        run: docker run -d -p 3000:80 --name order-frontend-container  charlize367/orderfrontend:latest
+        run: docker run -d -p 3000:80 --name order-frontend-container  charlize367/order_frontend:latest
