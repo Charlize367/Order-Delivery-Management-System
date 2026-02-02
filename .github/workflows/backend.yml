@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ODMS 
+        working-directory: Order-Delivery-Management-System 
     steps:
     - name: Checkout Source
       uses: actions/checkout@v4
@@ -41,6 +41,6 @@ jobs:
         run: docker run -d -p 8080:8080 --name order-backend-container charlize367/order_backend:latest
       - name: Deploy with Docker Compose
         run: |
-          docker compose -f ODMS/docker-compose.yml pull
-          docker compose -f ODMS/docker-compose.yml up -d --build
+          docker compose -f Order-Delivery-Management-System/docker-compose.yml pull
+          docker compose -f Order-Delivery-Management-System/docker-compose.yml up -d --build
       
