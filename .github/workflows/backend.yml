@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: Order-Delivery-Management-System/ODMS 
+        working-directory: ODMS 
     steps:
     - name: Checkout Source
       uses: actions/checkout@v4
