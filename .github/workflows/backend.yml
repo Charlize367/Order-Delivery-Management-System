@@ -32,10 +32,8 @@ jobs:
   deploy:
     needs: build
     runs-on : [self-hosted, backend]
-    defaults:
-      run:
-        working-directory: ODMS
     steps:
+      - uses: actions/checkout@v4
       - name: Pull image from docker hub
         run: docker pull charlize367/order_backend:latest
       - name: Delete old container
