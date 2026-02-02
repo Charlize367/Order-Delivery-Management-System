@@ -32,7 +32,6 @@ jobs:
   deploy:
     needs: build
     runs-on : [self-hosted, backend]
-    defaults:
     steps:
       - name: Pull image from docker hub
         run: docker pull charlize367/order_backend:latest
