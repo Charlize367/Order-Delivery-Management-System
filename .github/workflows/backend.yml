@@ -32,6 +32,9 @@ jobs:
   deploy:
     needs: build
     runs-on : [self-hosted, backend]
+    defaults:
+    run:
+      working-directory: ODMS
     steps:
       - name: Pull image from docker hub
         run: docker pull charlize367/order_backend:latest
@@ -45,7 +48,8 @@ jobs:
         run: docker run -d -p 8080:8080 --name order-backend-container charlize367/order_backend:latest
       - name: Deploy with Docker Compose
         run: |
-          docker compose pull
-          docker compose  up -d --build
+          docker compose -f docker-compose.yml pull
+          docker compose -f docker-compose.yml up -d --build
+
       
       
