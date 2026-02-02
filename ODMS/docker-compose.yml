@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: liz
       POSTGRES_PASSWORD: password
     volumes:
-      - db:/var/lib/postgresql/data
+        - db:/var/lib/postgresql
     ports:
       - "5442:5432"
     networks:
@@ -28,6 +28,7 @@ services:
   backend:
     image: charlize367/order_backend:latest
     container_name: order-backend-container
+
     depends_on:
       - postgres
       - redis
