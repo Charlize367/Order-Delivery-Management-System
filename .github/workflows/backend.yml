@@ -39,7 +39,7 @@ jobs:
       - name: Stop and remove old containers
         run: docker compose -f ODMS/docker-compose.yml down
       - name: Start all services
-        run: docker compose -f ODMS/docker-compose.yml up -d --build
+        run: AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} docker compose -f ODMS/docker-compose.yml up -d --build
 
 
       
