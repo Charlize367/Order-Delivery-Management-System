@@ -115,6 +115,8 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
           console.log("Failed to delete.");
         }
       }
+
+      
   
   return (
 

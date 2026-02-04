@@ -10,6 +10,7 @@ import RateLimitPopup from '../components/RateLimitPopup.jsx';
 const CatalogCategory = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const param = useParams();
+  
   const [item, setItem] = useState([]);
   const token = localStorage.getItem('jwtToken');
   const [isActive, setIsActive] = useState(false);
@@ -123,7 +124,7 @@ const CatalogCategory = () => {
       catalog_image: key, 
     };
 
-      const response = await axios.post(`${API_URL}/catalog`, catalogPayload, {
+      const response = await axios.post(`${API_URL}/catalog/category/${param.id}`, catalogPayload, {
                   headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'

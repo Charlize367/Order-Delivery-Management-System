@@ -89,7 +89,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
               
           }
 
-           const response = await axios.put(`${API_URL}/catalog/${catalogId}`, catalogPayload, {
+           const response = await axios.put(`${API_URL}/catalog/${catalogId}/category/${category_ID}`, catalogPayload, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json' 

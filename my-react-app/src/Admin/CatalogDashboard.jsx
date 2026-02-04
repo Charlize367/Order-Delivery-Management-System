@@ -153,7 +153,7 @@ const CatalogDashboard = () => {
     <div>
       <Header />
      
-  <section className="bg-[url('./main-hero.jpg')] bg-cover bg-center bg-no-repeat lg:grid lg:h-screen lg:place-content-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)', backgroundBlendMode: 'darken' }}>
+  <section  className=" bg-cover bg-center bg-no-repeat lg:grid lg:h-screen lg:place-content-center" style={{ backgroundImage: `url('/main-hero.jpg')`, backgroundColor: 'rgba(0,0,0,0.5)', backgroundBlendMode: 'darken' }}>
   <div className="mx-auto w-screen max-w-7xl px-4 py-15 sm:px-6 sm:py-24 lg:px-8 lg:py-30">
     
     <div className="relative z-10 mx-auto max-w-prose text-center">
