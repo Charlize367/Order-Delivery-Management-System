@@ -8,6 +8,8 @@ import RateLimitPopup from '../components/RateLimitPopup';
 const ItemDetails = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const bucket = import.meta.env.VITE_S3_BUCKET;
+    const region = import.meta.env.VITE_AWS_REGION;
     const param = useParams();
     const [item, setItem] = useState([]);
     const token = localStorage.getItem('jwtToken');
@@ -147,7 +149,7 @@ const ItemDetails = () => {
           <div class="w-full lg:sticky top-0">
             <div class="flex flex-col gap-4">
               <div class="bg-white shadow-sm p-2">
-                <img src={`${API_BASE_URL}/images/${item.catalog_image}`} alt="Product"
+                <img src={`https://${bucket}.s3.${region}.amazonaws.com/${item.catalog_image}`} alt="Product"
                   class="w-full  aspect-[11/8] object-cover object-top" />
               </div>
               

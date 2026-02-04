@@ -10,6 +10,8 @@ import RateLimitPopup from '../components/RateLimitPopup';
 const OrderHistory = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const API_URL = import.meta.env.VITE_API_URL;
+  const bucket = import.meta.env.VITE_S3_BUCKET;
+  const region = import.meta.env.VITE_AWS_REGION;
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [orderDetails, setOrderDetails] = useState([]);
@@ -158,7 +160,7 @@ const OrderHistory = () => {
                           {or.orderItems.map(oi => (
                             <div class="flex items-center gap-4">
                                 <div class="w-16 h-16 bg-gray-100 p-1 rounded-md overflow-hidden">
-                                    <img src={`${API_BASE_URL}/images/${oi.catalog.catalog_image}`} alt="Product" class="w-full h-full object-contain" />
+                                    <img src={`https://${bucket}.s3.${region}.amazonaws.com/${oi.catalog.catalog_image}`} alt="Product" class="w-full h-full object-contain" />
                                 </div>
                                 <div>
                                     <p class="text-[15px] font-medium text-white">{oi.catalog.catalogName}</p>

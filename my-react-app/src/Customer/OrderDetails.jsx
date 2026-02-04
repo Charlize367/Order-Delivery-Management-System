@@ -10,6 +10,8 @@ import RateLimitPopup from '../components/RateLimitPopup.jsx';
 const OrderDetails = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const bucket = import.meta.env.VITE_S3_BUCKET;
+  const region = import.meta.env.VITE_AWS_REGION;
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [orderDetails, setOrderDetails] = useState([]);
@@ -240,7 +242,7 @@ console.log(orderDetails);
                       <div class="grid sm:grid-cols-3 items-center gap-4">
                           <div class="col-span-2 flex items-center gap-4">
                               <div class="w-28 h-28 max-sm:w-24 max-sm:h-24 shrink-0 bg-gray-100 p-2 rounded-md">
-                                  <img src={`${API_BASE_URL}/images/${oi.catalog.catalog_image}`} class="w-full h-full object-contain" />
+                                  <img src={`https://${bucket}.s3.${region}.amazonaws.com/${oi.catalog.catalog_image}`} class="w-full h-full object-contain" />
                               </div>
                               <div>
                                   <h3 class="sm:text-base text-sm font-semibold text-white">{oi.catalog.catalogName}</h3>

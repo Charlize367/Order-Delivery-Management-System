@@ -8,7 +8,9 @@ import RateLimitPopup from '../components/RateLimitPopup';
 const Checkout = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const token = localStorage.getItem('jwtToken');
+  const bucket = import.meta.env.VITE_S3_BUCKET;
+  const region = import.meta.env.VITE_AWS_REGION;
+  const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
@@ -90,7 +92,7 @@ const token = localStorage.getItem('jwtToken');
                           {items.map(b => (
                             <div class="flex items-start gap-4">
                                 <div class="w-24 h-24 flex p-3 shrink-0 bg-white rounded-md">
-                                    <img src={`${API_BASE_URL}/images/${b.catalog.catalog_image}`} class="w-full object-contain" />
+                                    <img src={`https://${bucket}.s3.${region}.amazonaws.com/${b.catalog.catalog_image}`} class="w-full object-contain" />
                                 </div>
                                 <div class="w-full">
                                     <h3 class="text-sm text-white font-semibold">{b.catalog.catalogName}</h3>

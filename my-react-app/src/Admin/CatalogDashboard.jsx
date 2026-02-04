@@ -10,6 +10,7 @@ import RateLimitPopup from '../components/RateLimitPopup.jsx';
 const CatalogDashboard = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
+  
   const token = localStorage.getItem('jwtToken');
   const [categories, setCategories] = useState([]);
   const navigate = new useNavigate();
@@ -72,70 +73,69 @@ const CatalogDashboard = () => {
         fetchCategories();
     }, []);
 
-    console.log(categories);
 
     const addCategory = async (event) => {
-        event.preventDefault();
-        let categoryId = 0;
-            try {
-              
-                const response = await axios.post(`${API_URL}/categories`, inputData, {
+      event.preventDefault();
+
+      if (!categoryImage) {
+        return alert("Please select an image");
+      }
+
+      try {
+
+      const imageData = {
+        filename: categoryImage.name,
+        contentType: categoryImage.type,
+        fileSize: categoryImage.size
+
+      }
+        const { data } = await axios.post(`${API_URL}/images/initiate`, imageData,  {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
-                });
-
-              
-                setShowPopup(true);
-
-   
-                setTimeout(() => setShowPopup(false), 3000);
+        });
 
 
-                
-                const dt = response.data;
+        const { uploadUrl, key } = data;
 
-                categoryId = response.data.categoryId;
+      await axios.put(uploadUrl, categoryImage, {
+        headers: {
+          'Content-Type': categoryImage.type,
+        },
+      });
 
-                
-                
+      const categoryPayload = {
+      ...inputData,
+      category_image: key, 
+    };
 
-                 if (categoryImage) {
-             
-            
-                const fd = new FormData();
-                fd.append("category_image", categoryImage);
-                
-
-                await axios.post(`${API_URL}/categories/image/${categoryId}`, fd, {
+      const response = await axios.post(`${API_URL}/categories`, categoryPayload, {
                   headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                  },
-                });
-                
-                
-              }
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+      });
 
-              event.target.reset();
-                openAddForm(isActive);
-                fetchCategories();
-                return true;
-
-            } catch (error) {
-                console.error('Failed to add item:', error);
-                if (error.response?.data === "Too many requests" || error.response?.status === 429) {
-                const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
-                setRetryTime(retryAfter);
-                setError("Too Many Requests");
-                setShowRateLimitPopup(true);
-          
-          }
-                return false;
-            }
-
+      console.log(response);
+      setInputData({ category_name: '', category_image: null });
+      event.target.reset();
+      openAddForm(isActive);
+      fetchCategories();
+      
+      } catch (error) {
+        console.log(error);
+        if (error.response?.data === "Too many requests" || error.response?.status === 429) {
+          const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
+          setRetryTime(retryAfter);
+          setError("Too Many Requests");
+          setShowRateLimitPopup(true);
         }
+      }
+
+    }
+
+
 
     const handleReloadData = () => {
       fetchCategories();

@@ -88,64 +88,71 @@ const CatalogCategory = () => {
 
 
     const addItem = async (event) => {
-        event.preventDefault();
-        let catalogId = 0;
-            try {
-              
-                const response = await axios.post(`${API_URL}/catalog/category/${param.id}`, inputData, {
+      event.preventDefault();
+
+      if (!catalogImage) {
+        return alert("Please select an image");
+      }
+
+      try {
+
+      const imageData = {
+        filename: catalogImage.name,
+        contentType: catalogImage.type,
+        fileSize: catalogImage.size
+
+      }
+        const { data } = await axios.post(`${API_URL}/images/initiate`, imageData,  {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
-                });
-                
-                setShowPopup(true);
+        });
 
-   
-                setTimeout(() => setShowPopup(false), 3000);
 
-              
-                const dt = response.data;
+        const { uploadUrl, key } = data;
 
-                catalogId = response.data.catalogId;
+      await axios.put(uploadUrl, catalogImage, {
+        headers: {
+          'Content-Type': catalogImage.type,
+        },
+      });
 
-            
+      const catalogPayload = {
+      ...inputData,
+      catalog_image: key, 
+    };
 
-              if (catalogImage) {
-             
-            
-                const fd = new FormData();
-                fd.append("catalog_image", catalogImage);
-                
-
-                await axios.post(`${API_URL}/catalog/image/${catalogId}`, fd, {
+      const response = await axios.post(`${API_URL}/catalog`, catalogPayload, {
                   headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                  },
-                });
-                
-                
-              }
-              event.target.reset();
-                openAddForm(isActive);
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+      });
 
-                handleReloadData();
-                return true;
-
-            } catch (error) {
-                console.error('Failed to add item:', error);
-                if (error.response?.data === "Too many requests" || error.response?.status === 429) {
-                const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
-                setRetryTime(retryAfter);
-                setError("Too Many Requests");
-                setShowRateLimitPopup(true);
-          
-          }
-                return false;
-            }
-
+      console.log(response);
+      setInputData({
+        catalogName: "",
+        catalog_description: "",
+        catalog_price: "",
+        catalog_image: null,
+        category: param.id
+      });
+      event.target.reset();
+      openAddForm(isActive);
+      fetchCatalogByCategory();
+      
+      } catch (error) {
+        console.log(error);
+        if (error.response?.data === "Too many requests" || error.response?.status === 429) {
+          const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
+          setRetryTime(retryAfter);
+          setError("Too Many Requests");
+          setShowRateLimitPopup(true);
         }
+      }
+
+    }
 
         
 
