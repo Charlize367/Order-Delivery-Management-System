@@ -17,7 +17,6 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
 
 
    const openUpdateForm = (e) => {
-    e.stopPropagation();
       setInputData({
       categoryId : categoryId,
       category_name: category_name,
@@ -48,7 +47,7 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
         try {
 
 
-          if(categoryImage) {
+          if(categoryImage != null) {
             const imageData = {
                 filename: categoryImage.name,
                 contentType: categoryImage.type,
@@ -87,10 +86,13 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
 
           console.log(response);
           e.target.reset();
-          openUpdateForm(!isActive);
+          openUpdateForm(isActive);
+          setShowPopup(true);
+
+          setTimeout(() => setShowPopup(false), 3000);
           onReload();
-        } catch {
-          console.log("Failed to Update.");
+        } catch (error) {
+          console.log("Failed to Update.", error);
           console.log(inputData);
           console.log(categoryId);
          
@@ -98,19 +100,23 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
       }
 
   const deleteCategory = async (e) => {
-    e.stopPropagation();
+    
         try {
           const response = await axios.delete(`${API_URL}/categories/${categoryId}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
-                    setShowPopup2(true);
+          
+          setShowPopup2(true);
 
-   
-          setTimeout(() => setShowPopup2(false), 3000);
+    
+          setTimeout(() => {
+            setShowPopup2(false);
+            onReload(); 
+          }, 3000);
           console.log("Deleted");
-          onReload();
+          
         } catch {
           console.log("Failed to delete.");
         }
@@ -136,18 +142,18 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
   </div>
 </article>
 </Link>
-<div className="absolute top-3 right-3 flex space-x-2 z-10">
+<div className="absolute top-3 right-3 flex space-x-8 z-10">
     <button
       type="button"
       onClick={openUpdateForm}
-      className="w-6 h-6"
+      className="w-6 h-6 cursor-pointer"
     >
       <img src="./edit-icon.svg" className="pointer-events-none" />
     </button>
     <button
       type="button"
       onClick={deleteCategory}
-      className="w-6 h-6"
+      className="w-6 h-6 cursor-pointer"
     >
       <img src="./delete-icon.svg" className="pointer-events-none" />
     </button>
@@ -202,7 +208,7 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
                         <h3 className="text-lg font-semibold text-white">
                             Update Category Details
                         </h3>
-                        <button type="button" onClick={openUpdateForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                        <button type="button" onClick={openUpdateForm} className="text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                             <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -230,7 +236,7 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                         </div>
                       </div>
-                        <button type="submit" className="text-white inline-flex items-center bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                        <button type="submit" className="text-white inline-flex items-center cursor-pointer  rounded-sm bg-[#096E22] hover:bg-[#075515] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
                             <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
                             Update
                         </button>

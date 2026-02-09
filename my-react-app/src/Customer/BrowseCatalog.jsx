@@ -40,7 +40,7 @@ const BrowseCatalog = () => {
           try {
             const response = await axios.get(`${API_BASE_URL}/catalog?page=${page}&size=${pageSize}&categoryId=${param.id}`, {
               headers: {
-                        'Authorization' : `Bearer ${token}`,
+                        
                         'Content-Type': 'application/json'
                     }});
 
@@ -84,7 +84,7 @@ const BrowseCatalog = () => {
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={fetchCatalogByCategory} currentPage={currentPage} />
         )}
 
-                  <ul className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 p-10">
+                  <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 p-10">
           {item.map((items) => (
             <ItemCard items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}

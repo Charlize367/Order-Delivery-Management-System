@@ -98,6 +98,9 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
           console.log(response);
           e.target.reset();
           openUpdateForm(!isActive);
+          setShowPopup(true);
+
+          setTimeout(() => setShowPopup(false), 3000);
           onReload();
         } catch {
           console.log("Failed to Update.");
@@ -135,7 +138,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
   <img src={`https://${bucket}.s3.${region}.amazonaws.com/${catalog_image}`} alt="" class="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"/>
 
   <div class="relative  bg-[#282928] p-6">
-    <span class="bg-gradient-to-r from-[#56C789] to-[#096E22] px-3 py-1.5 text-xs font-medium whitespace-nowrap"> New </span>
+    
 
     <h3 class="mt-4 text-lg font-medium text-white">{catalogName}</h3>
 
@@ -145,10 +148,10 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
 
     <form class="flex mt-4 space-x-10">
       
-      <button type="button" onClick={() => openUpdateForm()} class="block w-13 rounded-sm bg-gradient-to-r from-[#56C789] to-[#096E22] p-4 text-sm font-medium transition hover:scale-105">
+      <button type="button" onClick={() => openUpdateForm()} class="block w-13 rounded-sm cursor-pointer bg-[#38A45C] hover:bg-[#2C8B47] p-4 text-sm font-medium transition hover:scale-105">
         <img src="/edit-icon.svg" className="w-5"/>
       </button>
-       <button type="button" class="block w-13 rounded-sm bg-gradient-to-r from-[#56C789] to-[#096E22] p-4 text-sm font-medium transition hover:scale-105">
+       <button type="button" class="block w-13 rounded-sm bg-[#E53935] hover:bg-[#B71C1C] cursor-pointer p-4 text-sm font-medium transition hover:scale-105">
        <img onClick={deleteItem} src="/delete-icon.svg" className="w-5"/>
       </button>
     </form>
@@ -196,9 +199,9 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
                 
                     <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
                         <h3 className="text-lg font-semibold text-white">
-                            Add Category
+                            Edit Catalog
                         </h3>
-                        <button type="button" onClick={openUpdateForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                        <button type="button" onClick={openUpdateForm} className="text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                             <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -247,7 +250,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
                      
 
 
-                        <button type="submit" className="text-white inline-flex items-center bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                        <button type="submit" className="text-white inline-flex items-center cursor-pointer  rounded-sm bg-[#096E22] hover:bg-[#075515] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
                             <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
                             Update
                         </button>

@@ -56,6 +56,11 @@ const Checkout = () => {
 
 
   const placeOrder = async() => {
+
+    if(!address) {
+
+        window.alert("Address is required.");
+    }
     try {
       const response = await axios.post(`${API_URL}/orders/users/${user_ID}`, orderData, {
         headers : {
@@ -87,7 +92,7 @@ const Checkout = () => {
         <div class="flex max-md:flex-col gap-12 max-lg:gap-4 h-full">
             <div class="bg-[#2a2a2a] p-10 md:h-screen md:sticky md:top-0 md:min-w-[800px]">
                 <div class="relative h-full">
-                    <div class="px-6 py-8 md:overflow-auto md:h-screen">
+                    <div class="px-6 py-20 md:overflow-auto md:h-screen">
                         <div class="space-y-4">
                           {items.map(b => (
                             <div class="flex items-start gap-4">
@@ -120,14 +125,14 @@ const Checkout = () => {
                             </ul>
 
                             <div class="mt-8">
-                                <button onClick={placeOrder} type="button" class="rounded-md px-4 py-2.5 w-full text-sm font-medium tracking-wide bg-gradient-to-r from-[#56C789] to-[#096E22] text-white cursor-pointer">Complete Purchase</button>
+                                <button onClick={placeOrder} type="button" class="rounded-md px-4 py-2.5 w-full text-sm font-medium tracking-wide cursor-pointer bg-green-800 text-white cursor-pointer">Complete Purchase</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="max-w-4xl w-full h-max rounded-md px-4 py-8 max-md:-order-1">
+            <div class="max-w-4xl w-full h-max rounded-md px-4 py-20 max-md:-order-1">
                 <form>
                     <div>
                         <h2 class="text-xl text-white font-semibold mb-6">Delivery Details</h2>
@@ -138,12 +143,12 @@ const Checkout = () => {
                                     className="bg-[#2a2a2a]
  border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " required/>
                             </div>
-                            <div className="mr-10">
+                            {/* <div className="mr-10">
                                 <label class="text-sm text-white font-medium block mb-2">Note to Driver</label>
                                 <input type="text" placeholder="Enter Note"
                                     className="bg-[#2a2a2a]
  border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " />
-                            </div>
+                            </div> */}
                             
                         </div>
                     </div>

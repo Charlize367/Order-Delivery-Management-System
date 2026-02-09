@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import BrowseCatalog from "./BrowseCategory.jsx"
 import { useAuth } from '../Auth/AuthContext';
 import { Link } from "react-router-dom";
@@ -11,6 +11,9 @@ const CustomerLogin = () => {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const { login } = useAuth();
+    const location = useLocation();
+
+    const from = location.state?.from || "/browse";
 
     const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -36,7 +39,14 @@ const CustomerLogin = () => {
                     }
                 });
                  login({username: response.data.username, role: response.data.role, id: response.data.id}, response.data.token)
-                navigate('/browse');
+                navigate(from, {
+                replace: true,
+                state: {
+                    popup: "✅ Logged in successfully",
+                    action: location.state?.action,
+                    quantity: location.state?.quantity
+                }
+                });
                 return true;
 
             } catch (error) {
@@ -61,8 +71,8 @@ const CustomerLogin = () => {
     return(
         <section className="login-body">
             <div className="flex">
-                <button className="block max-w-md  mt-3 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white" onClick={goToAdLogin}>Login As Admin</button>
-                <button className="block max-w-md  mt-3 ml-3 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white" onClick={goToDelLogin}>Login As Delivery Driver</button>
+                <button className="block max-w-md  cursor-pointer mt-3 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white" onClick={goToAdLogin}>Login As Admin</button>
+                <button className="block max-w-md  cursor-pointer mt-3 ml-3 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white" onClick={goToDelLogin}>Login As Delivery Driver</button>
             </div>
         
             
@@ -78,7 +88,7 @@ const CustomerLogin = () => {
             <input type="password" id="password" value={password} onChange={handlePasswordChange} class="bg-transparent text-white border border-[0.5px] rounded-lg border-gray-100 border-default-small text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Password" required />
         </div>
         
-        <button type="submit" class="block w-full  mt-10 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white">Login</button>
+        <button type="submit" class="block w-full cursor-pointer mt-10 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white">Login</button>
        <Link className="text-white" to ="/register">Don't have an account? Sign up here.</Link>
     </form>
 </div>

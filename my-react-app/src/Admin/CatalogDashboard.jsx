@@ -118,9 +118,12 @@ const CatalogDashboard = () => {
       });
 
       console.log(response);
-      setInputData({ category_name: '', category_image: null });
       event.target.reset();
-      openAddForm(isActive);
+      openAddForm(false);
+      
+      setShowPopup(true);
+
+      setTimeout(() => setShowPopup(false), 3000);
       fetchCategories();
       
       } catch (error) {
@@ -137,9 +140,7 @@ const CatalogDashboard = () => {
 
 
 
-    const handleReloadData = () => {
-      fetchCategories();
-    }
+    
 
     const searchCatalog = (e) => {
       e.preventDefault();
@@ -153,7 +154,7 @@ const CatalogDashboard = () => {
     <div>
       <Header />
      
-  <section  className=" bg-cover bg-center bg-no-repeat lg:grid lg:h-screen lg:place-content-center" style={{ backgroundImage: `url('/main-hero.jpg')`, backgroundColor: 'rgba(0,0,0,0.5)', backgroundBlendMode: 'darken' }}>
+  <section  className=" bg-cover bg-center bg-no-repeat lg:grid lg:h-[500px] lg:place-content-center" style={{ backgroundImage: `url('/main-hero.jpg')`, backgroundColor: 'rgba(0,0,0,0.5)', backgroundBlendMode: 'darken' }}>
   <div className="mx-auto w-screen max-w-7xl px-4 py-15 sm:px-6 sm:py-24 lg:px-8 lg:py-30">
     
     <div className="relative z-10 mx-auto max-w-prose text-center">
@@ -174,7 +175,7 @@ const CatalogDashboard = () => {
         </div>
         <input type="search" id="search" value={query} 
           onChange={(e) => setQuery(e.target.value)} class="block w-full p-5 ps-9 bg-white  text-heading text-sm rounded-4xl focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search" required />
-        <button type="button" onClick={searchCatalog} class="absolute end-2 bottom-3 text-white bg-gradient-to-r rounded-2xl from-[#56C789] to-[#096E22] hover:bg-brand-strong box-border  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>
+        <button type="button" onClick={searchCatalog} class="absolute cursor-pointer end-2 bottom-3 text-white bg-[#56C789] hover:bg-[#38A45C] text-white rounded-lg  box-border  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>
     </div>
 </form>
 
@@ -204,7 +205,7 @@ const CatalogDashboard = () => {
         </div>
               )}
 
-        <button onClick={openAddForm} class="flex justify-center  m-10 rounded-sm bg-gradient-to-r from-[#56C789] to-[#096E22] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-gray-200" href="#">
+        <button onClick={openAddForm} class="flex justify-center cursor-pointer m-10 rounded-sm bg-[#096E22] hover:bg-[#075515] text-white px-12 py-3 text-sm font-medium text-white  hover:text-gray-200" href="#">
           Add Category +
         </button>
 
@@ -212,13 +213,13 @@ const CatalogDashboard = () => {
             <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div className="relative p-4 w-full max-w-md max-h-full">
             
-                <div className="relative bg-[#242424] rounded-lg shadow-sm ">
+                <div className="relative bg-gradient-to-b from-[#1A1A1A] to-[#2A2A2A] rounded-lg shadow-sm ">
                 
                     <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
                         <h3 className="text-lg font-semibold text-white">
                             Add Category
                         </h3>
-                        <button type="button" onClick={openAddForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                        <button type="button" onClick={openAddForm} className="text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                             <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -235,18 +236,19 @@ const CatalogDashboard = () => {
                         </div>
                          <div className="col-span-2 ">
                             <label className="block text-sm font-medium text-gray-100 mb-1" htmlFor="file_input">Upload an image</label>
-                            <input onChange={handleImageChange} className="block w-full text-sm text-[#9a9a9a]
+                            <input onChange={handleImageChange} className="block w-full cursor-pointer text-sm text-[#9a9a9a]
                file:mr-4 file:py-2 file:px-4
                file:rounded-lg file:border-0
                file:text-sm file:font-semibold
                file:bg-gray-100 file:text-gray-700
                hover:file:bg-gray-200
+               cursor-pointer
                bg-[#2a2a2a]
  border border-[#2f2f2f] rounded-lg cursor-pointer " type="file" placeholder="Category Image" name="category_image" aria-describedby="file_input_help" id="file_input"/>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                         </div>
                       </div>
-                        <button type="submit" className="text-white inline-flex items-center bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                        <button type="submit" className="text-white inline-flex cursor-pointer items-center bg-gradient-to-r from-[#56C789] to-[#096E22] hover:from-[#38A45C] to-[#075515] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
                             <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
                             Add
                         </button>
@@ -270,7 +272,7 @@ const CatalogDashboard = () => {
              
              
             
-            <Category key={category.categoryId} category={category} onReload={handleReloadData}/>
+            <Category key={category.categoryId} category={category} onReload={fetchCategories}/>
             
           ))
           }

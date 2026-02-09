@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const CreateCustomerReg = () => {
 
@@ -10,6 +10,11 @@ export const CreateCustomerReg = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+
+
+  const from = location.state?.from || "/browse";
 
     const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -42,7 +47,14 @@ export const CreateCustomerReg = () => {
                 });
                 console.log(response);
                 window.alert("Account creation successful. You may now login");
-                navigate('/login');
+                navigate(from, {
+                replace: true,
+                state: {
+                    popup: "✅ Account created successfully. You may now login.",
+                    action: location.state?.action,
+                    quantity: location.state?.quantity
+                }
+                });
                 return true;
 
             } catch (error) {

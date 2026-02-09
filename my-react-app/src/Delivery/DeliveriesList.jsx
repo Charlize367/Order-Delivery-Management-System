@@ -7,7 +7,7 @@ import RateLimitPopup from '../components/RateLimitPopup.jsx';
 
 
 const DeliveriesList = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL;
     const token = localStorage.getItem('jwtToken');
     const user_ID = localStorage.getItem('user_ID');
     const [deliveryDetails, setDeliveryDetails] = useState([]);
@@ -48,20 +48,21 @@ const DeliveriesList = () => {
 
     const getDeliveryDetails = async (page = 0) => {
     try {
-            const response = await axios.get(`${API_URL}/delivery/users/delivery/${user_ID}`, {
+            const response = await axios.get(`${API_URL}/delivery?page=${page}&size=${pageSize}&driverId=${user_ID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
 
-
+          
           const deliveries = response.data.content;
+          
           const deliveryWithOrderItems = await Promise.all(
             deliveries.map(async (delivery) => {
               const orderId = delivery.order.orderId;
 
               const itemsRes = await axios.get(
-          `${API_BASE_URL}/orderItems/orders/${orderId}`,
+          `${API_URL}/orderItems/orders/${orderId}`,
           { headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -79,7 +80,7 @@ const DeliveriesList = () => {
           setCurrentPage(response.data.number);
           setTotalPages(response.data.totalPages);
           } catch (error) {
-            console.error("Error");
+            console.error(error);
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
                 const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
                 setRetryTime(retryAfter);
@@ -304,18 +305,18 @@ const DeliveriesList = () => {
 
               <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white" key={d.deliveryId}>
                 <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.deliveryId}</td>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"> {d.orders.customer.username}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"> {d.order.customer.username}</td>
                 
                   <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">
                     {d.orderItems.map(oi => (
                     <li className="td-oi">
-                    <p>{oi.order_catalog.catalogName} ({oi.quantity})</p>
+                    <p>{oi.catalog.catalogName} ({oi.quantity})</p>
                     
                     </li>
                     ))}
                   </td>
                 
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{new Date(d.orders.order_date).toLocaleDateString("en-US", {
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{new Date(d.order.order_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",

@@ -270,8 +270,28 @@ console.log(orderDetails);
                           <li class="flex flex-wrap gap-4 text-[15px]">Total <span class="ml-auto text-white font-semibold">PHP {or.order.order_price}</span></li>
                       </ul>
                       <div class="mt-8 space-y-3">
-                          <button onClick ={(e) => cancelOrder(e, or.order.orderId)} type="button" class="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-gradient-to-r from-[#56C789] to-[#096E22] text-white rounded-md cursor-pointer">Cancel Order</button>
-                          <button type="button" class="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-transparent text-white border border-gray-300 rounded-md cursor-pointer">Continue Shopping  </button>
+                          <button
+                            onClick={(e) => cancelOrder(e, or.order.orderId)}
+                            type="button"
+                            className="text-sm px-4 py-2.5 w-full font-medium tracking-wide 
+                                        bg-green-800 text-white rounded-md cursor-pointer
+                                        hover:bg-green-700 active:bg-green-900
+                                        transition-colors duration-200"
+                            >
+                            Cancel Order
+                            </button>
+
+                            <button
+                            type="button"
+                            className="text-sm px-4 py-2.5 w-full font-medium tracking-wide
+                                        bg-transparent text-white border border-gray-300 rounded-md cursor-pointer
+                                        hover:bg-gray-700 hover:border-gray-400
+                                        active:bg-gray-800
+                                        transition-colors duration-200"
+                            >
+                            Continue Shopping
+                            </button>
+
                       </div>
                   </div>
 

@@ -166,7 +166,7 @@ const CatalogCategory = () => {
       <section className="dashboard">
         <div className="catalog-top">
           <h1 className="text-4xl m-9 font-bold text-white">{param.name}</h1>
-         <button onClick={openAddForm} class="flex justify-center  m-10 rounded-sm bg-gradient-to-r from-[#56C789] to-[#096E22] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600" href="#">
+         <button onClick={openAddForm} class="flex justify-center  cursor-pointer m-10 rounded-sm bg-[#096E22] hover:bg-[#075515] rounded-sm px-12 py-3 text-sm font-medium text-white " href="#">
           Add Item +
         </button>
           
@@ -228,7 +228,7 @@ const CatalogCategory = () => {
                file:rounded-lg file:border-0
                file:text-sm file:font-semibold
                file:bg-gray-100 file:text-gray-700
-               hover:file:bg-[#2a2a2a]
+              
  border border-[#2f2f2f] rounded-lg cursor-pointer bg-[#2a2a2a]" type="file" placeholder="Catalog Image" name="catalog_image" aria-describedby="file_input_help" id="file_input"/>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                         </div>
@@ -236,7 +236,7 @@ const CatalogCategory = () => {
                       <input type="hidden" name="category" value={inputData.category} onChange={handleChange} />
 
 
-                        <button type="submit" className="text-white inline-flex items-center bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                        <button type="submit" className="text-white inline-flex items-center cursor-pointer  rounded-sm bg-[#096E22] hover:bg-[#075515] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
                             <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
                             Add
                         </button>
@@ -263,7 +263,7 @@ const CatalogCategory = () => {
         </div>
               )}
 
-                  <ul className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 p-10">
+                  <ul className="grid grid-cols-2 md:grid-cols-4 sm:grid-cols-2 gap-10 p-10">
           {item.map((items) => (
             <AdminItem items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}
