@@ -32,7 +32,7 @@ const SearchResults = () => {
     }, [query]);
 
     const found = results.some(item => 
-      item.catalogName.toLowerCase().includes(query.toLowerCase().trim())
+      item.catalogName?.toLowerCase().includes(query?.toLowerCase().trim())
     );
     
 
@@ -42,7 +42,7 @@ const SearchResults = () => {
       <section className="dashboard">
        <h1 className="text-2xl m-9 font-bold text-white"> Search results for "{query}"</h1>
       <div className="searchResults" style={{display:'flex'}}>
-      {!found && query.trim() !== "" && <h2 className="no-results-txt">No results found.</h2>}
+      {!found && query?.trim() !== "" && <h2 className="text-white m-10">No results found.</h2>}
       {results.map((items) => {
             
         

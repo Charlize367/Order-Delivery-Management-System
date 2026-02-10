@@ -22,6 +22,7 @@ const OrderHistory = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const getOrderDetails = async (page = 0) => {
       try {
@@ -59,6 +60,7 @@ const OrderHistory = () => {
       setOrderDetails(combined);
       setCurrentPage(response.data.number);
       setTotalPages(response.data.totalPages);
+      setIsLoading(false);
             
             } catch (error) {
               console.error("Error");
@@ -102,13 +104,19 @@ const OrderHistory = () => {
       <Header />
       <h1 className="text-white text-4xl font-bold m-10">Order History</h1>
 
-      {historyOrders.length == 0 && (
+      {!isLoading && historyOrders.length == 0 && (
             <p className="flex justify-center text-white text-lg">No order history found.</p>
         )}
 
       {showRateLimitPopup && (
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getOrderDetails} currentPage={currentPage} />
       )}
+
+      {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
 
       {orderDetails.length > 0 && historyOrders.map((or) => {
 

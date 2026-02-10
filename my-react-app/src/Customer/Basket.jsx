@@ -20,6 +20,14 @@ const Basket = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteId, setDeleteId] = useState(0);
+     const [isLoading, setIsLoading] = useState(true);
+          
+      const handleDeleteClick = (id) => {
+        setShowDeleteConfirm(!showDeleteConfirm); 
+        setDeleteId(id);
+     };
   
 
 
@@ -39,6 +47,7 @@ const Basket = () => {
     );
 
     setBasket(sortedBasket);
+    setIsLoading(false);
 
 
           } catch (error) {
@@ -94,16 +103,17 @@ getAllBasketItems();
       
       const total = basket.reduce((sum, baskets) => sum + baskets.subtotal, 0);
         
-      const deleteBasketItem = async(catalog_ID) => {
-        
+      const deleteBasketItem = async() => {
+        setShowDeleteConfirm(false);
         try{
-          const response = await axios.delete(`${API_URL}/basket/users/${user_ID}/catalog/${catalog_ID}`, {
+          const response = await axios.delete(`${API_URL}/basket/users/${user_ID}/catalog/${deleteId}`, {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
          
-getAllBasketItems();
+        getAllBasketItems();
+        setDeleteId(0);
         } catch (error) {
           console.log("Failed to delete");
           if (error.response?.data === "Too many requests" || error.response?.status === 429) {
@@ -137,11 +147,15 @@ getAllBasketItems();
       <section className=" py-8 antialiased md:py-16">
   <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
     <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Shopping Cart</h2>
-    
+    {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+    )}
     <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
         <div className="space-y-6">
-          {basket.length == 0 && (
+          {!isLoading && basket.length == 0 && (
             <p className="flex justify-center text-white text-lg">Your basket is empty.</p>
           )}
            {basket.map(b => (
@@ -179,7 +193,7 @@ getAllBasketItems();
                 <div className="flex items-center gap-4">
                   
 
-                  <button onClick={() => deleteBasketItem(b.catalog.catalogId)} type="button" className="inline-flex mt-3 cursor-pointer items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
+                  <button onClick={() => handleDeleteClick(b.catalog.catalogId)} type="button" className="inline-flex mt-3 cursor-pointer items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
                     <svg className="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
                     </svg>
@@ -226,6 +240,35 @@ getAllBasketItems();
         {showRateLimitPopup && (
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getAllBasketItems} currentPage={currentPage} />
         )}
+
+        {showDeleteConfirm && (
+  <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200 text-center shadow-lg">
+      
+      <h2 className="text-base font-semibold mb-2">Confirm Delete</h2>
+      <p className="text-sm text-gray-400 mb-4">
+        Are you sure you want to remove this item from basket
+      </p>
+
+      <div className="space-y-2">
+        <button
+          onClick={deleteBasketItem}
+          className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
+        >
+          Yes, Delete
+        </button>
+
+        <button
+          onClick={handleDeleteClick}
+          className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
       
       </div>
     </div>

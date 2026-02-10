@@ -7,8 +7,6 @@ const BrowseCategoryCard = ({category : {categoryId, category_name, category_ima
   const bucket = import.meta.env.VITE_S3_BUCKET;
   const region = import.meta.env.VITE_AWS_REGION;
 
-  
-  
   return (
 
    <div className="categories">

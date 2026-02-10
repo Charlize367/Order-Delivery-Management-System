@@ -13,7 +13,7 @@ const CatalogDashboard = () => {
   
   const token = localStorage.getItem('jwtToken');
   const [categories, setCategories] = useState([]);
-  const navigate = new useNavigate();
+  const navigate = useNavigate();
   const [isActive, setIsActive] = useState(false);
   const [inputData, setInputData] = useState([]);
   const [query, setQuery] = useState("");
@@ -22,6 +22,7 @@ const CatalogDashboard = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   
 
 
@@ -55,7 +56,7 @@ const CatalogDashboard = () => {
                     }});
          
             setCategories(response.data);
-            
+            setIsLoading(false);
             
           } catch (error) {
             console.error("Error");
@@ -76,6 +77,9 @@ const CatalogDashboard = () => {
 
     const addCategory = async (event) => {
       event.preventDefault();
+
+      setIsLoading(true);
+      openAddForm(false);
 
       if (!categoryImage) {
         return alert("Please select an image");
@@ -119,12 +123,14 @@ const CatalogDashboard = () => {
 
       console.log(response);
       event.target.reset();
-      openAddForm(false);
+      
       
       setShowPopup(true);
 
       setTimeout(() => setShowPopup(false), 3000);
+      
       fetchCategories();
+      setIsLoading(false);
       
       } catch (error) {
         console.log(error);
@@ -167,7 +173,7 @@ const CatalogDashboard = () => {
         Explore a menu full of fresh, flavorful dishes crafted to satisfy your cravings, delivered straight to you.
       </p>
 
-      <form class="max-w-md mt-6 sm:mt-8 mx-auto">   
+      <form  onSubmit={searchCatalog} class="max-w-md mt-6 sm:mt-8 mx-auto">   
     <label for="search" class="block mb-2.5 text-sm font-medium text-heading sr-only ">Search</label>
     <div class="relative">
         <div class="absolute text-black inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -175,7 +181,7 @@ const CatalogDashboard = () => {
         </div>
         <input type="search" id="search" value={query} 
           onChange={(e) => setQuery(e.target.value)} class="block w-full p-5 ps-9 bg-white  text-heading text-sm rounded-4xl focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search" required />
-        <button type="button" onClick={searchCatalog} class="absolute cursor-pointer end-2 bottom-3 text-white bg-[#56C789] hover:bg-[#38A45C] text-white rounded-lg  box-border  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>
+        <button type="submit" class="absolute cursor-pointer end-2 bottom-3 text-white bg-[#56C789] hover:bg-[#38A45C] text-white rounded-lg  box-border  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>
     </div>
 </form>
 
@@ -261,9 +267,14 @@ const CatalogDashboard = () => {
         
         <div>
 
+          {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
+          <ul class="grid grid-cols-2 md:grid-cols-3 gap-4">
           
-          <ul  class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {categories.length == 0 && (
+          {!isLoading && categories.length == 0 && (
             <p className="flex justify-center text-white text-lg">There are no categories found.</p>
           )}
 
@@ -272,7 +283,7 @@ const CatalogDashboard = () => {
              
              
             
-            <Category key={category.categoryId} category={category} onReload={fetchCategories}/>
+            <Category key={category.categoryId} category={category} setIsLoading={setIsLoading} onReload={fetchCategories}/>
             
           ))
           }

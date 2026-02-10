@@ -1,23 +1,53 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../Auth/AuthContext';
 
 const Header = () => {
   const API_BASE_URL = import.meta.env.VITE_API_URL;
   const { logout } = useAuth();
   const [isActive, setIsActive] = useState(false);
+  const location = useLocation();
+  const [showLoginSuccessPopup, setShowLoginSuccessPopup] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const navRef = useRef(null);
+  
+  const handleLogoutClick = () => {
+      setShowLogoutConfirm(!showLogoutConfirm); 
+  };
+  
+  
+     useEffect(() => {
+           if (location.state?.popup) {
+            
+             setShowLoginSuccessPopup(true);
+         
+             setTimeout(() => setShowLoginSuccessPopup(false), 3000);
+           }
+         }, []);
+
+         useEffect(() => {
+             const handleClickOutside = (event) => {
+               if (navRef.current && !navRef.current.contains(event.target)) {
+                 setIsActive(false);
+               }
+             };
+         
+             document.addEventListener("mousedown", handleClickOutside);
+         
+             return () => {
+               document.removeEventListener("mousedown", handleClickOutside);
+             };
+           }, []);
 
   const openNav = () => {
     setIsActive(!isActive);
   };
 
-  const closeNav = () => {
-    setIsActive(isActive);
-  }
+  
 
   return (
-   <nav class="bg-gradient-to-r from-[#56C789] to-[#096E22] text-white w-full z-20 top-0 start-0 border-default">
+   <nav ref={navRef} class="bg-gradient-to-r from-[#56C789] to-[#096E22] text-white w-full z-20 top-0 start-0 border-default">
          <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
            
         
@@ -35,12 +65,54 @@ const Header = () => {
                </li>
                
                 <li className='hover:bg-gradient-to-r from-[#45B16A] to-[#075E1A] p-2'>
-                 <Link onClick={logout} class="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Logout</Link>
+                 <Link onClick={handleLogoutClick} class="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Logout</Link>
                </li>
              </ul>
            </div>
            )}
          </div>
+
+         {showLoginSuccessPopup && (
+        <div className="fixed top-5 right-5 z-99 flex w-full max-w-xs p-4 text-gray-900 bg-none rounded-lg" role="alert">
+          <div className="flex items-center w-full p-4 text-white bg-gray-800 rounded-lg shadow-sm">
+            <div className="inline-flex items-center justify-center w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+              <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+              </svg>
+            </div>
+            <div className="ms-3 text-sm font-normal">{location.state?.popup || "Logged in successfully."}</div>
+          </div>
+        </div>
+      )}
+
+      {showLogoutConfirm && (
+  <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200 text-center shadow-lg">
+      
+      <h2 className="text-base font-semibold mb-2">Confirm Logout</h2>
+      <p className="text-sm text-gray-400 mb-4">
+        Are you sure you want to logout?
+      </p>
+
+      <div className="space-y-2">
+        <button
+          onClick={logout}
+          className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
+        >
+          Yes, Logout
+        </button>
+
+        <button
+          onClick={handleLogoutClick}
+          className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
        </nav>
   )
 }

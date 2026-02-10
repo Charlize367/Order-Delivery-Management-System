@@ -18,6 +18,7 @@ const Checkout = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const orderData = {
     address: address
@@ -34,6 +35,7 @@ const Checkout = () => {
 
           console.log(response);
           setItems(response.data);
+          setIsLoading(false);
           } catch (error) {
             console.error("Error");
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
@@ -111,6 +113,12 @@ const Checkout = () => {
 
                           {showRateLimitPopup && (
                             <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getAllBasketItems} currentPage={currentPage} />
+                            )}
+
+                            {isLoading && (
+                                <div className="flex items-center justify-center my-20">
+                                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+                                </div>
                             )}
 
                            

@@ -13,6 +13,11 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
    const [showPopup, setShowPopup] = useState(false);
    const [showPopup2, setShowPopup2] = useState(false);
    const [catalogImage, setCatalogImage] = useState(null);
+   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+     
+     const handleDeleteClick = () => {
+         setShowDeleteConfirm(!showDeleteConfirm); 
+     };
 
 
 
@@ -110,7 +115,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
       }
 
   const deleteItem = async (e) => {
-
+  setShowDeleteConfirm(false);
         try {
           const response = await axios.delete(`${API_URL}/catalog/${catalogId}`, {
               headers: {
@@ -151,8 +156,8 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
       <button type="button" onClick={() => openUpdateForm()} class="block w-13 rounded-sm cursor-pointer bg-[#38A45C] hover:bg-[#2C8B47] p-4 text-sm font-medium transition hover:scale-105">
         <img src="/edit-icon.svg" className="w-5"/>
       </button>
-       <button type="button" class="block w-13 rounded-sm bg-[#E53935] hover:bg-[#B71C1C] cursor-pointer p-4 text-sm font-medium transition hover:scale-105">
-       <img onClick={deleteItem} src="/delete-icon.svg" className="w-5"/>
+       <button onClick={handleDeleteClick} type="button" class="block w-13 rounded-sm bg-[#E53935] hover:bg-[#B71C1C] cursor-pointer p-4 text-sm font-medium transition hover:scale-105">
+       <img  src="/delete-icon.svg" className="w-5"/>
       </button>
     </form>
   </div>
@@ -259,6 +264,36 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
             </div>
         </div> 
         )}
+
+
+        {showDeleteConfirm && (
+  <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200 text-center shadow-lg">
+      
+      <h2 className="text-base font-semibold mb-2">Confirm Delete</h2>
+      <p className="text-sm text-gray-400 mb-4">
+        Are you sure you want to delete this category?
+      </p>
+
+      <div className="space-y-2">
+        <button
+          onClick={deleteItem}
+          className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
+        >
+          Yes, Delete
+        </button>
+
+        <button
+          onClick={handleDeleteClick}
+          className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
     </div>
     
   )

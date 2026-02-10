@@ -28,6 +28,14 @@ const Customers = () => {
    const [retryTime, setRetryTime] = useState(0);
    const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
    const [error, setError] = useState("");
+   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+   const [deleteId, setDeleteId] = useState(0);
+   const [isLoading, setIsLoading] = useState(true);
+        
+    const handleDeleteClick = (id) => {
+      setShowDeleteConfirm(!showDeleteConfirm); 
+      setDeleteId(id);
+   };
 
    
 
@@ -123,6 +131,7 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
             setCustomers(response.data.content);
             setCurrentPage(response.data.number);
             setTotalPages(response.data.totalPages);
+            setIsLoading(false);
             
           } catch (error) {
             console.error("Error");
@@ -141,10 +150,11 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
     }, []);
 
 
-      const deleteData = async (id) => {
+      const deleteData = async () => {
 
+      setShowDeleteConfirm(false);
             try {
-              const response = await axios.delete(`${API_URL}/users/customers/${id}`, {
+              const response = await axios.delete(`${API_URL}/users/customers/${deleteId}`, {
                   headers: {
                             'Authorization' : `Bearer ${token}`,
                             'Content-Type': 'application/json'
@@ -154,17 +164,24 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
       
                     setTimeout(() => setShowPopup2(false), 3000);
               console.log("Deleted");
-            
+              setDeleteId(0);
               fetchData();
             } catch (error) {
               console.log("Failed to delete.");
+              console.log(error);
               if (error.response?.data === "Too many requests" || error.response?.status === 429) {
                 const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
                 setRetryTime(retryAfter);
                 setError("Too Many Requests");
                 setShowRateLimitPopup(true);
+
           
           }
+
+          if(error.response?.data.message == "Could not commit JPA transaction") {
+            window.alert("User has pending transactions and cannot be deleted.");
+          }
+         
             }
       }
 
@@ -217,7 +234,7 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
           Add Customers +
         </button>
 
-        {customers.length == 0 && (
+        {!isLoading && customers.length == 0 && (
             <p className="flex justify-center text-white text-lg">There are no customers found.</p>
         )}
         {showRateLimitPopup && (
@@ -284,6 +301,11 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
               Customer details updated successfully.
             </div>
               )}
+        {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
 
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-6">
           {customers.length > 0 && (
@@ -313,7 +335,7 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
             
             <button
               className="cursor-pointer p-1 rounded-md bg-transparent hover:bg-[#E53935] transition-colors duration-150"
-              onClick={() => deleteData(customer.userId)}
+              onClick={() => handleDeleteClick(customer.userId)}
             >
               <img className="w-5 h-5" src="/delete-icon.svg" alt="Delete" />
             </button>
@@ -368,6 +390,35 @@ const updateID = customers.find(c => c.userId === resourceId)?.userId;
             </div>
         </div> 
         )}
+
+        {showDeleteConfirm && (
+  <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200 text-center shadow-lg">
+      
+      <h2 className="text-base font-semibold mb-2">Confirm Delete</h2>
+      <p className="text-sm text-gray-400 mb-4">
+        Are you sure you want to delete this customer/user?
+      </p>
+
+      <div className="space-y-2">
+        <button
+          onClick={deleteData}
+          className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
+        >
+          Yes, Delete
+        </button>
+
+        <button
+          onClick={handleDeleteClick}
+          className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
         
         
         </div>

@@ -20,13 +20,21 @@ const ItemDetails = () => {
     const [retryTime, setRetryTime] = useState(0);
     const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
     const [showLoginPopup, setShowLoginPopup] = useState(false);
+    const [showLoginSuccessPopup, setShowLoginSuccessPopup] = useState(false);
     const [error, setError] = useState("");
     const location = useLocation();
     const navigate = useNavigate();
     const hasResumedRef = useRef(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    
+    useEffect(() => {
+    if (location.state?.popup) {
+     
+      setShowLoginSuccessPopup(true);
   
+      setTimeout(() => setShowLoginSuccessPopup(false), 3000);
+    }
+  }, []);
 
 
     const goToLogin = () => {
@@ -70,6 +78,7 @@ console.log(quantity);
 
           console.log(response);
           setItem(response.data);
+          setIsLoading(false);
           } catch (error) {
             console.error("Error");
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
@@ -192,10 +201,12 @@ console.log(location.state?.quantity);
         />
       )}
 
+  
+
      
       {showPopup && (
-        <div className="fixed top-5 right-5 z-99 flex w-full max-w-xs p-4 text-gray-500 bg-none rounded-lg" role="alert">
-          <div className="flex items-center w-full p-4 text-white bg-gray-500 rounded-lg shadow-sm">
+        <div className="fixed top-5 right-5 z-99 flex w-full max-w-xs p-4 text-gray-900 bg-none rounded-lg" role="alert">
+          <div className="flex items-center w-full p-4 text-white bg-gray-800 rounded-lg shadow-sm">
             <div className="inline-flex items-center justify-center w-8 h-8 text-green-500 bg-green-100 rounded-lg">
               <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
@@ -244,7 +255,11 @@ console.log(location.state?.quantity);
       </div>
     </div>
       )}
-
+{isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+    )}
   <div className="flex-1 flex items-center justify-center">
 
     

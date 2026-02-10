@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
-const Category = ({category : {categoryId, category_name, category_image}, onReload}) => {
+const Category = ({category : {categoryId, category_name, category_image}, setIsLoading, onReload}) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const bucket = import.meta.env.VITE_S3_BUCKET;
@@ -14,6 +14,12 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
   const [showPopup, setShowPopup] = useState(false);
   const [showPopup2, setShowPopup2] = useState(false);
   const [categoryImage, setCategoryImage] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  
+  
+  const handleDeleteClick = () => {
+      setShowDeleteConfirm(!showDeleteConfirm); 
+  };
 
 
    const openUpdateForm = (e) => {
@@ -42,6 +48,8 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
   const updateCategory = async (e) => {
     
         e.preventDefault();
+        setIsLoading(true);
+        openUpdateForm(isActive);
         let categoryPayload = { ...inputData };
 
         try {
@@ -86,11 +94,12 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
 
           console.log(response);
           e.target.reset();
-          openUpdateForm(isActive);
+          
           setShowPopup(true);
 
           setTimeout(() => setShowPopup(false), 3000);
           onReload();
+          setIsLoading(false);
         } catch (error) {
           console.log("Failed to Update.", error);
           console.log(inputData);
@@ -100,6 +109,8 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
       }
 
   const deleteCategory = async (e) => {
+    setShowDeleteConfirm(false);
+    setIsLoading(true);
     
         try {
           const response = await axios.delete(`${API_URL}/categories/${categoryId}`, {
@@ -110,12 +121,14 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
           
           setShowPopup2(true);
 
-    
+          
           setTimeout(() => {
             setShowPopup2(false);
-            onReload(); 
+            onReload();
+            setIsLoading(false);
           }, 3000);
-          console.log("Deleted");
+          
+          
           
         } catch {
           console.log("Failed to delete.");
@@ -152,7 +165,7 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
     </button>
     <button
       type="button"
-      onClick={deleteCategory}
+      onClick={handleDeleteClick}
       className="w-6 h-6 cursor-pointer"
     >
       <img src="./delete-icon.svg" className="pointer-events-none" />
@@ -245,6 +258,35 @@ const Category = ({category : {categoryId, category_name, category_image}, onRel
             </div>
         </div> 
         )}
+
+        {showDeleteConfirm && (
+  <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200 text-center shadow-lg">
+      
+      <h2 className="text-base font-semibold mb-2">Confirm Delete</h2>
+      <p className="text-sm text-gray-400 mb-4">
+        Are you sure you want to delete this category?
+      </p>
+
+      <div className="space-y-2">
+        <button
+          onClick={deleteCategory}
+          className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
+        >
+          Yes, Delete
+        </button>
+
+        <button
+          onClick={handleDeleteClick}
+          className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
     </div>
 
     

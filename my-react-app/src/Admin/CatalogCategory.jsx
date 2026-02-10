@@ -23,6 +23,7 @@ const CatalogCategory = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
 
   console.log(inputData);
@@ -66,6 +67,7 @@ const CatalogCategory = () => {
           setItem(response.data.content);
           setCurrentPage(response.data.number);
           setTotalPages(response.data.totalPages);
+          setIsLoading(false);
           } catch (error) {
             console.error("Error");
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
@@ -263,13 +265,19 @@ const CatalogCategory = () => {
         </div>
               )}
 
+              {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
+
                   <ul className="grid grid-cols-2 md:grid-cols-4 sm:grid-cols-2 gap-10 p-10">
           {item.map((items) => (
             <AdminItem items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}
           </ul>
 
-          {item.length == 0 && (
+          {!isLoading && item.length == 0 && (
             <p className="flex justify-center text-white text-lg">There are no items in this category.</p>
           )}
 

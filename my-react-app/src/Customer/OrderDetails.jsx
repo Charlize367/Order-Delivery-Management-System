@@ -26,7 +26,14 @@ const OrderDetails = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelId, setCancelId] = useState(0);
 
+  const handleCancelClick = (id) => {
+        setShowCancelConfirm(!showCancelConfirm); 
+        setCancelId(id);
+     };
 
   useEffect(() => {
     if (location.state?.showPopup) {
@@ -71,10 +78,11 @@ const OrderDetails = () => {
       })
     );
 
-    
+    console.log(response);
     setOrderDetails(combined);
     setCurrentPage(response.data.number);
     setTotalPages(response.data.totalPages);
+    setIsLoading(false);
           
           } catch (error) {
             console.error("Error");
@@ -109,7 +117,7 @@ console.log(orderDetails);
   
     
 
-      const cancelOrder = async (e, orderId) => {
+      const cancelOrder = async (e) => {
         e.preventDefault();
          try {
 
@@ -117,7 +125,7 @@ console.log(orderDetails);
           order_status: 'Cancelled'
         }
 
-        const response = await axios.put(`${API_URL}/orders/orderStatus/${orderId}`, putData , {
+        const response = await axios.put(`${API_URL}/orders/orderStatus/${cancelId}`, putData , {
           headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -156,6 +164,12 @@ console.log(orderDetails);
        {showRateLimitPopup && (
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getOrderDetails} currentPage={currentPage} />
         )}
+
+        {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
       
       
        {showPopup && (
@@ -235,102 +249,156 @@ console.log(orderDetails);
                   </div>
               </div>
 
-              <div className="flex">
-              <div class="grid lg:grid-cols-3 gap-10 mt-12 max-lg:max-w-2xl max-lg:mx-auto">
-                {or.orderItems.map(oi => (
-                  <div class="lg:col-span-2 space-y-4">
-                      <div class="grid sm:grid-cols-3 items-center gap-4">
-                          <div class="col-span-2 flex items-center gap-4">
-                              <div class="w-28 h-28 max-sm:w-24 max-sm:h-24 shrink-0 bg-gray-100 p-2 rounded-md">
-                                  <img src={`https://${bucket}.s3.${region}.amazonaws.com/${oi.catalog.catalog_image}`} class="w-full h-full object-contain" />
-                              </div>
-                              <div>
-                                  <h3 class="sm:text-base text-sm font-semibold text-white">{oi.catalog.catalogName}</h3>
-                                  <div class="mt-2">
-                                      <p class="text-xs font-medium text-gray-200 mt-1">Qty: {oi.quantity}</p>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="sm:ml-auto">
-                              <h4 class="sm:text-lg text-base font-semibold text-white">PHP {oi.subtotal}</h4>
-                          </div>
-                      </div>
+             {/* GRID: Items Left, Billing Right */}
+<div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
 
-                      <hr class="border-gray-300" />
+  {/* LEFT — ALL ORDER ITEMS */}
+  <div className="lg:col-span-2 space-y-6">
+    {or.orderItems.map((oi) => (
+      <div key={oi.catalog.catalogId} className="bg-[#2a2a2a] p-4 rounded-md">
+        <div className="grid sm:grid-cols-3 items-center gap-4">
+          
+          <div className="col-span-2 flex items-center gap-4">
+            <div className="w-28 h-28 bg-gray-100 p-2 rounded-md">
+              <img
+                src={`https://${bucket}.s3.${region}.amazonaws.com/${oi.catalog.catalog_image}`}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <h3 className="sm:text-base text-sm font-semibold text-white">
+                {oi.catalog.catalogName}
+              </h3>
+              <p className="text-xs text-gray-200 mt-1">
+                Qty: {oi.quantity}
+              </p>
+            </div>
+          </div>
 
-                      </div>
-                ))}
-                <div >
-                  <div class="bg-[#202020] border border-[#232323] rounded-md p-4 h-max">
-                      <h3 class="text-base font-semibold text-white border-b border-gray-300 pb-2">Billing details</h3>
-                      <ul class="font-medium mt-6 space-y-4">
-                         
-                          
-                          
-                          <li class="flex flex-wrap gap-4 text-[15px]">Total <span class="ml-auto text-white font-semibold">PHP {or.order.order_price}</span></li>
-                      </ul>
-                      <div class="mt-8 space-y-3">
-                          <button
-                            onClick={(e) => cancelOrder(e, or.order.orderId)}
-                            type="button"
-                            className="text-sm px-4 py-2.5 w-full font-medium tracking-wide 
-                                        bg-green-800 text-white rounded-md cursor-pointer
-                                        hover:bg-green-700 active:bg-green-900
-                                        transition-colors duration-200"
-                            >
-                            Cancel Order
-                            </button>
+          <div className="sm:ml-auto">
+            <h4 className="sm:text-lg text-base font-semibold text-white">
+              PHP {oi.subtotal}
+            </h4>
+          </div>
+        </div>
 
-                            <button
-                            type="button"
-                            className="text-sm px-4 py-2.5 w-full font-medium tracking-wide
-                                        bg-transparent text-white border border-gray-300 rounded-md cursor-pointer
-                                        hover:bg-gray-700 hover:border-gray-400
-                                        active:bg-gray-800
-                                        transition-colors duration-200"
-                            >
-                            Continue Shopping
-                            </button>
+        <hr className="border-gray-300 my-3" />
+      </div>
+    ))}
+  </div>
 
-                      </div>
-                  </div>
+  {/* RIGHT — BILLING + DELIVERY CARD */}
+  <div className="space-y-6">
 
-                  <div class="bg-[#202020] border border-[#232323] rounded-md p-4 mt-4 h-max">
-                      <h3 class="text-base font-semibold text-white border-b border-gray-300 pb-2">Delivery Details</h3>
-                      <ul class="font-medium mt-6 space-y-4">
-                         
-                          
-                          
-                          <li class="flex flex-wrap gap-4 text-[15px]">Estimated Time <span class="ml-auto text-white font-semibold">{!or.estimated_time || or.estimated_time === null
-          ? "Pending" : (() => {
-        const [hours, minutes, seconds] = or.estimated_time.split(":").map(Number);
-        const date = new Date();
-        date.setHours(hours, minutes, seconds);
-        return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
-      })()}</span></li>
+    {/* Billing Card */}
+    <div className="bg-[#202020] border border-[#232323] rounded-md p-6">
+      <h3 className="text-lg font-semibold text-white border-b border-gray-300 pb-2">
+        Billing details
+      </h3>
 
-      <li class="flex flex-wrap gap-4 text-[15px]">Delivered Time <span class="ml-auto text-white font-semibold">{!or.delivered_time || or.delivered_time === null
-          ? "Not delivered yet" : (() => {
-        const [hours, minutes, seconds] = or.delivered_time.split(":").map(Number);
-        const date = new Date();
-        date.setHours(hours, minutes, seconds);
-        return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
-      })()}</span></li>
+      <ul className="mt-4 text-sm font-medium text-white space-y-4">
+        <li className="flex justify-between">
+          <span>Total</span>
+          <span className="font-semibold">PHP {or.order.order_price}</span>
+        </li>
+      </ul>
 
-      <li class="flex flex-wrap gap-4 text-[15px]">Assigned Driver <span class="ml-auto text-white font-semibold">{!or.deliveryMen || or.deliveryMen === null 
-          ? "No driver assigned yet" : or.deliveryMen.username}</span></li>
-                      </ul>
-                </div>
-                  </div>
-                  </div>
+      <div className="mt-6 space-y-3">
+        <button
+          onClick={() => showCancelConfirm(or.order.orderId)}
+          className="w-full text-sm px-4 py-2 bg-green-800 text-white rounded-md hover:bg-green-700"
+        >
+          Cancel Order
+        </button>
 
-                  
-              </div>
+        <button
+          className="w-full text-sm px-4 py-2 bg-transparent text-white border border-gray-300 rounded-md hover:bg-gray-700"
+        >
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+
+    {/* Delivery Details */}
+    <div className="bg-[#202020] border border-[#232323] rounded-md p-6">
+      <h3 className="text-lg font-semibold text-white border-b border-gray-300 pb-2">
+        Delivery Details
+      </h3>
+
+      <ul className="mt-4 text-sm font-medium text-white space-y-3">
+        <li className="flex justify-between">
+          <span>Estimated Time</span>
+          <span className="font-semibold">
+            {!or.estimated_time
+              ? "Pending"
+              : new Date(`1970-01-01T${or.estimated_time}Z`).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
+          </span>
+        </li>
+
+        <li className="flex justify-between">
+          <span>Delivered Time</span>
+          <span className="font-semibold">
+            {!or.delivered_time
+              ? "Not delivered yet"
+              : new Date(`1970-01-01T${or.delivered_time}Z`).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
+          </span>
+        </li>
+
+        <li className="flex justify-between">
+          <span>Assigned Driver</span>
+          <span className="font-semibold">
+            {or.deliveryMen?.username || "No driver assigned"}
+          </span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
           </div>
       </div>
       )})}
 
-      {ongoingOrders.length == 0 && (
+      {showCancelConfirm && (
+  <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200 text-center shadow-lg">
+      
+      <h2 className="text-base font-semibold mb-2">Confirm Delete</h2>
+      <p className="text-sm text-gray-400 mb-4">
+        Are you sure you want to remove this item from basket
+      </p>
+
+      <div className="space-y-2">
+        <button
+          onClick={cancelOrder}
+          className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
+        >
+          Yes, Delete
+        </button>
+
+        <button
+          onClick={handleCancelClick}
+          className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
+
+      {!isLoading && ongoingOrders.length == 0 && (
             <p className="flex justify-center text-white text-lg">You have no pending orders.</p>
           )}
       

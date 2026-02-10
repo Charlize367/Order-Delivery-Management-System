@@ -26,6 +26,8 @@ const Deliveries = () => {
    const [retryTime, setRetryTime] = useState(0);
    const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
    const [error, setError] = useState("");
+   const [isLoading, setIsLoading] = useState(true);
+   
   
     
     
@@ -66,6 +68,7 @@ const Deliveries = () => {
     setDeliveryDetails(sortedDeliveries);
     setCurrentPage(response.data.number);
     setTotalPages(response.data.totalPages);
+    setIsLoading(false);
           
           } catch (error) {
             console.error("Error");
@@ -245,7 +248,11 @@ const Deliveries = () => {
       <Header />
       
        <div className="relative overflow-x-auto  shadow-xl rounded-xl sm:rounded-lg m-6">
-        
+        {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="bg-[#232323] text-gray-200 border-b border-[#2f2f2f]">
             <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white">
@@ -347,7 +354,7 @@ const Deliveries = () => {
 
           </div>
 
-    {deliveryDetails.length == 0 && (
+    {!isLoading && deliveryDetails.length == 0 && (
             <p className="flex justify-center text-white text-lg">There are no deliveries found.</p>
     )}
 

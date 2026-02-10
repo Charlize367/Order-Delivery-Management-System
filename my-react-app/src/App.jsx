@@ -14,12 +14,10 @@ import Basket from "./Customer/Basket.jsx"
 import BrowseCategory from "./Customer/BrowseCategory.jsx"
 import BrowseCatalog from './Customer/BrowseCatalog.jsx'
 import ItemDetails from './Customer/ItemDetails.jsx'
-
 import DeliveriesList from './Delivery/DeliveriesList.jsx'
 import CatalogCategory from './Admin/CatalogCategory.jsx'
 import OrderDetails from './Customer/OrderDetails.jsx'
 import Checkout from './Customer/Checkout.jsx'
-import { Outlet, NavLink } from "react-router-dom";
 import OrderHistory from './Customer/OrderHistory.jsx'
 import SearchResults from './components/SearchResults.jsx'
 import { AuthProvider} from './Auth/AuthContext.jsx'
@@ -28,8 +26,9 @@ import ProtectedRoute from './Auth/ProtectedRoute.jsx'
 const App = () => {
   return (
     <div>
-      <AuthProvider>
       <BrowserRouter>
+      <AuthProvider>
+      
       
 
             <Routes>
@@ -100,65 +99,65 @@ const App = () => {
                   <Route
                     path="/order"
                     element={
-                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                      
                         <OrderDetails />
-                      </ProtectedRoute>
+                      
                     }
                   />
                   <Route
                     path="/basket"
                     element={
-                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                      
                         <Basket />
-                      </ProtectedRoute>
+                     
                     }
                   />
                   <Route
                     path="/browse"
                     element={
-                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                     
                         <BrowseCategory />
-                      </ProtectedRoute>
+                      
                     }
                   />
                   <Route
                     path="/browse_food/:id/:name"
                     element={
-                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                      
                         <BrowseCatalog />
-                      </ProtectedRoute>
+                      
                     }
                   />
                   <Route
                     path="/food_details/:id/"
                     element={
-                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                      
                         <ItemDetails />
-                      </ProtectedRoute>
+                      
                     }
                   />
                   <Route
                     path="/checkout/:id"
                     element={
-                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                     
                         <Checkout />
-                      </ProtectedRoute>
+                      
                     }
                   />
                   <Route
                     path="/order_history"
                     element={
-                      <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                     
                         <OrderHistory />
-                      </ProtectedRoute>
+                      
                     }
                   />
                   <Route
                     path="/search"
                     element={
-                      <ProtectedRoute allowedRoles={["CUSTOMER", "ADMIN"]}>
+                      
                         <SearchResults />
-                      </ProtectedRoute>
+                      
                     }
                   />
 
@@ -172,8 +171,9 @@ const App = () => {
                     }
                   />
                 </Routes>
-</BrowserRouter>
+
 </AuthProvider>
+</BrowserRouter>
     </div>
   )
 }
