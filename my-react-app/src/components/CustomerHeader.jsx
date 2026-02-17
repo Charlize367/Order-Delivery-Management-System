@@ -12,7 +12,7 @@ const Header = () => {
   const token = localStorage.getItem('jwtToken');
   const navigate = useNavigate();
   const location = useLocation();
-  const [showLoginSuccessPopup, setShowLoginSuccessPopup] = useState(true);
+  const [showLoginSuccessPopup, setShowLoginSuccessPopup] = useState(false);
   const [showLogoutSuccessPopup, setShowLogoutSuccessPopup] = useState(false);
   const { logoutPopup, setLogoutPopup } = useAuth();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
