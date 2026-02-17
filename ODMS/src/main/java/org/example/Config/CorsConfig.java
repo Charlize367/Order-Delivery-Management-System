@@ -1,5 +1,6 @@
 package org.example.Config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -13,10 +14,14 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
+    @Value("${frontend.url}")
+    private String url;
+
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "https://order-delivery-management-system.vercel.app/", "http://localhost:5174", "http://localhost:5178")); // Frontend origin
+        config.setAllowedOrigins(List.of("http://localhost:5173", "https://order-delivery-management-system.vercel.app/", "http://localhost:5174", "http://localhost:5178", "http://13.60.248.219:3000", url )); // Frontend origin
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -32,7 +37,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5175", "https://order-delivery-management-system.vercel.app/", "http://localhost:5174", "http://localhost:5179")
+                        .allowedOrigins("http://localhost:5175", "https://order-delivery-management-system.vercel.app/", "http://localhost:5174", "http://localhost:5173",  "http://13.60.248.219:3000", url)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

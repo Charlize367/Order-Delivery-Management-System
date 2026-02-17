@@ -61,7 +61,7 @@ const DeliveryLogin = () => {
             <input type="password" id="password" value={password} onChange={handlePasswordChange} class="bg-transparent text-white border border-[0.5px] rounded-lg border-gray-100 border-default-small text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Password" required />
         </div>
         
-        <button type="submit" class="block w-full  mt-10 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white">Login</button>
+        <button type="submit" class="block w-full cursor-pointer mt-10 mb-5 rounded-lg px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent bg-gradient-to-r from-[#56C789] to-[#096E22] hover:text-indigo-600 dark:hover:bg-indigo-700 dark:hover:text-white">Login</button>
        
     </form>
 </div>

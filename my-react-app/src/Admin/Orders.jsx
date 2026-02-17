@@ -10,6 +10,8 @@ const Orders = () => {
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [orderDetails, setOrderDetails] = useState([]);
+  const bucket = import.meta.env.VITE_S3_BUCKET;
+  const region = import.meta.env.VITE_AWS_REGION;
   const [orderId, setOrderID] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
@@ -23,6 +25,7 @@ const Orders = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
 
   console.log(selectedOrder);
@@ -57,6 +60,7 @@ const Orders = () => {
           setOrderDetails(sortedOrders);
           setCurrentPage(response.data.number);
           setTotalPages(response.data.totalPages);
+          setIsLoading(false);
           
           
           
@@ -131,7 +135,7 @@ const Orders = () => {
                     console.log(response);
          setOrderDetails(or =>
           or.map(orders =>
-            orders.orders.orderId === orderId
+            orders.order.orderId === orderId
               ? { ...orders, orders : {...orders.orders, order_status: status}
           }
             : orders
@@ -159,7 +163,11 @@ const Orders = () => {
       <Header />
       
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-6">
-        
+        {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="bg-[#232323] text-gray-200 border-b border-[#2f2f2f]">
             <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white">
@@ -213,37 +221,56 @@ const Orders = () => {
             )})}
             </table>
 
-            <div className="ordersView" style={isActive ? {display: "flex"} : {display: "none"}}>
-              <button className="closeBtn5" onClick={openOrders}>x</button>
-              <ul>
-                 {orderItems.map(oi => (
-              <li className="order-summary-details-div">
-                <img className="order-summary-img" src={`${API_URL}/images/${oi.catalog.catalog_image}`}/>
-                <div className="order-summary-details">
-                    <div className="order-summary-division">
-                        <p className="order-summary-name">{oi.catalog.catalogName}</p>
-                        <p className="order-summary-price">Price: PHP {oi.catalog.catalog_price}</p>
-                        <p className="order-summary-quantity">Quantity: {oi.quantity}</p>
-                    </div>
-                   
-                    <p className="order-summary-subtotal">PHP {oi.subtotal}</p>
-                  
-                   <div className="order-summary-total">
-                    
-                    
-                    </div>
-                    
-                </div>
-                
-              </li>
-                 ))}
-              </ul>
-              {orderPrice && (
-                <>
-              <p className="order-summary-total-txt">Total:</p>
-                    <p className="order-summary-total-amount-txt"> PHP {orderPrice.order_price}</p></>
-              )}
-            </div>
+            <div
+  className={`fixed top-0 right-0 w-96 h-screen bg-[#2a2a2a] text-white shadow-2xl p-6 flex flex-col z-50 transition-transform ${
+    isActive ? "translate-x-0" : "translate-x-full"
+  }`}
+>
+  
+  <button
+    className="self-end  cursor-pointer hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold transition"
+    onClick={openOrders}
+  >
+    ×
+  </button>
+
+  <h2 className="text-2xl font-bold mt-2 mb-4">Order Items</h2>
+
+  
+  <ul className="flex-1 flex flex-col gap-4 overflow-y-auto">
+    {orderItems.map((oi) => (
+      <li
+        key={oi.catalog.id}
+        className="flex gap-4 p-4 bg-[#1f1f1f] rounded-lg shadow hover:shadow-lg transition items-center"
+      >
+        <img
+          className="w-20 h-20 object-cover rounded-lg border-2 border-green-500"
+          src={`https://${bucket}.s3.${region}.amazonaws.com/${oi.catalog.catalog_image}`}
+          alt={oi.catalog.catalogName}
+        />
+        <div className="flex-1 flex flex-col justify-between">
+          <div className="flex flex-col gap-1">
+            <p className="font-semibold text-white text-lg">{oi.catalog.catalogName}</p>
+            <p className="text-white text-sm">Price: PHP {oi.catalog.catalog_price}</p>
+            <p className="text-white text-sm">Quantity: {oi.quantity}</p>
+          </div>
+          <p className="mt-2 font-bold text-white">Subtotal: PHP {oi.subtotal}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+
+  {orderPrice && (
+    <div className="mt-4 pt-4 border-t border-green-500 flex justify-between items-center font-bold text-xl text-white">
+      <p>Total:</p>
+      <p>PHP {orderPrice.order_price}</p>
+    </div>
+  )}
+
+ 
+</div>
+
             
         
     </div>
@@ -252,7 +279,7 @@ const Orders = () => {
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getOrderDetails} currentPage={currentPage} />
     )}
 
-    {orderDetails.length == 0 && (
+    {!isLoading && orderDetails.length == 0 && (
             <p className="flex justify-center text-white text-lg">There are no orders found.</p>
     )}
 

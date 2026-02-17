@@ -42,7 +42,9 @@ public class DeliveryMapper {
     public DeliveryResponse toResponse(Deliveries delivery) {
         DeliveryResponse deliveryResponse = new DeliveryResponse();
 
-        deliveryResponse.setDeliveryMen(userMapper.toResponse(delivery.getDeliveryMen()));
+        if(delivery.getDeliveryMen() != null) {
+            deliveryResponse.setDeliveryMen(userMapper.toResponse(delivery.getDeliveryMen()));
+        }
         deliveryResponse.setDeliveryId(delivery.getDeliveryId());
         deliveryResponse.setDelivery_status(delivery.getDelivery_status());
         deliveryResponse.setOrder(orderMapper.toResponse(delivery.getOrders()));
@@ -57,7 +59,9 @@ public class DeliveryMapper {
                 .map(delivery -> {
                     DeliveryResponse deliveryResponse = new DeliveryResponse();
 
-                    deliveryResponse.setDeliveryMen(userMapper.toResponse(delivery.getDeliveryMen()));
+                    if(delivery.getDeliveryMen() != null) {
+                        deliveryResponse.setDeliveryMen(userMapper.toResponse(delivery.getDeliveryMen()));
+                    }
                     deliveryResponse.setDeliveryId(delivery.getDeliveryId());
                     deliveryResponse.setDelivery_status(delivery.getDelivery_status());
                     deliveryResponse.setOrder(orderMapper.toResponse(delivery.getOrders()));

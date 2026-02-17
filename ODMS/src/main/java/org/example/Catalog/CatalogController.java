@@ -61,22 +61,10 @@ public class CatalogController {
         CatalogResponse catalog = catalogService.addCatalog(categoryId, request);
         return new ResponseEntity<>(catalog, HttpStatus.CREATED);
     }
-
-    @PostMapping("/image/{id}")
-    public ResponseEntity<Void> uploadImage(
-            @PathVariable Long id,
-            @RequestParam("catalog_image") MultipartFile file
-    ) throws IOException {
-        catalogService.saveImage(id, file);
-        return ResponseEntity.ok().build();
-    }
     
 
     @PutMapping("/{catalogId}/category/{categoryId}")
     public ResponseEntity<CatalogResponse> updateCatalog(@Validated @PathVariable long catalogId, @PathVariable long categoryId, @RequestBody UpdateCatalogRequest request) throws IOException {
-
-
-
         CatalogResponse catalog = catalogService.updateCatalog(catalogId, categoryId, request);
         return new ResponseEntity<>(catalog, HttpStatus.CREATED);
     }

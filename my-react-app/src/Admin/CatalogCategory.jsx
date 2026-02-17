@@ -10,6 +10,7 @@ import RateLimitPopup from '../components/RateLimitPopup.jsx';
 const CatalogCategory = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const param = useParams();
+  
   const [item, setItem] = useState([]);
   const token = localStorage.getItem('jwtToken');
   const [isActive, setIsActive] = useState(false);
@@ -22,6 +23,7 @@ const CatalogCategory = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
 
   console.log(inputData);
@@ -65,6 +67,7 @@ const CatalogCategory = () => {
           setItem(response.data.content);
           setCurrentPage(response.data.number);
           setTotalPages(response.data.totalPages);
+          setIsLoading(false);
           } catch (error) {
             console.error("Error");
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
@@ -88,64 +91,75 @@ const CatalogCategory = () => {
 
 
     const addItem = async (event) => {
-        event.preventDefault();
-        let catalogId = 0;
-            try {
-              
-                const response = await axios.post(`${API_URL}/catalog/category/${param.id}`, inputData, {
+      event.preventDefault();
+
+      if (!catalogImage) {
+        alert("Please select an image"); 
+        return;
+      }
+
+      setIsLoading(true);
+      openAddForm(false);
+
+      try {
+
+      const imageData = {
+        filename: catalogImage.name,
+        contentType: catalogImage.type,
+        fileSize: catalogImage.size
+
+      }
+        const { data } = await axios.post(`${API_URL}/images/initiate`, imageData,  {
                     headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
-                });
-                
-                setShowPopup(true);
+        });
 
-   
-                setTimeout(() => setShowPopup(false), 3000);
 
-              
-                const dt = response.data;
+        const { uploadUrl, key } = data;
 
-                catalogId = response.data.catalogId;
+      await axios.put(uploadUrl, catalogImage, {
+        headers: {
+          'Content-Type': catalogImage.type,
+        },
+      });
 
-            
+      const catalogPayload = {
+      ...inputData,
+      catalog_image: key, 
+    };
 
-              if (catalogImage) {
-             
-            
-                const fd = new FormData();
-                fd.append("catalog_image", catalogImage);
-                
-
-                await axios.post(`${API_URL}/catalog/image/${catalogId}`, fd, {
+      const response = await axios.post(`${API_URL}/catalog/category/${param.id}`, catalogPayload, {
                   headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                  },
-                });
-                
-                
-              }
-              event.target.reset();
-                openAddForm(isActive);
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+      });
 
-                handleReloadData();
-                return true;
-
-            } catch (error) {
-                console.error('Failed to add item:', error);
-                if (error.response?.data === "Too many requests" || error.response?.status === 429) {
-                const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
-                setRetryTime(retryAfter);
-                setError("Too Many Requests");
-                setShowRateLimitPopup(true);
-          
-          }
-                return false;
-            }
-
+      console.log(response);
+      setInputData({
+        catalogName: "",
+        catalog_description: "",
+        catalog_price: "",
+        catalog_image: null,
+        category: param.id
+      });
+      event.target.reset();
+      openAddForm(isActive);
+      fetchCatalogByCategory();
+      
+      } catch (error) {
+        console.log(error);
+        if (error.response?.data === "Too many requests" || error.response?.status === 429) {
+          const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
+          setRetryTime(retryAfter);
+          setError("Too Many Requests");
+          setShowRateLimitPopup(true);
         }
+      }
+
+    }
 
         
 
@@ -158,7 +172,7 @@ const CatalogCategory = () => {
       <section className="dashboard">
         <div className="catalog-top">
           <h1 className="text-4xl m-9 font-bold text-white">{param.name}</h1>
-         <button onClick={openAddForm} class="flex justify-center  m-10 rounded-sm bg-gradient-to-r from-[#56C789] to-[#096E22] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600" href="#">
+         <button onClick={openAddForm} class="flex justify-center  cursor-pointer m-10 rounded-sm bg-[#096E22] hover:bg-[#075515] rounded-sm px-12 py-3 text-sm font-medium text-white " href="#">
           Add Item +
         </button>
           
@@ -179,7 +193,7 @@ const CatalogCategory = () => {
                         <h3 className="text-lg font-semibold text-white">
                             Add Catalog
                         </h3>
-                        <button type="button" onClick={openAddForm} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                        <button type="button" onClick={openAddForm} className="text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                             <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -220,7 +234,7 @@ const CatalogCategory = () => {
                file:rounded-lg file:border-0
                file:text-sm file:font-semibold
                file:bg-gray-100 file:text-gray-700
-               hover:file:bg-[#2a2a2a]
+              
  border border-[#2f2f2f] rounded-lg cursor-pointer bg-[#2a2a2a]" type="file" placeholder="Catalog Image" name="catalog_image" aria-describedby="file_input_help" id="file_input"/>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                         </div>
@@ -228,7 +242,7 @@ const CatalogCategory = () => {
                       <input type="hidden" name="category" value={inputData.category} onChange={handleChange} />
 
 
-                        <button type="submit" className="text-white inline-flex items-center bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                        <button type="submit" className="text-white inline-flex items-center cursor-pointer  rounded-sm bg-[#096E22] hover:bg-[#075515] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
                             <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
                             Add
                         </button>
@@ -255,13 +269,19 @@ const CatalogCategory = () => {
         </div>
               )}
 
-                  <ul className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 p-10">
+              {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
+
+                  <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 p-10">
           {item.map((items) => (
             <AdminItem items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}
           </ul>
 
-          {item.length == 0 && (
+          {!isLoading && item.length == 0 && (
             <p className="flex justify-center text-white text-lg">There are no items in this category.</p>
           )}
 

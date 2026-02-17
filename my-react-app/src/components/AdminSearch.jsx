@@ -2,11 +2,10 @@ import { useNavigate, Link, useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 import ItemCard from '../components/ItemCard';
-import Header from '../components/CustomerHeader';
+import Header from '../components/AdminHeader';
 
-import React from 'react'
 
-const SearchResults = () => {
+const AdminSearch = () => {
   const API_URL = import.meta.env.VITE_API_URL;
     const location = useLocation();
     const params = new URLSearchParams(location.search);
@@ -85,4 +84,4 @@ const SearchResults = () => {
 
 }
 
-export default SearchResults
+export default AdminSearch

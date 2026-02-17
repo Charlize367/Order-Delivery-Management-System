@@ -6,9 +6,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 
-public class CategoryResponse implements Serializable {
+public class CategoryResponse {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     private Long categoryId;
     private String category_name;

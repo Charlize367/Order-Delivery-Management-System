@@ -8,7 +8,9 @@ import RateLimitPopup from '../components/RateLimitPopup';
 const Checkout = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const token = localStorage.getItem('jwtToken');
+  const bucket = import.meta.env.VITE_S3_BUCKET;
+  const region = import.meta.env.VITE_AWS_REGION;
+  const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ const token = localStorage.getItem('jwtToken');
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const orderData = {
     address: address
@@ -32,6 +35,7 @@ const token = localStorage.getItem('jwtToken');
 
           console.log(response);
           setItems(response.data);
+          setIsLoading(false);
           } catch (error) {
             console.error("Error");
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
@@ -54,6 +58,11 @@ const token = localStorage.getItem('jwtToken');
 
 
   const placeOrder = async() => {
+
+    if(!address) {
+
+        window.alert("Address is required.");
+    }
     try {
       const response = await axios.post(`${API_URL}/orders/users/${user_ID}`, orderData, {
         headers : {
@@ -85,12 +94,12 @@ const token = localStorage.getItem('jwtToken');
         <div class="flex max-md:flex-col gap-12 max-lg:gap-4 h-full">
             <div class="bg-[#2a2a2a] p-10 md:h-screen md:sticky md:top-0 md:min-w-[800px]">
                 <div class="relative h-full">
-                    <div class="px-6 py-8 md:overflow-auto md:h-screen">
+                    <div class="px-6 py-20 md:overflow-auto md:h-screen">
                         <div class="space-y-4">
                           {items.map(b => (
                             <div class="flex items-start gap-4">
                                 <div class="w-24 h-24 flex p-3 shrink-0 bg-white rounded-md">
-                                    <img src={`${API_BASE_URL}/images/${b.catalog.catalog_image}`} class="w-full object-contain" />
+                                    <img src={`https://${bucket}.s3.${region}.amazonaws.com/${b.catalog.catalog_image}`} class="w-full object-contain" />
                                 </div>
                                 <div class="w-full">
                                     <h3 class="text-sm text-white font-semibold">{b.catalog.catalogName}</h3>
@@ -106,6 +115,12 @@ const token = localStorage.getItem('jwtToken');
                             <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getAllBasketItems} currentPage={currentPage} />
                             )}
 
+                            {isLoading && (
+                                <div className="flex items-center justify-center my-20">
+                                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+                                </div>
+                            )}
+
                            
                         </div>
                         <hr class="border-gray-300 my-8" />
@@ -118,14 +133,14 @@ const token = localStorage.getItem('jwtToken');
                             </ul>
 
                             <div class="mt-8">
-                                <button onClick={placeOrder} type="button" class="rounded-md px-4 py-2.5 w-full text-sm font-medium tracking-wide bg-gradient-to-r from-[#56C789] to-[#096E22] text-white cursor-pointer">Complete Purchase</button>
+                                <button onClick={placeOrder} type="button" class="rounded-md px-4 py-2.5 w-full text-sm font-medium tracking-wide cursor-pointer bg-green-800 text-white cursor-pointer">Complete Purchase</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="max-w-4xl w-full h-max rounded-md px-4 py-8 max-md:-order-1">
+            <div class="max-w-4xl w-full h-max rounded-md px-4 py-20 max-md:-order-1">
                 <form>
                     <div>
                         <h2 class="text-xl text-white font-semibold mb-6">Delivery Details</h2>
@@ -136,12 +151,12 @@ const token = localStorage.getItem('jwtToken');
                                     className="bg-[#2a2a2a]
  border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " required/>
                             </div>
-                            <div className="mr-10">
+                            {/* <div className="mr-10">
                                 <label class="text-sm text-white font-medium block mb-2">Note to Driver</label>
                                 <input type="text" placeholder="Enter Note"
                                     className="bg-[#2a2a2a]
  border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " />
-                            </div>
+                            </div> */}
                             
                         </div>
                     </div>

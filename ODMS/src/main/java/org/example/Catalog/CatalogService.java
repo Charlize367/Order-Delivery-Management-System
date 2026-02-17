@@ -43,7 +43,7 @@ public class CatalogService {
 
     private static final Logger logger = LoggerFactory.getLogger(Catalog.class);
 
-    public static String uploadDirectory = "/Users/charlizemendoza/Documents/ODMSImages";
+
 
     public List<CatalogResponse> getAllCatalog() {
         logger.info("Displaying all catalogs");
@@ -80,6 +80,7 @@ public class CatalogService {
             catalog.setCatalogName(safeName);
             catalog.setCatalog_price(request.getCatalog_price());
             catalog.setCatalog_description(safeDescription);
+            catalog.setCatalog_image(request.getCatalog_image());
             catalog.setCategory(category);
 
             Catalog savedCatalog =  catalogRepository.save(catalog);
@@ -88,30 +89,7 @@ public class CatalogService {
 
     }
 
-    public void saveImage(Long catalogId, MultipartFile file) throws IOException {
-        Catalog catalog = catalogRepository.findById(catalogId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-
-        Files.createDirectories(Paths.get(uploadDirectory));
-
-        if (catalog.getCatalog_image() != null) {
-            Path oldPath = Paths.get(uploadDirectory, catalog.getCatalog_image());
-
-            if (Files.exists(oldPath)) {
-                Files.delete(oldPath);
-            }
-        }
-
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDirectory, fileName);
-
-        Files.write(filePath, file.getBytes());
-
-
-        catalog.setCatalog_image(fileName);
-        catalogRepository.save(catalog);
-    }
 
     public CatalogResponse updateCatalog(Long catalogId, Long categoryId, UpdateCatalogRequest request) throws IOException {
         try {
@@ -132,6 +110,7 @@ public class CatalogService {
             catalog.setCatalogName(safeName);
             catalog.setCatalog_price(request.getCatalog_price());
             catalog.setCatalog_description(safeDescription);
+            catalog.setCatalog_image(request.getCatalog_image());
             catalog.setCategory(category);
             Catalog savedCatalog =  catalogRepository.save(catalog);
             logger.info("Successfully updated catalog ID: {}", catalogId);
@@ -156,7 +135,7 @@ public class CatalogService {
     }
 
 
-    @Cacheable("catalog")
+   
     public CatalogResponse getCatalogById(Long id) {
         logger.info("Getting catalog ID: {}", id);
         Catalog catalog = catalogRepository.findById(id)

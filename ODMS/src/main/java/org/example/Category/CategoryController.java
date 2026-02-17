@@ -62,15 +62,6 @@ public class CategoryController {
 
     }
 
-    @PostMapping("/image/{id}")
-    public ResponseEntity<Void> uploadImage(
-            @PathVariable Long id,
-            @RequestParam("category_image") MultipartFile file
-    ) throws IOException {
-        categoryService.saveImage(id, file);
-        return ResponseEntity.ok().build();
-    }
-
     @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryResponse> updateCategory(@Validated @PathVariable long categoryId, @RequestBody UpdateCategoryRequest request) throws IOException {
         CategoryResponse category = categoryService.updateCategory(categoryId, request);

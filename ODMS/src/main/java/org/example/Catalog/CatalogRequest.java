@@ -23,8 +23,8 @@ public class CatalogRequest {
     @NotNull(message = "Category ID is required")
     private Long categoryId;
 
-
-
+    @NotBlank
+    private String catalog_image;
 
 
     public Long getCategoryId() {
@@ -57,6 +57,14 @@ public class CatalogRequest {
 
     public void setCatalog_price(Double catalog_price) {
         this.catalog_price = catalog_price;
+    }
+
+    public String getCatalog_image() {
+        return catalog_image;
+    }
+
+    public void setCatalog_image(String catalog_image) {
+        this.catalog_image = catalog_image;
     }
 
 }

@@ -20,6 +20,7 @@ const BrowseCatalog = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   
 
   console.log(inputData);
@@ -29,18 +30,14 @@ const BrowseCatalog = () => {
   };
 
 
-  const handleChange = (e) => {
-    const { name, value, files, type } = e.target;
-  setInputData({ ...inputData, [name]: type === "file" ? files[0] : type === "number" ? Number(value) : value,
-    });
-  }
+ 
 
 
   const fetchCatalogByCategory = async (page = 0) => {
           try {
             const response = await axios.get(`${API_BASE_URL}/catalog?page=${page}&size=${pageSize}&categoryId=${param.id}`, {
               headers: {
-                        'Authorization' : `Bearer ${token}`,
+                        
                         'Content-Type': 'application/json'
                     }});
 
@@ -48,6 +45,7 @@ const BrowseCatalog = () => {
           setItem(response.data.content);
           setCurrentPage(response.data.number);
           setTotalPages(response.data.totalPages);
+          setIsLoading(false);
           } catch (error) {
             console.error("Error");
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
@@ -84,13 +82,19 @@ const BrowseCatalog = () => {
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={fetchCatalogByCategory} currentPage={currentPage} />
         )}
 
-                  <ul className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 p-10">
+        {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
+
+                  <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 p-10">
           {item.map((items) => (
             <ItemCard items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}
           </ul>
 
-       {item.length == 0 && (
+       {!isLoading && item.length == 0 && (
             <p className="flex justify-center text-white text-lg">There are no items in this category.</p>
           )}
 

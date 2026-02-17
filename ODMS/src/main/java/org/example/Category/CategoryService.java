@@ -42,7 +42,6 @@ public class CategoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(Category.class);
 
-    public static String uploadDirectory = "/Users/charlizemendoza/Documents/ODMSImages";
 
     public List<CategoryResponse> getAllCategories() {
         logger.info("Displaying all categories");
@@ -64,36 +63,12 @@ public class CategoryService {
 
         Category category = new Category();
         category.setCategory_name(safeName);
+        category.setCategory_image(request.getCategory_image());
 
 
         Category savedCategory =  categoryRepository.save(category);
         logger.info("Successfully added new category with name: {}", request.getCategory_name());
         return categoryMapper.toResponse(savedCategory);
-    }
-
-    public void saveImage(Long categoryId, MultipartFile file) throws IOException {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-
-
-        Files.createDirectories(Paths.get(uploadDirectory));
-
-        if (category.getCategory_image() != null) {
-            Path oldPath = Paths.get(uploadDirectory, category.getCategory_image());
-
-            if (Files.exists(oldPath)) {
-                Files.delete(oldPath);
-            }
-        }
-
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDirectory, fileName);
-
-        Files.write(filePath, file.getBytes());
-
-
-        category.setCategory_image(fileName);
-        categoryRepository.save(category);
     }
 
 
@@ -107,6 +82,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId).get();
         category.setCategoryId(categoryId);
         category.setCategory_name(safeName);
+        category.setCategory_image(request.getCategory_image());
 
         Category savedCategory =  categoryRepository.save(category);
         logger.info("Successfully updated category ID: {}", categoryId);

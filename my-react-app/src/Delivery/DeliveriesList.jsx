@@ -7,7 +7,7 @@ import RateLimitPopup from '../components/RateLimitPopup.jsx';
 
 
 const DeliveriesList = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL;
     const token = localStorage.getItem('jwtToken');
     const user_ID = localStorage.getItem('user_ID');
     const [deliveryDetails, setDeliveryDetails] = useState([]);
@@ -24,6 +24,8 @@ const DeliveriesList = () => {
     const [retryTime, setRetryTime] = useState(0);
     const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+
    
 
 
@@ -48,20 +50,21 @@ const DeliveriesList = () => {
 
     const getDeliveryDetails = async (page = 0) => {
     try {
-            const response = await axios.get(`${API_URL}/delivery/users/delivery/${user_ID}`, {
+            const response = await axios.get(`${API_URL}/delivery?page=${page}&size=${pageSize}&driverId=${user_ID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }});
 
-
+          
           const deliveries = response.data.content;
+          
           const deliveryWithOrderItems = await Promise.all(
             deliveries.map(async (delivery) => {
               const orderId = delivery.order.orderId;
 
               const itemsRes = await axios.get(
-          `${API_BASE_URL}/orderItems/orders/${orderId}`,
+          `${API_URL}/orderItems/orders/${orderId}`,
           { headers: {
                         'Authorization' : `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -78,8 +81,9 @@ const DeliveriesList = () => {
           setDeliveryDetails(deliveryWithOrderItems);
           setCurrentPage(response.data.number);
           setTotalPages(response.data.totalPages);
+          setIsLoading(false);
           } catch (error) {
-            console.error("Error");
+            console.error(error);
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
                 const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
                 setRetryTime(retryAfter);
@@ -262,6 +266,12 @@ const DeliveriesList = () => {
       <h1 className="text-4xl m-9 font-bold text-white">Deliveries</h1>
       
       <div className="m-4 relative overflow-x-auto shadow-md sm:rounded-lg m-6">
+
+        {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+    )}
         {deliveryDetails.length > 0 && (
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="bg-[#232323] text-gray-200 border-b border-[#2f2f2f]">
@@ -304,18 +314,18 @@ const DeliveriesList = () => {
 
               <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white" key={d.deliveryId}>
                 <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.deliveryId}</td>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"> {d.orders.customer.username}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"> {d.order.customer.username}</td>
                 
                   <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">
                     {d.orderItems.map(oi => (
                     <li className="td-oi">
-                    <p>{oi.order_catalog.catalogName} ({oi.quantity})</p>
+                    <p>{oi.catalog.catalogName} ({oi.quantity})</p>
                     
                     </li>
                     ))}
                   </td>
                 
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{new Date(d.orders.order_date).toLocaleDateString("en-US", {
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{new Date(d.order.order_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
@@ -363,7 +373,7 @@ const DeliveriesList = () => {
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getDeliveryDetails} currentPage={currentPage} />
   )}
 
-  {deliveryDetails.length == 0 && (
+  {!isLoading && deliveryDetails.length == 0 && (
             <p className="flex justify-center text-white text-lg">You have no deliveries found.</p>
           )}
 

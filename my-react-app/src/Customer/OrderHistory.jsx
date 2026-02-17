@@ -10,6 +10,8 @@ import RateLimitPopup from '../components/RateLimitPopup';
 const OrderHistory = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const API_URL = import.meta.env.VITE_API_URL;
+  const bucket = import.meta.env.VITE_S3_BUCKET;
+  const region = import.meta.env.VITE_AWS_REGION;
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [orderDetails, setOrderDetails] = useState([]);
@@ -20,6 +22,7 @@ const OrderHistory = () => {
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const getOrderDetails = async (page = 0) => {
       try {
@@ -57,6 +60,7 @@ const OrderHistory = () => {
       setOrderDetails(combined);
       setCurrentPage(response.data.number);
       setTotalPages(response.data.totalPages);
+      setIsLoading(false);
             
             } catch (error) {
               console.error("Error");
@@ -100,13 +104,19 @@ const OrderHistory = () => {
       <Header />
       <h1 className="text-white text-4xl font-bold m-10">Order History</h1>
 
-      {historyOrders.length == 0 && (
+      {!isLoading && historyOrders.length == 0 && (
             <p className="flex justify-center text-white text-lg">No order history found.</p>
         )}
 
       {showRateLimitPopup && (
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getOrderDetails} currentPage={currentPage} />
       )}
+
+      {isLoading && (
+            <div className="flex items-center justify-center my-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+            </div>
+          )}
 
       {orderDetails.length > 0 && historyOrders.map((or) => {
 
@@ -158,7 +168,7 @@ const OrderHistory = () => {
                           {or.orderItems.map(oi => (
                             <div class="flex items-center gap-4">
                                 <div class="w-16 h-16 bg-gray-100 p-1 rounded-md overflow-hidden">
-                                    <img src={`${API_BASE_URL}/images/${oi.catalog.catalog_image}`} alt="Product" class="w-full h-full object-contain" />
+                                    <img src={`https://${bucket}.s3.${region}.amazonaws.com/${oi.catalog.catalog_image}`} alt="Product" class="w-full h-full object-contain" />
                                 </div>
                                 <div>
                                     <p class="text-[15px] font-medium text-white">{oi.catalog.catalogName}</p>

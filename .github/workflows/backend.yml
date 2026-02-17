@@ -25,7 +25,7 @@ jobs:
     - name: Login to docker hub
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Build docker image
-      run: docker build -t charlize367/order_backend .
+      run: docker build --build-arg AWS_ACCESS_KEY_ID='${{ secrets.AWS_ACCESS_KEY_ID }}' --build-arg AWS_SECRET_ACCESS_KEY='${{ secrets.AWS_SECRET_ACCESS_KEY }}' --build-arg FRONTEND_URL='${{ secrets.FRONTEND_URL }}' -t charlize367/order_backend .
     - name: Publish image to docker hub
       run: docker push charlize367/order_backend:latest
 
@@ -39,6 +39,10 @@ jobs:
       - name: Stop and remove old containers
         run: docker compose -f ODMS/docker-compose.yml down
       - name: Start all services
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
         run: docker compose -f ODMS/docker-compose.yml up -d --build
 
 

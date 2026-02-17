@@ -1,10 +1,13 @@
 import { createContext, useContext, useState  } from "react";
 
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
     const [token, setToken] = useState(localStorage.getItem("jwtToken") || null);
+    const [logoutPopup, setLogoutPopup] = useState(false);
+    
 
     const login = (userData, token) => {
         const roleArray = typeof userData.role === "string" ? [userData.role] : userData.role;
@@ -24,16 +27,27 @@ export const AuthProvider = ({ children }) => {
         
     }
 
-    const logout = () => {
+    const userLogout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("jwtToken");
+    
+
+  
+    setLogoutPopup(true);
+  
+  };
+
+  const logout = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    window.location.href = "/login";
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, userLogout, logoutPopup, setLogoutPopup}}>
       {children}
     </AuthContext.Provider>
   );
