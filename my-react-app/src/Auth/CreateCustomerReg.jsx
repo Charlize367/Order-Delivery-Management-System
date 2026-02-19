@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 export const CreateCustomerReg = () => {
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -40,14 +40,14 @@ export const CreateCustomerReg = () => {
                     "enabled" : true,
                     "role" : "CUSTOMER"
                 }
-                const response = await axios.post(`${API_BASE_URL}/users/register`, postData, {
+                const response = await axios.post(`${API_BASE_URL}/register`, postData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
                 console.log(response);
                 window.alert("Account creation successful. You may now login");
-                navigate(from, {
+                navigate("/login", {
                 replace: true,
                 state: {
                     popup: "✅ Account created successfully. You may now login.",

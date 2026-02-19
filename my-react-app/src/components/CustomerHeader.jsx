@@ -17,24 +17,13 @@ const Header = () => {
   const { logoutPopup, setLogoutPopup } = useAuth();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navRef = useRef(null);
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  
   
    
      const handleLogoutClick = () => {
        setShowLogoutConfirm(!showLogoutConfirm); 
      };
 
-     const handleBasketClick = () => {
-      if(!token) {
-          setShowLoginPopup(true);
-          return;
-        }
-
-
-        navigate('/basket');
-     }
-
-     
 
    useEffect(() => {
          if (location.state?.popup) {
@@ -118,7 +107,7 @@ const Header = () => {
             </div>
             )}
           <div className=' hover:bg-green-600 rounded-lg p-1 mr-9'>
-              <button className="cursor-pointer" onClick={handleBasketClick}><img className="w-7 h-7" src="/basket.svg" /></button>
+              <button className="cursor-pointer" onClick={() => navigate('/basket')}><img className="w-7 h-7" src="/basket.svg" /></button>
         </div>
         <button data-collapse-toggle="navbar-hamburger" onClick={openNav} type="button" class="inline-flex cursor-pointer items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base hover:bg-neutral-tertiary hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary" aria-controls="navbar-hamburger" aria-expanded="false">
             <span class="sr-only">Open main menu</span>
@@ -169,43 +158,8 @@ const Header = () => {
         </div>
       )}
 
-      {showLoginPopup && (
-         <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200">
-        
-        <h2 className="text-center text-base font-semibold">
-          Login required
-        </h2>
-
-        <p className="mt-1 mb-4 text-center text-sm text-gray-400">
-          Please log in or create an account to access your basket
-        </p>
-
-        <div className="space-y-2">
-          <button
-            onClick={() => goToLogin()}
-            className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
-          >
-            Log in
-          </button>
-
-          <button
-            onClick={() => goToRegister()}
-            className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
-          >
-            Create account
-          </button>
-        </div>
-
-        <button
-          onClick={() => setShowLoginPopup(false)}
-          className="mt-3 w-full cursor-pointer text-xs text-gray-400 hover:text-gray-300"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-      )}
+      
+    
 
   {showLogoutSuccessPopup && (
         <div className="fixed top-5 right-5 z-99 flex w-full max-w-xs p-4 text-gray-900 bg-none rounded-lg" role="alert">

@@ -22,12 +22,15 @@ const Basket = () => {
   const [error, setError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
-     const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
           
       const handleDeleteClick = (id) => {
         setShowDeleteConfirm(!showDeleteConfirm); 
         setDeleteId(id);
      };
+
+
+    
   
 
 
@@ -147,7 +150,8 @@ getAllBasketItems();
       <section className=" py-8 antialiased md:py-16">
   <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
     <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Shopping Cart</h2>
-    {isLoading && (
+    
+    {isLoading && token && (
             <div className="flex items-center justify-center my-20">
               <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
             </div>
@@ -155,9 +159,54 @@ getAllBasketItems();
     <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
         <div className="space-y-6">
-          {!isLoading && basket.length == 0 && (
+          {!isLoading  && basket.length == 0 && (
             <p className="flex justify-center text-white text-lg">Your basket is empty.</p>
           )}
+
+          {!token && (
+            <p className="flex justify-center text-white text-lg">Your basket is empty.</p>
+          )}
+
+          {!token && (
+            <div className="flex justify-center">
+            <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200">
+        
+        <h2 className="text-center text-base font-semibold">
+          Login required
+        </h2>
+
+        <p className="mt-1 mb-4 text-center text-sm text-gray-400">
+          Please log in or create an account to add items to your basket
+        </p>
+
+        <div className="space-y-2">
+          <button
+            onClick={() => goToLogin()}
+            className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
+          >
+            Log in
+          </button>
+
+          <button
+            onClick={() => goToRegister()}
+            className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
+          >
+            Create account
+          </button>
+        </div>
+
+        <button
+          onClick={() => setShowLoginPopup(false)}
+          className="mt-3 w-full cursor-pointer text-xs text-gray-400 hover:text-gray-300"
+        >
+          Cancel
+        </button>
+      </div>
+      </div>
+          )}
+
+
+          
            {basket.map(b => (
           <div className="rounded-lg border border-[#2a2a2a] bg-[#232323] p-4 shadow-sm  md:p-6">
             <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
