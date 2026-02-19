@@ -17,7 +17,7 @@ const CatalogCategory = () => {
   const [inputData, setInputData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(8);
   const [catalogImage, setCatalogImage] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [retryTime, setRetryTime] = useState(0);

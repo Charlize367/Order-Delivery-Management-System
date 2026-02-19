@@ -144,10 +144,19 @@ const Category = ({category : {categoryId, category_name, category_image}, setIs
         
         <div className="relative">
         <Link to = {`/catalog/${categoryId}/${category_name}`}>
-        <article className="relative overflow-hidden rounded-lg shadow-sm transition hover:shadow-lg">
+        <article className="group relative overflow-hidden  rounded-lg shadow-sm transition hover:shadow-lg">
   <img alt="" src={`https://${bucket}.s3.${region}.amazonaws.com/${category_image}`} className="absolute inset-0 h-full w-full object-cover"/>
 
-  <div className="relative bg-linear-to-t from-gray-900/50 to-gray-900/25 pt-32 sm:pt-48 lg:pt-64">
+  <div className="
+  relative 
+  bg-gradient-to-t 
+  from-gray-900/40 
+  to-transparent 
+  group-hover:from-black/90 
+  group-hover:to-black/40
+  transition-all duration-300
+  pt-32 sm:pt-48 lg:pt-64
+">
     <div className="p-4 sm:p-6">
       <h1 className="text-white text-2xl font-bold ">{category_name} </h1>
       

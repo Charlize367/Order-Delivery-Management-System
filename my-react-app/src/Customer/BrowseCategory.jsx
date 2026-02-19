@@ -6,6 +6,7 @@ import BrowseCategoryCard from '../components/BrowseCategoryCard.jsx'
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import RateLimitPopup from '../components/RateLimitPopup.jsx';
 import { useAuth } from '../Auth/AuthContext.jsx';
+import ItemCard from '../components/ItemCard.jsx';
 
 const BrowseCategory = () => {
 
@@ -19,6 +20,10 @@ const BrowseCategory = () => {
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageSize] = useState(8);
+  const [item, setItem] = useState([]);
   
 
     const fetchCategories = async () => {
@@ -48,7 +53,38 @@ const BrowseCategory = () => {
         fetchCategories();
     }, []);
 
-    console.log(categories);
+
+    const fetchCatalog = async (page = 0) => {
+          try {
+            const response = await axios.get(`${API_URL}/catalog?page=${page}&size=${pageSize}`, {
+              headers: {
+                        
+                        'Content-Type': 'application/json'
+                    }});
+
+
+          setItem(response.data.content);
+          setCurrentPage(response.data.number);
+          setTotalPages(response.data.totalPages);
+          setIsLoading(false);
+          } catch (error) {
+            console.error(error);
+            if (error.response?.data === "Too many requests" || error.response?.status === 429) {
+                const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
+                setRetryTime(retryAfter);
+                setError("Too Many Requests");
+                setShowRateLimitPopup(true);
+          
+          }
+          
+          }
+        }
+
+    useEffect(() => {
+        fetchCatalog(0);
+    }, []);
+
+    console.log(item);
 
     const searchCatalog = (e) => {
       e.preventDefault();
@@ -103,7 +139,8 @@ const BrowseCategory = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
             </div>
           )}
-          <ul class="grid grid-cols-2 md:grid-cols-3 gap-1 m-10">
+          <h1 className="text-white text-2xl font-bold ml-20 mt-15">Browse By Category</h1>
+          <ul class="grid grid-cols-2 md:grid-cols-4 gap-1 pl-20 pr-15 pt-10 mb-10">
           {categories.map((category) => (
              
              
@@ -113,6 +150,16 @@ const BrowseCategory = () => {
           ))
           }
           </ul>
+
+
+          <h1 className="text-white text-2xl font-bold ml-20">Recommended</h1>
+          <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 pl-20 pr-15 pt-10 mb-10">
+          {item.map((items) => (
+            <ItemCard items={items}  />
+          ))}
+          </ul>
+
+
        
           
         </div>

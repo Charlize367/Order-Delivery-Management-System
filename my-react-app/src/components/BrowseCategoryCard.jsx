@@ -14,14 +14,17 @@ const BrowseCategoryCard = ({category : {categoryId, category_name, category_ima
            
            <div className="relative">
            <Link to = {`/browse_food/${categoryId}/${category_name}`}>
-           <article className="relative overflow-hidden rounded-lg shadow-sm transition hover:shadow-lg">
-     <img alt="" src={`https://${bucket}.s3.${region}.amazonaws.com/${category_image}`} className="absolute inset-0 h-full w-full object-cover"/>
+          <article className="group relative overflow-hidden h-70 rounded-lg shadow-sm transition duration-300 hover:shadow-lg">
+     <img alt="" src={`https://${bucket}.s3.${region}.amazonaws.com/${category_image}`} className="absolute inset-0 h-full w-full transition-transform duration-700 object-cover"/>
    
-     <div className="relative bg-linear-to-t from-gray-900/50 to-gray-900/25 pt-32 sm:pt-48 lg:pt-64">
-       <div className="p-4 sm:p-6">
+    <div className="absolute inset-0 bg-black opacity-30 
+                  transition-opacity duration-500 ease-out
+                  group-hover:opacity-75">
+  </div>
+        <div className="relative z-10 flex items-end h-full p-6">
          <h1 className="text-white text-2xl font-bold ">{category_name} </h1>
          
-       </div>
+      
      </div>
    </article>
    </Link>

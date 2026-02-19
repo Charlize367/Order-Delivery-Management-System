@@ -142,7 +142,7 @@ const AdminItem = ({items : {catalogId, catalogName, catalog_price, catalog_desc
 
   <img src={`https://${bucket}.s3.${region}.amazonaws.com/${catalog_image}`} alt="" class="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"/>
 
-  <div class="relative  bg-[#282928] p-6">
+  <div class="relative bg-[#282928] p-6">
     
 
     <h3 class="mt-4 text-lg font-medium text-white">{catalogName}</h3>
