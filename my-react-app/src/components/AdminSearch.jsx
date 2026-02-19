@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react'
 import ItemCard from '../components/ItemCard';
 import Header from '../components/AdminHeader';
+import AdminItem from './AdminItem';
 
 
 const AdminSearch = () => {
@@ -63,7 +64,7 @@ const AdminSearch = () => {
        <ul className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 p-10">
           
             
-    <ItemCard  items={items}/>
+    <AdminItem  items={items}/>
             
          
           
