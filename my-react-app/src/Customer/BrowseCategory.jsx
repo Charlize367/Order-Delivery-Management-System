@@ -139,6 +139,8 @@ const BrowseCategory = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
             </div>
           )}
+
+          
           <h1 className="text-white text-2xl font-bold ml-20 mt-15">Browse By Category</h1>
           <ul class="grid grid-cols-2 md:grid-cols-4 gap-1 pl-20 pr-15 pt-10 mb-10">
           {categories.map((category) => (
