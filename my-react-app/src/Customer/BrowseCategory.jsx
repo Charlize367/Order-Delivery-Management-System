@@ -9,7 +9,6 @@ import { useAuth } from '../Auth/AuthContext.jsx';
 import ItemCard from '../components/ItemCard.jsx';
 
 const BrowseCategory = () => {
-
   const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('jwtToken');
   const [categories, setCategories] = useState([]);

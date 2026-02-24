@@ -18,7 +18,7 @@ const Basket = () => {
   const user_ID = localStorage.getItem('user_ID');
   const didRun = useRef(false);
   const [basket, setBasket] = useState([]);
-  const navigate = new useNavigate();
+  const navigate =  useNavigate();
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
@@ -27,9 +27,18 @@ const Basket = () => {
   const [deleteId, setDeleteId] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [guestBasket, setGuestBasket] = useState(() => {
-      const basketString = localStorage.getItem('basket');
-      return basketString ? JSON.parse(basketString) : [] ;
-  })
+        try {
+    const basketString = localStorage.getItem('basket');
+    if (!basketString || basketString === "undefined") {
+      return [];
+    }
+    return JSON.parse(basketString);
+  } catch (err) {
+    console.warn("Invalid basket in localStorage, resetting to empty array", err);
+    return [];
+  }
+    })
+
           
       const handleDeleteClick = (id) => {
 
@@ -170,9 +179,11 @@ const Basket = () => {
 
   const syncBasket = async () => {
     if (token && guestBasket.length > 0) {
-      await addTempBasketToBasket();
-      localStorage.removeItem('basket');
-      setGuestBasket([]);   
+      const success = await addTempBasketToBasket();
+      if (success) {
+        localStorage.removeItem('basket');  
+        setGuestBasket([]);   
+      }
     }
 
     await getAllBasketItems();

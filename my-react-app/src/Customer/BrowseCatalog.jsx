@@ -33,6 +33,10 @@ const BrowseCatalog = () => {
     return [];
   }
     })
+
+     useEffect(() => {
+        localStorage.setItem('basket', JSON.stringify(guestBasket));
+      }, [guestBasket])
   
 
   console.log(inputData);
