@@ -26,9 +26,17 @@ const ItemDetails = () => {
     const hasResumedRef = useRef(false);
     const [isLoading, setIsLoading] = useState(true);
     const [guestBasket, setGuestBasket] = useState(() => {
-        const basketString = localStorage.getItem('basket');
-        return basketString ? JSON.parse(basketString) : [] ;
-      })
+        try {
+    const basketString = localStorage.getItem('basket');
+    if (!basketString || basketString === "undefined") {
+      return [];
+    }
+    return JSON.parse(basketString);
+  } catch (err) {
+    console.warn("Invalid basket in localStorage, resetting to empty array", err);
+    return [];
+  }
+    })
 
       useEffect(() => {
     if (location.state?.popup) {

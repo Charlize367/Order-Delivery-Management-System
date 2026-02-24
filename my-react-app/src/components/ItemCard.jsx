@@ -19,13 +19,11 @@ const ItemCard = ({items : {catalogId, catalogName, catalog_price, catalog_descr
   const location = useLocation();
 
   
-
   useEffect(() => {
     localStorage.setItem('basket', JSON.stringify(guestBasket));
   }, [guestBasket])
 
   
-
 
   
     const addToBasket = async (event) => {
