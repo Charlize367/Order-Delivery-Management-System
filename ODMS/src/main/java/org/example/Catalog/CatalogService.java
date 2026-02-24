@@ -57,7 +57,7 @@ public class CatalogService {
             return catalogRepository.findCatalogByCategoryCategoryIdAndActiveTrue(categoryId, pageable)
                     .map(catalogMapper::toResponse);
         }
-        return catalogRepository.findAllAndActiveTrue(pageable)
+        return catalogRepository.findByActiveTrue(pageable)
                 .map(catalogMapper::toResponse);
     }
 

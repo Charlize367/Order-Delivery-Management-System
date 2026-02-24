@@ -10,6 +10,6 @@ import java.util.List;
 public interface CatalogRepository extends JpaRepository<Catalog, Long> {
    List<Catalog> getCatalogByCategory(Category category);
    Page<Catalog> findCatalogByCategoryCategoryIdAndActiveTrue(Long categoryId, Pageable pageable);
-   Page<Catalog> findAllAndActiveTrue(Pageable pageable);
+   Page<Catalog> findByActiveTrue(Pageable pageable);
    List<Catalog> findByCatalogNameContainingIgnoreCaseAndActiveTrue(String catalogName);
 }
