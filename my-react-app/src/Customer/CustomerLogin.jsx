@@ -26,6 +26,7 @@ const CustomerLogin = () => {
 
     const from = location.state?.from || "/browse";
 
+    console.log(location.state?.action);
     const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -38,7 +39,8 @@ const CustomerLogin = () => {
   const handleGoToSignup = () => {
   navigate("/register", {
     state: {
-      from: location.state?.from
+      from: location.state?.from,
+      action: location.state?.action
     }
   });
 };
@@ -58,14 +60,17 @@ const CustomerLogin = () => {
                     }
                 });
                  login({username: response.data.username, role: response.data.role, id: response.data.id}, response.data.token)
-                navigate(from, {
-                replace: true,
-                state: {
-                    popup: "Logged in successfully",
-                    action: location.state?.action,
-                    quantity: location.state?.quantity
-                }
-                });
+
+                if (location.state?.action === "CHECKOUT") {
+                    navigate(`/checkout/${response.data.id}`, { replace: true });
+                    } else {
+                    navigate(from, {
+                        replace: true,
+                        state: {
+                        popup: "Logged in successfully"
+                        }
+                    });
+                    }
                 return true;
 
             } catch (error) {

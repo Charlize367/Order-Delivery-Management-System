@@ -48,15 +48,6 @@ const Basket = () => {
 
      };
 
-     useEffect(() => {
-    if (location.state?.action) {
-     
-     if(action === "CHECKOUT" && basket.length != 0) {
-      navigate('/checkout');
-     }
-    }
-  }, []);
-
      const goToLogin = () => {
     navigate("/login", {
       state: {
@@ -194,8 +185,25 @@ const Basket = () => {
 
     const updateQuantity = async(basket_ID, quantity) => {
       try {
+        if (quantity < 1) return; 
+        if(!token) {
+          console.log("Update temp basket quantity")
+          const existingBasketIndex = guestBasket.findIndex(b => b.catalog.catalogId === basket_ID);
+          if (existingBasketIndex !== -1) {
+            const updatedBasket = [...guestBasket];
+            updatedBasket[existingBasketIndex] = {
+                ...updatedBasket[existingBasketIndex],
+                quantity: quantity,
+                subtotal: updatedBasket[existingBasketIndex].catalog.catalog_price * quantity
+            };
+            setGuestBasket(updatedBasket);
+            setBasket(updatedBasket);
+            localStorage.setItem('basket', JSON.stringify(updatedBasket));
+            }
+          return;
+        }
     
-        if (quantity < 1) return;  
+         
 
         const response = await axios.put(`${API_URL}/basket/${basket_ID}/quantity/${quantity}`, {}, {
           headers: {
@@ -353,13 +361,25 @@ getAllBasketItems();
               <label for="counter-input" className="sr-only">Choose quantity:</label>
               <div className="flex items-center justify-between md:order-3 md:justify-end">
                 <div className="flex items-center">
-                  <button onClick={() => updateQuantity(b.basketId, b.quantity - 1)} type="button" id="decrement-button" data-input-counter-decrement="counter-input" className="inline-flex cursor-pointer h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                  <button onClick={() => {
+                    if(!token) {
+                      updateQuantity(b.catalog.catalogId, b.quantity - 1);
+                    } else {
+                      updateQuantity(b.catalog.catalogId, b.quantity - 1);
+                    }
+                    }} type="button" id="decrement-button" data-input-counter-decrement="counter-input" className="inline-flex cursor-pointer h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
                     <svg className="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
                     </svg>
                   </button>
                   <input type="text" value={b.quantity} id="counter-input" data-input-counter className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white" placeholder="" required />
-                  <button onClick={() => updateQuantity(b.basketId, b.quantity + 1)} type="button" id="increment-button" data-input-counter-increment="counter-input" className="inline-flex cursor-pointer h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                  <button onClick={() => {
+                    if(!token) {
+                      updateQuantity(b.catalog.catalogId, b.quantity + 1);
+                    } else {
+                      updateQuantity(b.catalog.catalogId, b.quantity + 1);
+                    }
+                    }} type="button" id="increment-button" data-input-counter-increment="counter-input" className="inline-flex cursor-pointer h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
                     <svg className="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
                     </svg>

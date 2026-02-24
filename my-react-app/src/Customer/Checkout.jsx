@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import Header from '../components/CustomerHeader';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import RateLimitPopup from '../components/RateLimitPopup';
 
 const Checkout = () => {
@@ -13,17 +13,84 @@ const Checkout = () => {
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
   const [items, setItems] = useState([]);
+  const didRun = useRef(false);
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [guestBasket, setGuestBasket] = useState(() => {
+          try {
+      const basketString = localStorage.getItem('basket');
+      if (!basketString || basketString === "undefined") {
+        return [];
+      }
+      return JSON.parse(basketString);
+    } catch (err) {
+      console.warn("Invalid basket in localStorage, resetting to empty array", err);
+      return [];
+    }
+      })
 
   const orderData = {
     address: address
 
   }
+
+  const addTempBasketToBasket = async () => {
+        
+    let postData = []
+    let newBasket = {}
+      for (const basket of guestBasket) {
+        newBasket = {
+          basket_ID: null,
+          userId: Number(user_ID),
+          catalogId: basket.catalog.catalogId,
+          quantity: basket.quantity,
+          subtotal: basket.subtotal
+        }
+         postData.push(newBasket);
+      }
+
+     
+     
+            try {
+              
+                const response = await axios.post(`${API_URL}/basket/batchBasket`, postData, {
+                    headers: {
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const dt = response.config.data;
+
+                setShowPopup(true);
+
+   
+                setTimeout(() => setShowPopup(false), 3000);
+                
+               
+                console.log(response);
+                console.log(postData);
+                return true;
+
+            } catch (error) {
+                console.error('Failed to add to cart:', error);
+                if (error.response?.data === "Too many requests" || error.response?.status === 429) {
+                const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
+                setRetryTime(retryAfter);
+                setError("Too Many Requests");
+                setShowRateLimitPopup(true);
+          
+          }
+                return false;
+              
+            }
+
+
+        }
+
     const getAllBasketItems = async () => {
     try {
             const response = await axios.get(`${API_URL}/basket/users/${user_ID}`, {
@@ -51,8 +118,23 @@ const Checkout = () => {
   console.log(items);
 
   useEffect(() => {
-        getAllBasketItems();
-    }, []);
+   if (didRun.current) return;
+   didRun.current = true;
+ 
+   const syncBasket = async () => {
+     if (token && guestBasket.length > 0) {
+       const success = await addTempBasketToBasket();
+       if (success) {
+         localStorage.removeItem('basket');  
+         setGuestBasket([]);   
+       }
+     }
+ 
+     await getAllBasketItems();
+   };
+ 
+   syncBasket();
+ }, []);
 
     const total = items.reduce((sum, basket) => sum + basket.subtotal, 0);
 

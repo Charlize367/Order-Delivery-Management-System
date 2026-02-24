@@ -23,6 +23,23 @@ const BrowseCategory = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [pageSize] = useState(8);
   const [item, setItem] = useState([]);
+
+  const [guestBasket, setGuestBasket] = useState(() => {
+        try {
+    const basketString = localStorage.getItem('basket');
+    if (!basketString || basketString === "undefined") {
+      return [];
+    }
+    return JSON.parse(basketString);
+  } catch (err) {
+    console.warn("Invalid basket in localStorage, resetting to empty array", err);
+    return [];
+  }
+    })
+
+     useEffect(() => {
+        localStorage.setItem('basket', JSON.stringify(guestBasket));
+      }, [guestBasket])
   
 
     const fetchCategories = async () => {
@@ -146,7 +163,7 @@ const BrowseCategory = () => {
              
              
             
-            <BrowseCategoryCard key={category.categoryId} category={category}/>
+            <BrowseCategoryCard key={category.categoryId} category={category} />
             
           ))
           }
@@ -156,7 +173,7 @@ const BrowseCategory = () => {
           <h1 className="text-white text-2xl font-bold ml-20">Recommended</h1>
           <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 pl-20 pr-15 pt-10 mb-10">
           {item.map((items) => (
-            <ItemCard items={items}  />
+            <ItemCard items={items} guestBasket={guestBasket} setGuestBasket={setGuestBasket} />
           ))}
           </ul>
 
