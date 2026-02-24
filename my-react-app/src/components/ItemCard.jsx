@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import RateLimitPopup from '../components/RateLimitPopup';
 
-const ItemCard = ({items : {catalogId, catalogName, catalog_price, catalog_description, catalog_image} } ) => {
+const ItemCard = ({items : {catalogId, catalogName, catalog_price, catalog_description, catalog_image}, guestBasket, setGuestBasket } ) => {
   const user_ID = localStorage.getItem('user_ID');
   const API_URL = import.meta.env.VITE_API_URL;
   const bucket = import.meta.env.VITE_S3_BUCKET;
@@ -18,39 +18,53 @@ const ItemCard = ({items : {catalogId, catalogName, catalog_price, catalog_descr
   const navigate = useNavigate();
   const location = useLocation();
 
-
   
 
-   const goToLogin = () => {
-    navigate("/login", {
-      state: {
-        from: location.pathname + location.search,
-        action: "ADD_TO_BASKET"
-      }
-    })
-  }
+  useEffect(() => {
+    localStorage.setItem('basket', JSON.stringify(guestBasket));
+  }, [guestBasket])
 
-
-  const goToRegister = () => {
-    navigate("/register", {
-      state: {
-        from: location.pathname + location.search,
-        action: "ADD_TO_BASKET"
-      }
-    })
-  }
-
+  const basketString = localStorage.getItem('basket');
+  const basket = JSON.parse(basketString);
+  console.log(basket);
 
   
     const addToBasket = async (event) => {
         if (event) event.preventDefault();
 
+        let postData = {}
         if(!token) {
-          setShowLoginPopup(true);
-          return;
-        }
 
+          setGuestBasket(prevBasket => {
+    const existingCatalogIndex = prevBasket.findIndex(b => b.catalog.catalogId === catalogId);
+
+    if (existingCatalogIndex !== -1) {
+        const updatedBasket = [...prevBasket];
+        updatedBasket[existingCatalogIndex] = {
+            ...updatedBasket[existingCatalogIndex],
+            quantity: updatedBasket[existingCatalogIndex].quantity + 1,
+            subtotal: updatedBasket[existingCatalogIndex].catalog.catalog_price * (updatedBasket[existingCatalogIndex].quantity + 1)
+        };
+        return updatedBasket;
+    } else {
         const postData = {
+            basket_ID: null,
+            customer: null,
+            catalog: { catalogId, catalogName, catalog_price, catalog_description, catalog_image },
+            quantity: 1,
+            subtotal: catalog_price
+        };
+        return [...prevBasket, postData];
+    }
+});
+        setShowPopup(true);
+
+   
+        setTimeout(() => setShowPopup(false), 3000);
+        return;
+      }
+
+     postData = {
         basket_ID: null,
         customer: null,
         catalog: null,

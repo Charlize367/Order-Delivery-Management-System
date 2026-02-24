@@ -1,7 +1,6 @@
 package org.example.Basket;
 
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.example.Catalog.Catalog;
 import org.example.Catalog.CatalogRepository;
@@ -16,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +56,59 @@ public class BasketService {
                 .orElseThrow(() -> new ResourceNotFoundException("User basket not found"));
         List<Basket> basket = basketRepository.findByCustomer(users);
         return basketMapper.toListResponse(basket);
+    }
+
+    @Transactional
+    public List<BasketResponse> addTemporaryBasket(List<BasketRequest> request) {
+        logger.info("Attempting to add temporary basket");
+        List<Basket> baskets = new ArrayList<>();
+        for (BasketRequest basketItem : request) {
+            logger.info("Processing item -> userId: {}, catalogId: {}, quantity: {}",
+                    basketItem.getUserId(),
+                    basketItem.getCatalogId(),
+                    basketItem.getQuantity());
+            if (basketItem.getUserId() == null) {
+                throw new IllegalArgumentException("UserId must not be null");
+            }
+
+            if (basketItem.getCatalogId() == null) {
+                throw new IllegalArgumentException("CatalogId must not be null");
+            }
+            Optional<Basket> existingBasket = basketRepository.findByCustomer_UserIdAndCatalog_CatalogId(basketItem.getUserId(), basketItem.getCatalogId());
+
+            Catalog catalog = catalogRepository.findById(basketItem.getCatalogId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Catalog not found"));
+
+            Basket basket;
+            logger.info("Existing basket present? {}",
+                    existingBasket.isPresent());
+            if (existingBasket.isPresent()) {
+
+                basket = existingBasket.get();
+                basket.setQuantity(basket.getQuantity() + basketItem.getQuantity());
+                basket.setSubtotal(existingBasket.get().getSubtotal() + catalog.getCatalog_price() );
+
+
+
+            } else {
+                Users users = usersRepository.findById(basketItem.getUserId())
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                basket = new Basket();
+                basket.setCustomer(users);
+                basket.setCatalog(catalog);
+                basket.setQuantity(basketItem.getQuantity());
+                basket.setSubtotal(catalog.getCatalog_price() * basketItem.getQuantity());
+                baskets.add(basket);
+            }
+
+
+
+
+        }
+
+        List<Basket> savedBaskets = basketRepository.saveAll(baskets);
+        logger.info("Successfully added temporary basket");
+        return basketMapper.toListResponse(savedBaskets);
     }
 
     public BasketResponse addBasket(Long userId, Long catalogId, BasketRequest request) {

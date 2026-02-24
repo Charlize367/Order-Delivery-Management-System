@@ -2,41 +2,138 @@ import React from 'react'
 import axios from 'axios';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import Header from '../components/CustomerHeader';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import RateLimitPopup from '../components/RateLimitPopup';
 
 
 
 
 const Basket = () => {
+
   const API_URL = import.meta.env.VITE_API_URL;
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const bucket = import.meta.env.VITE_S3_BUCKET;
   const region = import.meta.env.VITE_AWS_REGION;
   const token = localStorage.getItem('jwtToken');
   const user_ID = localStorage.getItem('user_ID');
+  const didRun = useRef(false);
   const [basket, setBasket] = useState([]);
   const navigate = new useNavigate();
   const [retryTime, setRetryTime] = useState(0);
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [guestBasket, setGuestBasket] = useState(() => {
+      const basketString = localStorage.getItem('basket');
+      return basketString ? JSON.parse(basketString) : [] ;
+  })
           
       const handleDeleteClick = (id) => {
+
+        
         setShowDeleteConfirm(!showDeleteConfirm); 
         setDeleteId(id);
+
      };
 
+     useEffect(() => {
+    if (location.state?.action) {
+     
+     if(action === "CHECKOUT" && basket.length != 0) {
+      navigate('/checkout');
+     }
+    }
+  }, []);
+
+     const goToLogin = () => {
+    navigate("/login", {
+      state: {
+        from: location.pathname + location.search,
+        action: "CHECKOUT",
+        
+      }
+    })
+  }
+
+
+  const goToRegister = () => {
+    navigate("/register", {
+      state: {
+        from: location.pathname + location.search,
+        action: "CHECKOUT",
+      }
+    })
+  }
 
     
-  
+     
+    
+     const addTempBasketToBasket = async () => {
+        
+    let postData = []
+    let newBasket = {}
+      for (const basket of guestBasket) {
+        newBasket = {
+          basket_ID: null,
+          userId: Number(user_ID),
+          catalogId: basket.catalog.catalogId,
+          quantity: basket.quantity,
+          subtotal: basket.subtotal
+        }
+         postData.push(newBasket);
+      }
+
+     
+     
+            try {
+              
+                const response = await axios.post(`${API_URL}/basket/batchBasket`, postData, {
+                    headers: {
+                        'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const dt = response.config.data;
+
+                setShowPopup(true);
+
+   
+                setTimeout(() => setShowPopup(false), 3000);
+                
+               
+                console.log(response);
+                console.log(postData);
+                return true;
+
+            } catch (error) {
+                console.error('Failed to add to cart:', error);
+                if (error.response?.data === "Too many requests" || error.response?.status === 429) {
+                const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
+                setRetryTime(retryAfter);
+                setError("Too Many Requests");
+                setShowRateLimitPopup(true);
+          
+          }
+                return false;
+              
+            }
 
 
-  console.log(basket);
+        }
+
+     
+
+  console.log(guestBasket);
   const getAllBasketItems = async () => {
     try {
+      if(!token) {
+      setBasket(guestBasket);
+      
+      return;
+      }
             const response = await axios.get(`${API_URL}/basket/users/${user_ID}`, {
               headers: {
                         'Authorization' : `Bearer ${token}`,
@@ -49,6 +146,7 @@ const Basket = () => {
       (a, b) => a.basketId - b.basketId
     );
 
+    
     setBasket(sortedBasket);
     setIsLoading(false);
 
@@ -67,9 +165,21 @@ const Basket = () => {
   }
 
   useEffect(() => {
-        getAllBasketItems();
-    }, []);
+  if (didRun.current) return;
+  didRun.current = true;
 
+  const syncBasket = async () => {
+    if (token && guestBasket.length > 0) {
+      await addTempBasketToBasket();
+      localStorage.removeItem('basket');
+      setGuestBasket([]);   
+    }
+
+    await getAllBasketItems();
+  };
+
+  syncBasket();
+}, []);
 
     const updateQuantity = async(basket_ID, quantity) => {
       try {
@@ -107,6 +217,15 @@ getAllBasketItems();
       const total = basket.reduce((sum, baskets) => sum + baskets.subtotal, 0);
         
       const deleteBasketItem = async() => {
+
+        if(!token) {
+           const updatedBasket = guestBasket.filter(b => b.catalog.catalogId !== deleteId);
+          setGuestBasket(updatedBasket);          
+          setBasket(updatedBasket);        
+          localStorage.setItem('basket', JSON.stringify(updatedBasket));
+          setShowDeleteConfirm(false);
+          return;
+        }
         setShowDeleteConfirm(false);
         try{
           const response = await axios.delete(`${API_URL}/basket/users/${user_ID}/catalog/${deleteId}`, {
@@ -130,7 +249,10 @@ getAllBasketItems();
       }
 
       const goToCheckout = () => {
-
+        if(!token) {
+          setShowLoginPopup(true);
+          return;
+      }
       if (basket == 0) {
         window.alert("Please add items to basket first");
       } else {
@@ -163,20 +285,20 @@ getAllBasketItems();
             <p className="flex justify-center text-white text-lg">Your basket is empty.</p>
           )}
 
-          {!token && (
+          {!token && basket.length == 0 && (
             <p className="flex justify-center text-white text-lg">Your basket is empty.</p>
           )}
 
-          {!token && (
-            <div className="flex justify-center">
-            <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200">
+         {showLoginPopup && (
+         <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
+      <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200">
         
         <h2 className="text-center text-base font-semibold">
           Login required
         </h2>
 
         <p className="mt-1 mb-4 text-center text-sm text-gray-400">
-          Please log in or create an account to add items to your basket
+          Please log in or create an account before checking out
         </p>
 
         <div className="space-y-2">
@@ -202,8 +324,10 @@ getAllBasketItems();
           Cancel
         </button>
       </div>
-      </div>
-          )}
+    </div>
+      )}
+          
+          
 
 
           

@@ -19,15 +19,18 @@ const ItemDetails = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [retryTime, setRetryTime] = useState(0);
     const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
-    const [showLoginPopup, setShowLoginPopup] = useState(false);
     const [showLoginSuccessPopup, setShowLoginSuccessPopup] = useState(false);
     const [error, setError] = useState("");
     const location = useLocation();
     const navigate = useNavigate();
     const hasResumedRef = useRef(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [guestBasket, setGuestBasket] = useState(() => {
+        const basketString = localStorage.getItem('basket');
+        return basketString ? JSON.parse(basketString) : [] ;
+      })
 
-    useEffect(() => {
+      useEffect(() => {
     if (location.state?.popup) {
      
       setShowLoginSuccessPopup(true);
@@ -36,31 +39,10 @@ const ItemDetails = () => {
     }
   }, []);
 
+  useEffect(() => {
+      localStorage.setItem('basket', JSON.stringify(guestBasket));
+    }, [guestBasket])
 
-    const goToLogin = () => {
-    navigate("/login", {
-      state: {
-        from: location.pathname + location.search,
-        action: "ADD_TO_BASKET",
-        quantity: quantity,
-        catalogId: param.id
-      }
-    })
-  }
-console.log(quantity);
-
-  const goToRegister = () => {
-    navigate("/register", {
-      state: {
-        from: location.pathname + location.search,
-        action: "ADD_TO_BASKET",
-        quantity: quantity,
-        catalogId: param.id
-      }
-    })
-  }
-
-    
 
     const fetchCatalogByCategory = async () => {
 
@@ -97,17 +79,15 @@ console.log(quantity);
     }, [param.id]);
 
 
+  
 
-    
     
 
      const addToBasket = async (event, overrideQty) => {
         if (event) event.preventDefault();
 
-        if(!token) {
-          setShowLoginPopup(true);
-          return;
-        }
+        let postData = {}
+        
 
         let id = param.id;
         let finalQty = quantity;
@@ -119,13 +99,51 @@ console.log(quantity);
 
       if(overrideQty) finalQty = overrideQty;
 
-        const postData = {
+      if(!token) {
+        const existingCatalogIndex = guestBasket.findIndex(b => b.catalog.catalogId === Number(id));
+          
+          if(existingCatalogIndex !== -1) {
+           
+             const updatedBasket = [...guestBasket];
+            updatedBasket[existingCatalogIndex] = {
+              ...updatedBasket[existingCatalogIndex],
+              quantity: updatedBasket[existingCatalogIndex].quantity + finalQty,
+              subtotal: updatedBasket[existingCatalogIndex].catalog.catalog_price * (updatedBasket[existingCatalogIndex].quantity + finalQty)
+            };
+            setGuestBasket(updatedBasket);
+          } else {
+         postData = {
+            basket_ID: null,
+            customer: null,
+            catalog: {
+              catalogId: item.catalogId,
+              catalogName: item.catalogName,
+              catalog_price: item.catalog_price,
+              catalog_description: item.catalog_description,
+              catalog_image: item.catalog_image
+            },
+            quantity: finalQty,
+            subtotal: item.catalog_price * finalQty
+        }
+
+        setGuestBasket([...guestBasket, postData]);
+      }
+        setShowPopup(true);
+
+   
+        setTimeout(() => setShowPopup(false), 3000);
+        return;
+      }
+
+       postData = {
         basket_ID: null,
         customer: null,
         catalog: null,
         quantity: finalQty,
         subtotal: item.catalog_price * finalQty
     }
+
+    
       
             try {
               
@@ -218,43 +236,7 @@ console.log(location.state?.quantity);
       )}
 
 
-      {showLoginPopup && (
-         <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-xs rounded-lg bg-[#1e1e1e] px-6 py-5 text-gray-200">
-        
-        <h2 className="text-center text-base font-semibold">
-          Login required
-        </h2>
-
-        <p className="mt-1 mb-4 text-center text-sm text-gray-400">
-          Please log in or create an account to add items to your cart
-        </p>
-
-        <div className="space-y-2">
-          <button
-            onClick={() => goToLogin()}
-            className="w-full cursor-pointer rounded-md bg-gradient-to-r from-[#56C789] to-[#096E22] py-2 text-sm font-medium text-white hover:opacity-90 transition"
-          >
-            Log in
-          </button>
-
-          <button
-            onClick={() => goToRegister()}
-            className="w-full cursor-pointer rounded-md border border-[#56C789] py-2 text-sm text-[#56C789] hover:bg-[#56C789]/10 transition"
-          >
-            Create account
-          </button>
-        </div>
-
-        <button
-          onClick={() => setShowLoginPopup(false)}
-          className="mt-3 w-full cursor-pointer text-xs text-gray-400 hover:text-gray-300"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-      )}
+     
 {isLoading && (
             <div className="flex items-center justify-center my-20">
               <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>

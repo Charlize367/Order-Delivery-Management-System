@@ -71,6 +71,12 @@ public class BasketController {
         return new ResponseEntity<>(savedBasket, HttpStatus.OK);
     }
 
+    @PostMapping("/batchBasket")
+    public ResponseEntity<List<BasketResponse>> addTemporaryBasket(@Validated @RequestBody List<BasketRequest> request) {
+        List<BasketResponse> savedBaskets = basketService.addTemporaryBasket(request);
+        return new ResponseEntity<>(savedBaskets, HttpStatus.OK);
+    }
+
     @DeleteMapping("/users/{userId}/catalog/{catalogId}")
     public ResponseEntity<String> deleteBasket(@PathVariable Long userId, @PathVariable Long catalogId) {
         basketService.deleteBasket(userId, catalogId);

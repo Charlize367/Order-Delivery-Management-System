@@ -21,6 +21,10 @@ const BrowseCatalog = () => {
   const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [guestBasket, setGuestBasket] = useState(() => {
+        const basketString = localStorage.getItem('basket');
+        return basketString ? JSON.parse(basketString) : [] ;
+    })
   
 
   console.log(inputData);
@@ -90,7 +94,8 @@ const BrowseCatalog = () => {
 
                   <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 p-10">
           {item.map((items) => (
-            <ItemCard items={items} onReload={handleReloadData} category_ID={param.id} />
+            <ItemCard items={items} onReload={handleReloadData} category_ID={param.id} guestBasket={guestBasket} 
+  setGuestBasket={setGuestBasket} />
           ))}
           </ul>
 

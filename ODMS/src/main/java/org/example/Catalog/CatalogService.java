@@ -11,19 +11,15 @@ import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-
-import static org.example.Catalog.CatalogController.uploadDirectory;
 
 @Service
 public class CatalogService {
@@ -122,6 +118,7 @@ public class CatalogService {
         }
     }
 
+
     @Transactional
     public void deleteCatalogById(Long catalogId) {
         logger.info("Deleting catalog ID: {}", catalogId);
@@ -135,14 +132,14 @@ public class CatalogService {
     }
 
 
-   
-    public CatalogResponse getCatalogById(Long id) {
-        logger.info("Getting catalog ID: {}", id);
-        Catalog catalog = catalogRepository.findById(id)
+
+    public CatalogResponse getCatalogById(Long catalogId) {
+        logger.info("Getting catalog ID: {}", catalogId);
+        Catalog catalog = catalogRepository.findById(catalogId)
                 .orElseThrow(() -> {
                     return new ResourceNotFoundException("Catalog not found.");
                 });
-        logger.info("Successfully fetched catalog ID: {}", id);
+        logger.info("Successfully fetched catalog ID: {}", catalogId);
         return catalogMapper.toResponse(catalog);
     }
 }
