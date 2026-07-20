@@ -11,9 +11,12 @@ import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,10 +40,16 @@ public class CatalogService {
     private CatalogMapper catalogMapper;
 
 
-    private static final Logger logger = LoggerFactory.getLogger(Catalog.class);
+    private static final Logger logger = LoggerFactory.getLogger(CatalogService.class);
+
+    @EventListener(ApplicationReadyEvent.class)
+    @CacheEvict(value = {"catalog", "catalogItem"}, allEntries = true)
+    public void clearCacheOnStartup() {
+        logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
+    }
 
 
-
+    @Cacheable(value = "catalog")
     public List<CatalogResponse> getAllCatalog() {
         logger.info("Displaying all catalogs");
 
@@ -50,6 +59,7 @@ public class CatalogService {
                 .toList();
     }
 
+    @Cacheable(value = "catalog", key = "'page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()")
     public Page<CatalogResponse> getCatalog(Long categoryId, Pageable pageable) {
         logger.info("Displaying catalogs by page");
 
@@ -62,6 +72,14 @@ public class CatalogService {
     }
 
 
+    @Caching(
+            put = {
+                    @CachePut(value = "catalogItem", key = "#savedCatalog.catalogId")
+            },
+            evict = {
+                    @CacheEvict(value = "catalogItem", allEntries = true)
+            }
+    )
     public CatalogResponse addCatalog(Long categoryId, CatalogRequest request) throws IOException {
         logger.info("Attempting to add new catalog with name: {}", request.getCatalogName());
             Category category = categoryRepository.findById(categoryId)
@@ -87,6 +105,14 @@ public class CatalogService {
 
 
 
+    @Caching(
+            put = {
+                    @CachePut(value = "catalogItem", key = "#savedCatalog.catalogId")
+            },
+            evict = {
+                    @CacheEvict(value = "catalog", allEntries = true)
+            }
+    )
     public CatalogResponse updateCatalog(Long catalogId, Long categoryId, UpdateCatalogRequest request) throws IOException {
         try {
 
@@ -119,6 +145,10 @@ public class CatalogService {
     }
 
 
+    @Caching(evict = {
+            @CacheEvict(value = "catalogItem", key = "#catalogId"),
+            @CacheEvict(value = "catalogItem", allEntries = true)
+    })
     @Transactional
     public void deleteCatalogById(Long catalogId) {
         logger.info("Deleting catalog ID: {}", catalogId);
@@ -133,6 +163,7 @@ public class CatalogService {
 
 
 
+    @Cacheable(value = "catalogItem", key = "#catalogId")
     public CatalogResponse getCatalogById(Long catalogId) {
         logger.info("Getting catalog ID: {}", catalogId);
         Catalog catalog = catalogRepository.findById(catalogId)

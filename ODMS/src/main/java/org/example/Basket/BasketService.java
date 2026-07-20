@@ -10,7 +10,13 @@ import org.example.Users.UsersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,8 +40,21 @@ public class BasketService {
     @Autowired
     private BasketMapper basketMapper;
 
+    @Autowired
+    private CacheManager cacheManager;
+
+
+    @EventListener(ApplicationReadyEvent.class)
+    @CacheEvict(value = {"basket", "basketItem"}, allEntries = true)
+    public void clearCacheOnStartup() {
+        logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(Basket.class);
 
+
+
+    @Cacheable(value = "basket")
     public List<BasketResponse> getAllBasket() {
         logger.info("Displaying all basket");
         return basketRepository.findAll().stream()
@@ -43,6 +62,7 @@ public class BasketService {
                 .toList();
     }
 
+    @Cacheable(value = "basket", key = "'page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()")
     public Page<BasketResponse> getBasket(Pageable pageable) {
 
         logger.info("Displaying basket by page");
@@ -50,6 +70,8 @@ public class BasketService {
                 .map(basketMapper::toResponse);
     }
 
+
+    @Cacheable(value = "basketItem", key = "#userId")
     public List<BasketResponse> getBasketByUser(Long userId) {
         logger.info("Displaying basket by user");
         Users users = usersRepository.findById(userId)
@@ -58,6 +80,14 @@ public class BasketService {
         return basketMapper.toListResponse(basket);
     }
 
+
+
+    @Caching(
+
+            evict = {
+                    @CacheEvict(value = "basket", allEntries = true)
+            }
+    )
     @Transactional
     public List<BasketResponse> addTemporaryBasket(List<BasketRequest> request) {
         logger.info("Attempting to add temporary basket");
@@ -107,10 +137,24 @@ public class BasketService {
         }
 
         List<Basket> savedBaskets = basketRepository.saveAll(baskets);
+
+        for (Basket saved : savedBaskets) {
+            cacheManager.getCache("basketItem")
+                    .put(saved.getBasketId(), basketMapper.toResponse(saved));
+        }
+
         logger.info("Successfully added temporary basket");
         return basketMapper.toListResponse(savedBaskets);
     }
 
+    @Caching(
+            put = {
+                    @CachePut(value = "basketItem", key = "#savedBasket.basketId")
+            },
+            evict = {
+                    @CacheEvict(value = "basket", allEntries = true)
+            }
+    )
     public BasketResponse addBasket(Long userId, Long catalogId, BasketRequest request) {
         logger.info("Attempting to add new basket with catalog: {}", request.getCatalogId());
         Optional<Basket>  existingBasket = basketRepository.findByCustomer_UserIdAndCatalog_CatalogId(userId, catalogId);
@@ -142,6 +186,14 @@ public class BasketService {
 
     }
 
+    @Caching(
+            put = {
+                    @CachePut(value = "basket", key = "#savedBasket.basketId")
+            },
+            evict = {
+                    @CacheEvict(value = "basket", allEntries = true)
+            }
+    )
     public BasketResponse updateBasketQuantity(Long basketId, Integer quantity) {
         logger.info("Updating basket {} quantity with {}", basketId, quantity);
         Basket basket = basketRepository.findById(basketId)
@@ -153,6 +205,10 @@ public class BasketService {
         return basketMapper.toResponse(savedBasket);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "basketItem", key = "#basket.basketId"),
+            @CacheEvict(value = "basket", allEntries = true)
+    })
     @Transactional
     public void deleteBasket(Long userId, Long catalogId) {
         logger.info("Deleting basket of User ID: {}", userId);
@@ -162,14 +218,15 @@ public class BasketService {
         logger.info("Successfully deleted basket with User ID: {}", userId);
     }
 
-    @Cacheable("basket")
-    public BasketResponse getBasketById(Long id) {
-        logger.info("Getting basket with ID: {}", id);
-        Basket basket = basketRepository.findById(id)
+
+    @Cacheable(value = "basketItem", key = "#basketId")
+    public BasketResponse getBasketById(Long basketId) {
+        logger.info("Getting basket with ID: {}", basketId);
+        Basket basket = basketRepository.findById(basketId)
                 .orElseThrow(() -> {
                     return new ResourceNotFoundException("Basket not found.");
                 });
-        logger.info("Successfully fetched basket with ID: {}", id);
+        logger.info("Successfully fetched basket with ID: {}", basketId);
         return basketMapper.toResponse(basket);
 
     }

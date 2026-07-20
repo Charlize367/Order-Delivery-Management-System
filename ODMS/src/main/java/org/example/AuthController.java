@@ -41,21 +41,38 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
-        String token = tokenService.generateToken(authentication);
+        try {
 
-        Users users = usersRepository.findByUsername(request.getUsername());
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("id", users.getUserId());
-        response.put("username", users.getUsername());
-        response.put("role", users.getRole());
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
 
-        return ResponseEntity.ok(response);
+            String token = tokenService.generateToken(authentication);
 
+            Users users = usersRepository.findByUsername(request.getUsername());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("id", users.getUserId());
+            response.put("username", users.getUsername());
+            response.put("role", users.getRole());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+
+            Log.error("Login failed for user: {}", request.getUsername(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Invalid username or password");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
     }
+
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@Validated @RequestBody UserRequest request) {
         UserResponse newUser = userService.createUser(request);

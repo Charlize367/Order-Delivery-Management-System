@@ -3,17 +3,12 @@ package org.example.Orders;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.*;
-import org.example.Basket.Basket;
 import org.example.Deliveries.Deliveries;
 import org.example.OrderItems.OrderItems;
 import org.example.Users.Users;
-import org.springframework.cglib.core.Local;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,9 +32,19 @@ public class Orders {
     @DecimalMax(value = "1000000.00", message = "Price must not exceed 1,000,000")
     private Double order_price;
 
-    @NotBlank(message = "Order status cannot be blank")
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Order status cannot be blank")
     @Size(min = 1, max = 50, message = "Order status must have at least 1-50 characters")
-    private String order_status;
+    private OrderStatuses order_status;
+
+    private String order_notes;
+
+    private OrderCancellationReason order_cancel_reason;
+
+
+    @NotBlank(message = "Address cannot be blank")
+    @Size(min = 1, max = 50, message = "Address must have at least 1-50 characters")
+    private String order_address;
 
     @OneToMany(mappedBy = "orders", fetch=FetchType.EAGER)
     private List<OrderItems> orderItems;
@@ -48,6 +53,7 @@ public class Orders {
     private List<Deliveries> deliveries;
 
     public Orders(){}
+
 
 
 
@@ -83,13 +89,60 @@ public class Orders {
         this.order_price = order_price;
     }
 
-    public String getOrder_status() {
+    public OrderStatuses getOrder_status() {
         return order_status;
     }
 
-    public void setOrder_status(String order_status) {
+    public void setOrder_status(OrderStatuses order_status) {
         this.order_status = order_status;
     }
+
+    public String getOrder_notes() {
+        return order_notes;
+    }
+
+    public void setOrder_notes(String order_notes) {
+        this.order_notes = order_notes;
+    }
+
+    public String getOrder_address() {
+        return order_address;
+    }
+
+    public void setOrder_address(String order_address) {
+        this.order_address = order_address;
+    }
+
+    public void setOrder_price(Double order_price) {
+        this.order_price = order_price;
+    }
+
+    public List<OrderItems> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItems> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    public List<Deliveries> getDeliveries() {
+        return deliveries;
+    }
+
+    public void setDeliveries(List<Deliveries> deliveries) {
+        this.deliveries = deliveries;
+    }
+
+
+    public OrderCancellationReason getOrder_cancel_reason() {
+        return order_cancel_reason;
+    }
+
+    public void setOrder_cancel_reason(OrderCancellationReason order_cancel_reason) {
+        this.order_cancel_reason = order_cancel_reason;
+    }
+
+
 
 
 
@@ -97,12 +150,12 @@ public class Orders {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Orders orders = (Orders) o;
-        return Objects.equals(orderId, orders.orderId) && Objects.equals(customer, orders.customer) && Objects.equals(order_date, orders.order_date) && Objects.equals(order_price, orders.order_price) && Objects.equals(order_status, orders.order_status);
+        return Objects.equals(orderId, orders.orderId) && Objects.equals(customer, orders.customer) && Objects.equals(order_date, orders.order_date) && Objects.equals(order_price, orders.order_price) && Objects.equals(order_status, orders.order_status) && Objects.equals(order_notes, orders.order_notes) && Objects.equals(order_address, orders.order_address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, customer, order_date, order_price, order_status);
+        return Objects.hash(orderId, customer, order_date, order_price, order_status, order_notes, order_address);
     }
 
 

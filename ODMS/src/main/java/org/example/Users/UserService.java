@@ -14,7 +14,12 @@ import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,8 +49,15 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(Catalog.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
+    @EventListener(ApplicationReadyEvent.class)
+    @CacheEvict(value = {"users", "user"}, allEntries = true)
+    public void clearCacheOnStartup() {
+        logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
+    }
+
+    @Cacheable(value = "users")
     public List<UserResponse> getAllUsers() {
         logger.info("Displaying all users");
         return usersRepository.findAll().stream()
@@ -53,6 +65,7 @@ public class UserService {
                 .toList();
     }
 
+    @Cacheable(value = "users", key = "'page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()")
     public Page<UserResponse> getUsers(String role, Pageable pageable) {
         logger.info("Displaying users by page");
 
@@ -64,6 +77,14 @@ public class UserService {
                 .map(userMapper::toResponse);
     }
 
+    @Caching(
+            put = {
+                    @CachePut(value = "user", key = "#savedUser.userId")
+            },
+            evict = {
+                    @CacheEvict(value = "users", allEntries = true)
+            }
+    )
     public UserResponse createUser(UserRequest request) {
         logger.info("Attempting to add new user with name: {}", request.getUsername());
         String encodedPassword = passwordEncoder.encode(request.getPassword());
@@ -80,6 +101,15 @@ public class UserService {
         return userMapper.toResponse(savedUser);
     }
 
+
+    @Caching(
+            put = {
+                    @CachePut(value = "user", key = "#savedUser.userId")
+            },
+            evict = {
+                    @CacheEvict(value = "users", allEntries = true)
+            }
+    )
     public UserResponse createAdmin(UserRequest request) {
         logger.info("Attempting to add new admin with name: {}", request.getUsername());
         String encodedPassword = passwordEncoder.encode(request.getPassword());
@@ -95,6 +125,14 @@ public class UserService {
     }
 
 
+    @Caching(
+            put = {
+                    @CachePut(value = "user", key = "#savedUser.userId")
+            },
+            evict = {
+                    @CacheEvict(value = "users", allEntries = true)
+            }
+    )
     public UserResponse updateUsers(Long id, UserRequest request) {
         logger.info("Updating user with ID: {}", id);
         Optional<Users> user = usersRepository.findById(id);
@@ -147,6 +185,11 @@ public class UserService {
 
     }
 
+
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#userId"),
+            @CacheEvict(value = "users", allEntries = true)
+    })
     @Transactional
     public void deleteDeliveryDriverById(Long userId) {
         logger.info("Deleting delivery driver ID: {}", userId);
@@ -164,14 +207,14 @@ public class UserService {
     }
 
 
-    @Cacheable("users")
-    public UserResponse getUsersById(Long id) {
-        logger.info("Getting user ID: {}", id);
-        Users user = usersRepository.findById(id)
+    @Cacheable(value = "user", key = "#userId")
+    public UserResponse getUsersById(Long userId) {
+        logger.info("Getting user ID: {}", userId);
+        Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> {
                     return new ResourceNotFoundException("User not found.");
                 });
-        logger.info("Successfully fetched user ID: {}", id);
+        logger.info("Successfully fetched user ID: {}", userId);
         return userMapper.toResponse(user);
     }
 }

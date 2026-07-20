@@ -79,9 +79,9 @@ public class OrdersController {
 
     }
 
-    @PutMapping("/orderStatus/{orderId}")
-    public ResponseEntity<OrderResponse> updateOrderStatus(@Validated @PathVariable long orderId, @RequestBody OrderStatus orderStatus) {
-        OrderResponse orders = ordersService.updateOrderStatus(orderId, orderStatus);
+    @PatchMapping("/cancel/{orderId}")
+    public ResponseEntity<OrderResponse> cancelOrder(@Validated @PathVariable long orderId, String reason) {
+        OrderResponse orders = ordersService.cancelOrder(orderId, reason);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 

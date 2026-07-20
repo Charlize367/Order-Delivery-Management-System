@@ -12,8 +12,12 @@ import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,7 +46,13 @@ public class CategoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(Category.class);
 
+    @EventListener(ApplicationReadyEvent.class)
+    @CacheEvict(value = {"categories", "category"}, allEntries = true)
+    public void clearCacheOnStartup() {
+        logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
+    }
 
+    @Cacheable(value = "categories")
     public List<CategoryResponse> getAllCategories() {
         logger.info("Displaying all categories");
         return categoryRepository.findAll().stream()
@@ -50,12 +60,23 @@ public class CategoryService {
                 .toList();
     }
 
+
+    @Cacheable(value = "categories", key = "'page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()")
     public Page<CategoryResponse> getCategories(Pageable pageable) {
         logger.info("Displaying categories by page");
         return categoryRepository.findAll(pageable)
                 .map(categoryMapper::toResponse);
     }
 
+
+    @Caching(
+            put = {
+                    @CachePut(value = "category", key = "#savedCategory.categoryId")
+            },
+            evict = {
+                    @CacheEvict(value = "categories", allEntries = true)
+            }
+    )
     public CategoryResponse addCategory(CategoryRequest request) throws IOException {
         logger.info("Attempting to add new category with name: {}", request.getCategory_name());
 
@@ -72,6 +93,14 @@ public class CategoryService {
     }
 
 
+    @Caching(
+            put = {
+                    @CachePut(value = "category", key = "#savedCategory.categoryId")
+            },
+            evict = {
+                    @CacheEvict(value = "categories", allEntries = true)
+            }
+    )
     public CategoryResponse updateCategory(Long categoryId, UpdateCategoryRequest request) throws IOException {
 
         logger.info("Updating category with ID: {}", categoryId);
@@ -89,6 +118,11 @@ public class CategoryService {
         return categoryMapper.toResponse(savedCategory);
     }
 
+
+    @Caching(evict = {
+            @CacheEvict(value = "category", key = "#categoryId"),
+            @CacheEvict(value = "categories", allEntries = true)
+    })
     @Transactional
     public void deleteByCategoryId(Long categoryId) {
         logger.info("Deleting category ID: {}", categoryId);
@@ -106,14 +140,14 @@ public class CategoryService {
     }
 
 
-    @Cacheable("categories")
-    public CategoryResponse getCategoryById(Long id) {
-        logger.info("Getting category ID: {}", id);
-        Category category = categoryRepository.findById(id)
+    @Cacheable(value = "category", key = "#categoryId")
+    public CategoryResponse getCategoryById(Long categoryId) {
+        logger.info("Getting category ID: {}", categoryId);
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> {
                     return new ResourceNotFoundException("Category not found.");
                 });
-        logger.info("Successfully fetched category ID: {}", id);
+        logger.info("Successfully fetched category ID: {}", categoryId);
         return categoryMapper.toResponse(category);
     }
 }

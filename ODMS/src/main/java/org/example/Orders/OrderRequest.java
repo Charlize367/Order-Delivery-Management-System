@@ -1,24 +1,32 @@
 package org.example.Orders;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
-
-import java.time.LocalDate;
 
 public class OrderRequest {
 
 
     @NotBlank(message = "Address cannot be blank")
     @Size(min = 1, max = 50, message = "Address must have at least 1-50 characters")
-    private String address;
+    private String order_address;
 
-    public String getAddress() {
-        return address;
+    private String order_notes;
+
+    public String getOrder_address() {
+        return order_address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setOrder_address(String order_address) {
+        this.order_address = order_address;
     }
+
+    public String getOrder_notes() {
+        return order_notes;
+    }
+
+    public void setOrder_notes(String order_notes) {
+        this.order_notes = order_notes;
+    }
+
 
 
 

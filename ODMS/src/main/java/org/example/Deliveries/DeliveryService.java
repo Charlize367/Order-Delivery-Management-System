@@ -1,20 +1,29 @@
 package org.example.Deliveries;
 
 
+import org.example.Events.OrderDeliveredEvent;
+import org.example.Events.OrderStatusChangeEvent;
 import org.example.Exception.ResourceNotFoundException;
-import org.example.Orders.Orders;
-import org.example.Orders.OrdersRepository;
+import org.example.Notifications.NotificationRepository;
+import org.example.Orders.*;
 import org.example.Users.Users;
 import org.example.Users.UsersRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,12 +40,32 @@ public class DeliveryService {
     private OrdersRepository ordersRepository;
 
     @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
     private DeliveryMapper deliveryMapper;
 
+    @Autowired
+    private OrderMapper orderMapper;
+
+    private final ApplicationEventPublisher publisher;
 
 
-    private static final Logger logger = LoggerFactory.getLogger(Deliveries.class);
 
+
+    private static final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
+
+    public DeliveryService(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    @CacheEvict(value = {"deliveries", "delivery"}, allEntries = true)
+    public void clearCacheOnStartup() {
+        logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
+    }
+
+    @Cacheable(value = "deliveries")
     public List<DeliveryResponse> getAllDeliveries() {
         logger.info("Displaying all deliveries");
         return deliveryRepository.findAll().stream()
@@ -44,6 +73,7 @@ public class DeliveryService {
                 .toList();
     }
 
+    @Cacheable(value = "deliveries", key = "'page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()")
     public Page<DeliveryResponse> getDeliveries(Long customerId, Long driverId, Pageable pageable) {
         logger.info("Displaying all deliveries by page");
 
@@ -67,6 +97,8 @@ public class DeliveryService {
                 .map(deliveryMapper::toResponse);
     }
 
+
+    @Cacheable(value = "delivery", key = "#userId")
     public List<DeliveryResponse> getDeliveriesByUser(Long userId) {
         logger.info("Displaying deliveries by user");
         Users customer = usersRepository.findById(userId)
@@ -75,6 +107,7 @@ public class DeliveryService {
         return deliveryMapper.toListResponse(deliveries);
     }
 
+    @Cacheable(value = "delivery", key = "#userId")
     public List<DeliveryResponse> getDeliveriesByDeliveryMen(Long userId) {
         logger.info("Displaying deliveries by delivery men");
         Users deliveryMen = usersRepository.findById(userId)
@@ -83,6 +116,15 @@ public class DeliveryService {
         return deliveryMapper.toListResponse(deliveries);
     }
 
+
+    @Caching(
+            put = {
+                    @CachePut(value = "delivery", key = "#savedDelivery.deliveryId")
+            },
+            evict = {
+                    @CacheEvict(value = "deliveries", allEntries = true)
+            }
+    )
     public DeliveryResponse addDeliveries(DeliveryRequest request) {
         logger.info("Attempting to add new delivery with order ID: {}", request.getOrderId());
         Users deliveryMen = usersRepository.findById(request.getUserId())
@@ -94,7 +136,6 @@ public class DeliveryService {
         delivery.setAddress(request.getAddress());
         delivery.setOrders(order);
         delivery.setDeliveryMen(deliveryMen);
-        delivery.setDelivery_status(request.getDelivery_status());
         delivery.setEstimated_time(request.getEstimated_time());
         delivery.setDelivered_time(request.getDelivered_time());
         Deliveries savedDelivery = deliveryRepository.save(delivery);
@@ -102,16 +143,17 @@ public class DeliveryService {
         return deliveryMapper.toResponse(savedDelivery);
     }
 
-    public DeliveryResponse updateDeliveryStatus(Long deliveryId, DeliveryStatus deliveryStatus) {
-        logger.info("Updating delivery status with ID: {}", deliveryId);
-        Deliveries deliveries = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Delivery not found with id: " + deliveryId));
-        deliveries.setDelivery_status(deliveryStatus.getDelivery_status());
-        Deliveries delivery = deliveryRepository.save(deliveries);
-        logger.info("Successfully updated delivery status with ID: {}", deliveryId);
-        return deliveryMapper.toResponse(delivery);
-    }
 
+
+
+    @Caching(
+            put = {
+                    @CachePut(value = "delivery", key = "#delivery.deliveryId")
+            },
+            evict = {
+                    @CacheEvict(value = "deliveries", allEntries = true)
+            }
+    )
     public DeliveryResponse updateEstimatedTime(Long deliveryId, EstimatedTime estimatedTime) {
         logger.info("Updating delivery ETA  with ID: {}", deliveryId);
         Deliveries deliveries = deliveryRepository.findById(deliveryId)
@@ -122,16 +164,16 @@ public class DeliveryService {
         return deliveryMapper.toResponse(delivery);
     }
 
-    public DeliveryResponse updateDeliveredTime(Long deliveryId, DeliveredTime deliveredTime) {
-        logger.info("Updating delivery delivered time  with ID: {}", deliveryId);
-        Deliveries deliveries = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Delivery not found with id: " + deliveryId));
-        deliveries.setDelivered_time(deliveredTime.getDelivered_time());
-        Deliveries delivery = deliveryRepository.save(deliveries);
-        logger.info("Successfully updated delivery delivered time  with ID: {}", deliveryId);
-        return deliveryMapper.toResponse(delivery);
-    }
 
+
+    @Caching(
+            put = {
+                    @CachePut(value = "delivery", key = "#delivery.deliveryId")
+            },
+            evict = {
+                    @CacheEvict(value = "deliveries", allEntries = true)
+            }
+    )
     public DeliveryResponse updateDeliveryDriver(Long deliveryId, Long userId) {
         logger.info("Updating delivery ID {} with user ID: {}", deliveryId, userId);
         Users deliveryMen = usersRepository.findById(userId)
@@ -145,30 +187,63 @@ public class DeliveryService {
     }
 
 
+    public OrderResponse markAsOTW(Long orderId) {
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        order.setOrder_status(OrderStatuses.OUT_FOR_DELIVERY);
+        publisher.publishEvent(
+                new OrderStatusChangeEvent(
+                       orderId,
+                        OrderStatuses.OUT_FOR_DELIVERY
+
+                )
+        );
+
+        return orderMapper.toResponse(order);
+    }
 
 
-    public void deleteDeliveries(Long id) {
-        logger.info("Deleting delivery ID: {}", id);
-        Optional<Deliveries> delivery = deliveryRepository.findById(id);
-        Deliveries deliveries = deliveryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Delivery not found with id: " + id));
+    public OrderResponse markAsDelivered(Long orderId, Long deliveryId) {
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        order.setOrder_status(OrderStatuses.DELIVERED);
+
+        Deliveries deliveries = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Delivery not found with id: " + deliveryId));
+        deliveries.setDelivered_time(LocalTime.now());
+        publisher.publishEvent(new OrderDeliveredEvent(orderId, deliveryId, LocalTime.now()));
+
+        return orderMapper.toResponse(order);
+    }
+
+
+    @Caching(evict = {
+            @CacheEvict(value = "delivery", key = "#deliveryId"),
+            @CacheEvict(value = "deliveries", allEntries = true)
+    })
+    public void deleteDeliveries(Long deliveryId) {
+        logger.info("Deleting delivery ID: {}", deliveryId);
+        Optional<Deliveries> delivery = deliveryRepository.findById(deliveryId);
+        Deliveries deletedDelivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Delivery not found with id: " + deliveryId));
         if (delivery.isPresent()) {
-            deliveryRepository.delete(deliveries);
+            deliveryRepository.delete(deletedDelivery);
         }
         else {
             return;
         }
-        logger.info("Successfully deleted delivery ID: {}", id);
+        logger.info("Successfully deleted delivery ID: {}", deliveryId);
     }
 
-    @Cacheable("deliveries")
-    public DeliveryResponse getDeliveriesById(Long id) {
-        logger.info("Getting delivery ID: {}", id);
-        Deliveries delivery = deliveryRepository.findById(id)
-                .orElseThrow(() -> {
-                    return new ResourceNotFoundException("Delivery not found.");
-                });
-        logger.info("Successfully fetched delivery ID: {}", id);
+    @Cacheable(value = "delivery", key = "#deliveryId")
+    public DeliveryResponse getDeliveriesById(Long deliveryId) {
+        logger.info("Getting delivery ID: {}", deliveryId);
+        Deliveries delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() ->
+                     new ResourceNotFoundException("Delivery not found."));
+        logger.info("Successfully fetched delivery ID: {}", deliveryId);
         return deliveryMapper.toResponse(delivery);
     }
 }

@@ -22,11 +22,6 @@ public class DeliveryRequest {
 
     @NotBlank(message = "Order status cannot be blank")
     @Size(min = 1, max = 50, message = "Order status must have at least 1-50 characters")
-    private String delivery_status;
-
-
-    @NotBlank(message = "Order status cannot be blank")
-    @Size(min = 1, max = 50, message = "Order status must have at least 1-50 characters")
     private String address;
 
     @NotNull(message = "Estimated time is required")
@@ -51,14 +46,6 @@ public class DeliveryRequest {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
-    }
-
-    public String getDelivery_status() {
-        return delivery_status;
-    }
-
-    public void setDelivery_status(String delivery_status) {
-        this.delivery_status = delivery_status;
     }
 
     public String getAddress() {

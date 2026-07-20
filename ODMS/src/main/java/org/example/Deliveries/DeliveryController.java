@@ -3,6 +3,7 @@ package org.example.Deliveries;
 import org.example.Basket.Basket;
 import org.example.Catalog.Catalog;
 import org.example.Category.CategoryResponse;
+import org.example.Orders.OrderResponse;
 import org.example.Orders.OrderStatus;
 import org.example.Orders.Orders;
 import org.example.Orders.OrdersRepository;
@@ -75,11 +76,6 @@ public class DeliveryController {
     }
 
 
-    @PutMapping("/deliveryStatus/{deliveryId}")
-    public ResponseEntity<DeliveryResponse> updateDeliveryStatus(@Validated @PathVariable long deliveryId, @RequestBody DeliveryStatus deliveryStatus) {
-        DeliveryResponse updatedDelivery = deliveryService.updateDeliveryStatus(deliveryId, deliveryStatus);
-        return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
-    }
 
     @PutMapping("/estimatedTime/{deliveryId}")
     public ResponseEntity<DeliveryResponse> updateEstimatedTime(@Validated @PathVariable long deliveryId, @RequestBody EstimatedTime estimatedTime) {
@@ -87,10 +83,16 @@ public class DeliveryController {
         return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
     }
 
-    @PutMapping("/deliveredTime/{deliveryId}")
-    public ResponseEntity<DeliveryResponse> updateDeliveredTime(@Validated @PathVariable long deliveryId, @RequestBody DeliveredTime deliveredTime) {
-        DeliveryResponse updatedDelivery = deliveryService.updateDeliveredTime(deliveryId, deliveredTime);
-        return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
+    @PatchMapping("/otw/{deliveryId}")
+    public ResponseEntity<OrderResponse> updateDeliveredTime(@Validated @PathVariable long orderId) {
+        OrderResponse updatedStatus = deliveryService.markAsOTW(orderId);
+        return new ResponseEntity<>(updatedStatus, HttpStatus.OK);
+    }
+
+    @PatchMapping("/delivered/{deliveryId}")
+    public ResponseEntity<OrderResponse> updateDeliveredTime(@Validated @PathVariable long orderId, @PathVariable long deliveryId) {
+        OrderResponse updatedStatus = deliveryService.markAsDelivered(orderId, deliveryId);
+        return new ResponseEntity<>(updatedStatus, HttpStatus.OK);
     }
 
     @PutMapping("/{deliveryId}/drivers/{userId}")

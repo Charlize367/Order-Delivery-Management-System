@@ -10,7 +10,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @Component
-@Order(1)
+@Order(10)
 public class RateLimitFilter implements Filter {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
@@ -29,21 +31,51 @@ public class RateLimitFilter implements Filter {
     @Autowired
     ProxyManager<String> proxyManager;
 
+    private final JwtDecoder jwtDecoder;
+
+    public RateLimitFilter(JwtDecoder jwtDecoder) {
+        this.jwtDecoder = jwtDecoder;
+    }
+
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
+
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-        String key = httpRequest.getRemoteAddr();
+        String key;
+
+
+        String authHeader = httpRequest.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+                var jwt = jwtDecoder.decode(token); // HS256 decoder
+                key = jwt.getSubject(); // use username/id as key
+            } catch (Exception e) {
+                LOG.warn("Invalid JWT, falling back to IP address", e);
+                key = httpRequest.getRemoteAddr();
+            }
+        } else {
+
+            key = httpRequest.getRemoteAddr();
+        }
+
+
         Bucket bucket = proxyManager.builder().build(key, bucketConfiguration);
 
+
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
-        LOG.debug(">>>>>>>>remainingTokens: {}", probe.getRemainingTokens());
+        LOG.debug(">>>>>>>>remainingTokens for {}: {}", key, probe.getRemainingTokens());
+
+
         if (probe.isConsumed()) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
             httpResponse.setContentType("text/plain");
-            httpResponse.setHeader("Retry-After", "" + TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill()));
-            httpResponse.setStatus(429);
+            httpResponse.setHeader("Retry-After",
+                    String.valueOf(TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill())));
+            httpResponse.setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
             httpResponse.getWriter().append("Too many requests");
         }
     }

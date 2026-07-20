@@ -29,9 +29,6 @@ public class Deliveries {
     @NotNull(message = "Order is required")
     private Orders orders;
 
-    @NotBlank(message = "Order status cannot be blank")
-    @Size(min = 1, max = 50, message = "Order status must have at least 1-50 characters")
-    private String delivery_status;
 
     @NotBlank(message = "Order status cannot be blank")
     @Size(min = 1, max = 50, message = "Order status must have at least 1-50 characters")
@@ -43,11 +40,11 @@ public class Deliveries {
 
     private LocalTime delivered_time;
 
-    public Deliveries(Long deliveryId, Users deliveryMen, Orders orders, String delivery_status, String address, LocalTime estimated_time, LocalTime delivered_time) {
+    public Deliveries(Long deliveryId, Users deliveryMen, Orders orders,  String address, LocalTime estimated_time, LocalTime delivered_time) {
         this.deliveryId = deliveryId;
         this.deliveryMen = deliveryMen;
         this.orders = orders;
-        this.delivery_status = delivery_status;
+
         this.address = address;
         this.estimated_time = estimated_time;
         this.delivered_time = delivered_time;
@@ -82,13 +79,6 @@ public class Deliveries {
         this.deliveryMen = delivery_men;
     }
 
-    public String getDelivery_status() {
-        return delivery_status;
-    }
-
-    public void setDelivery_status(String delivery_status) {
-        this.delivery_status = delivery_status;
-    }
 
     public LocalTime getEstimated_time() {
         return estimated_time;
@@ -118,12 +108,12 @@ public class Deliveries {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Deliveries that = (Deliveries) o;
-        return Objects.equals(deliveryId, that.deliveryId) && Objects.equals(orders, that.orders) && Objects.equals(deliveryMen, that.deliveryMen) && Objects.equals(delivery_status, that.delivery_status) && Objects.equals(estimated_time, that.estimated_time) && Objects.equals(delivered_time, that.delivered_time) && Objects.equals(address, that.address);
+        return Objects.equals(deliveryId, that.deliveryId) && Objects.equals(orders, that.orders) && Objects.equals(deliveryMen, that.deliveryMen)  && Objects.equals(estimated_time, that.estimated_time) && Objects.equals(delivered_time, that.delivered_time) && Objects.equals(address, that.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(deliveryId, orders, deliveryMen, delivery_status, estimated_time, delivered_time, address);
+        return Objects.hash(deliveryId, orders, deliveryMen, estimated_time, delivered_time, address);
     }
 
 

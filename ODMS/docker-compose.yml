@@ -43,6 +43,7 @@ services:
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       FRONTEND_URL: ${FRONTEND_URL}
+      APP_JWT_SECRET: 1234567890123456789012345678901234567890123456789012345678
     networks:
       - backend
     restart: unless-stopped

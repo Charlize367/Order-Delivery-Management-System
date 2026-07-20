@@ -6,6 +6,7 @@ import org.example.Basket.BasketResponse;
 import org.example.Catalog.Catalog;
 import org.example.Catalog.CatalogMapper;
 import org.example.Catalog.CatalogResponse;
+import org.example.OrderItems.OrderItemsMapper;
 import org.example.Users.UserMapper;
 import org.example.Users.Users;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,11 @@ public class OrderMapper {
 
 
     private final UserMapper userMapper;
+    private final OrderItemsMapper orderItemsMapper;
 
-    public OrderMapper(UserMapper userMapper) {
+    public OrderMapper(UserMapper userMapper, OrderItemsMapper orderItemsMapper) {
         this.userMapper = userMapper;
+        this.orderItemsMapper = orderItemsMapper;
     }
 
 
@@ -28,9 +31,12 @@ public class OrderMapper {
         OrderResponse orderResponse = new OrderResponse();
         orderResponse.setOrderId(order.getOrderId());
         orderResponse.setCustomer(userMapper.toResponse(order.getCustomer()));
-        orderResponse.setOrder_status(order.getOrder_status());
+        orderResponse.setOrder_status(order.getOrder_status().toString());
         orderResponse.setOrder_price(order.getOrder_price());
         orderResponse.setOrder_date(order.getOrder_date());
+        orderResponse.setOrder_address(order.getOrder_address());
+        orderResponse.setOrder_notes(order.getOrder_notes());
+        orderResponse.setOrderItems(orderItemsMapper.toListResponse(order.getOrderItems()));
         return orderResponse;
     }
 
@@ -40,9 +46,12 @@ public class OrderMapper {
                     OrderResponse orderResponse = new OrderResponse();
                     orderResponse.setOrderId(order.getOrderId());
                     orderResponse.setCustomer(userMapper.toResponse(order.getCustomer()));
-                    orderResponse.setOrder_status(order.getOrder_status());
+                    orderResponse.setOrder_status(order.getOrder_status().toString());
                     orderResponse.setOrder_price(order.getOrder_price());
                     orderResponse.setOrder_date(order.getOrder_date());
+                    orderResponse.setOrder_address(order.getOrder_address());
+                    orderResponse.setOrder_notes(order.getOrder_notes());
+                    orderResponse.setOrderItems(orderItemsMapper.toListResponse(order.getOrderItems()));
                     return orderResponse;
                 })
                 .collect(Collectors.toList());

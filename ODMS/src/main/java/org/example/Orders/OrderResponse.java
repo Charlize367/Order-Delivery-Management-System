@@ -1,9 +1,10 @@
 package org.example.Orders;
 
-import jakarta.validation.constraints.*;
+import org.example.OrderItems.OrderItemsResponse;
 import org.example.Users.UserResponse;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class OrderResponse {
 
@@ -12,7 +13,9 @@ public class OrderResponse {
     private LocalDate order_date;
     private Double order_price;
     private String order_status;
-    private String address;
+    private String order_address;
+    private String order_notes;
+    private List<OrderItemsResponse> orderItems;
 
 
     public Long getOrderId() {
@@ -23,13 +26,30 @@ public class OrderResponse {
         this.orderId = orderId;
     }
 
-    public String getAddress() {
-        return address;
+    public String getOrder_address() {
+        return order_address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setOrder_address(String order_address) {
+        this.order_address = this.order_address;
     }
+
+    public String getOrder_notes() {
+        return order_notes;
+    }
+
+    public void setOrder_notes(String order_notes) {
+        this.order_notes = order_notes;
+    }
+
+    public List<OrderItemsResponse> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItemsResponse> orderItems) {
+        this.orderItems = orderItems;
+    }
+
 
     public UserResponse getCustomer() {
         return customer;
