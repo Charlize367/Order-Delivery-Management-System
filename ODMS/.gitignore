@@ -43,4 +43,4 @@ src/main/resources/application-local.properties
 application-local.properties
 
 
-/Secrets
+src/main/java/org/example/Secrets
