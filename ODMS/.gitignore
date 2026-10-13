@@ -43,4 +43,6 @@ src/main/resources/application-local.properties
 application-local.properties
 
 
-src/main/java/org/example/Secrets
+*.json
+src/main/java/org/example/Secrets/
+ODMS/src/main/java/org/example/Secrets/
