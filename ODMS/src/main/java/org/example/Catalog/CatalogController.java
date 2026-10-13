@@ -1,6 +1,8 @@
 package org.example.Catalog;
 
 import org.example.Category.CategoryRepository;
+import org.example.ModifierGroup.ModifierGroupResponse;
+import org.example.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,12 +40,14 @@ public class CatalogController {
     public List<CatalogResponse> getAllCatalog() {
         return catalogService.getAllCatalog();
     }
+
+
     @GetMapping
-    public ResponseEntity<Page<CatalogResponse>> getCatalog(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "5") int size,
-                                                          @RequestParam(defaultValue = "catalogId") String sortBy,
-                                                            @RequestParam(required = false) Long categoryId,
-                                                          @RequestParam(defaultValue = "true") boolean descending) {
+    public ResponseEntity<PageResponse<CatalogResponse>> getCatalog(@RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "5") int size,
+                                                                    @RequestParam(defaultValue = "catalogId") String sortBy,
+                                                                    @RequestParam(required = false) Long categoryId,
+                                                                    @RequestParam(defaultValue = "true") boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -80,5 +84,18 @@ public class CatalogController {
     public ResponseEntity<List<Catalog>> searchCatalog(@RequestParam String query) {
         List<Catalog> results = catalogRepository.findByCatalogNameContainingIgnoreCaseAndActiveTrue(query);
         return ResponseEntity.ok(results);
+    }
+
+
+    @PatchMapping("/{catalogId}/unavailable")
+    public ResponseEntity<CatalogResponse> setUnavailable(@Validated @PathVariable long catalogId) throws IOException {
+        CatalogResponse catalog = catalogService.setUnavailable(catalogId);
+        return new ResponseEntity<>(catalog, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{catalogId}/available")
+    public ResponseEntity<CatalogResponse> setAvailable(@Validated @PathVariable long catalogId) throws IOException {
+        CatalogResponse catalog = catalogService.setAvailable(catalogId);
+        return new ResponseEntity<>(catalog, HttpStatus.CREATED);
     }
 }

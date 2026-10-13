@@ -93,41 +93,47 @@ const CatalogCategory = () => {
     const addItem = async (event) => {
       event.preventDefault();
 
-      if (!catalogImage) {
-        alert("Please select an image"); 
-        return;
-      }
+      // if (!catalogImage) {
+      //   alert("Please select an image"); 
+      //   return;
+      // }
 
       setIsLoading(true);
       openAddForm(false);
 
       try {
 
-      const imageData = {
-        filename: catalogImage.name,
-        contentType: catalogImage.type,
-        fileSize: catalogImage.size
+    //   const imageData = {
+    //     filename: catalogImage.name,
+    //     contentType: catalogImage.type,
+    //     fileSize: catalogImage.size
 
-      }
-        const { data } = await axios.post(`${API_URL}/images/initiate`, imageData,  {
-                    headers: {
-                        'Authorization' : `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-        });
+    //   }
+    //     const { data } = await axios.post(`${API_URL}/images/initiate`, imageData,  {
+    //                 headers: {
+    //                     'Authorization' : `Bearer ${token}`,
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //     });
 
 
-        const { uploadUrl, key } = data;
+    //     const { uploadUrl, key } = data;
 
-      await axios.put(uploadUrl, catalogImage, {
-        headers: {
-          'Content-Type': catalogImage.type,
-        },
-      });
+    //   await axios.put(uploadUrl, catalogImage, {
+    //     headers: {
+    //       'Content-Type': catalogImage.type,
+    //     },
+    //   });
 
-      const catalogPayload = {
+    //   const catalogPayload = {
+    //   ...inputData,
+    //   catalog_image: key, 
+    // };
+
+
+     const catalogPayload = {
       ...inputData,
-      catalog_image: key, 
+    
     };
 
       const response = await axios.post(`${API_URL}/catalog/category/${param.id}`, catalogPayload, {
@@ -167,12 +173,12 @@ const CatalogCategory = () => {
 
 
   return (
-    <div className="body">
+    <div className="body bg-[#F7F1E8] min-h-screen">
       <Header />
-      <section className="dashboard">
-        <div className="catalog-top">
-          <h1 className="text-4xl m-9 font-bold text-white">{param.name}</h1>
-         <button onClick={openAddForm} class="flex justify-center  cursor-pointer m-10 rounded-sm bg-[#096E22] hover:bg-[#075515] rounded-sm px-12 py-3 text-sm font-medium text-white " href="#">
+      <section className="dashboard max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="catalog-top flex items-center justify-between flex-wrap gap-4 pt-8">
+          <h1 className="text-4xl font-bold text-[#3B2A20] tracking-tight">{param.name}</h1>
+         <button onClick={openAddForm} class="flex justify-center  cursor-pointer rounded-lg bg-[#A65A34] hover:bg-[#8A4A2A] transition-colors duration-150 px-6 py-3 text-sm font-medium text-[#F7F1E8] shadow-sm hover:shadow-md" href="#">
           Add Item +
         </button>
           
@@ -184,16 +190,16 @@ const CatalogCategory = () => {
         
 
         {isActive && (
-            <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-[#3B2A20]/40 backdrop-blur-sm">
             <div className="relative p-4 w-full max-w-md max-h-full">
             
-                <div className="relative bg-[#242424] rounded-lg shadow-sm ">
+                <div className="relative bg-[#F7F1E8] rounded-2xl shadow-2xl border border-[#A65A34]/15 ">
                 
-                    <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
-                        <h3 className="text-lg font-semibold text-white">
+                    <div className="flex items-center justify-between px-6 py-5 rounded-t border-b border-[#A65A34]/15">
+                        <h3 className="text-lg font-semibold text-[#3B2A20]">
                             Add Catalog
                         </h3>
-                        <button type="button" onClick={openAddForm} className="text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                        <button type="button" onClick={openAddForm} className="text-[#3B2A20]/60 cursor-pointer bg-transparent hover:bg-[#A65A34]/10 hover:text-[#3B2A20] transition-colors duration-150 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="crud-modal">
                             <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -204,45 +210,47 @@ const CatalogCategory = () => {
                 
 
 
-                    <form onSubmit={addItem} className="p-4 md:p-5">
-                        <div className="grid gap-4 mb-4 grid-cols-2">
+                    <form onSubmit={addItem} className="px-6 py-5">
+                        <div className="grid gap-5 mb-5 grid-cols-2">
 
                         <div className="col-span-2">
-                          <label htmlFor="catalogName"  name="catalogName"  className="block mb-2 text-sm font-medium text-white">Name</label>
-                          <input type="text" id="catalogName" name="catalogName" placeholder="Catalog Name" value={inputData.catalogName} onChange={handleChange} className="bg-[#2a2a2a]
- border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " required/>
+                          <label htmlFor="catalogName"  name="catalogName"  className="block mb-2 text-sm font-medium text-[#3B2A20]">Name</label>
+                          <input type="text" id="catalogName" name="catalogName" placeholder="Catalog Name" value={inputData.catalogName} onChange={handleChange} className="bg-white
+ border border-[#A65A34]/30 text-[#3B2A20] text-sm rounded-lg focus:ring-2 focus:ring-[#A65A34] focus:border-[#A65A34] block w-full p-3 " required/>
                         </div>
 
                         <div className="col-span-2">
-                                <label htmlFor="catalog_description" className="block mb-2 text-sm font-medium text-white">Description</label>
-                                <textarea value={inputData.catalog_description} onChange={handleChange} name="catalog_description" id="catalog_description" rows="4" className="bg-[#2a2a2a]
- border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder="Description" required></textarea>                    
+                                <label htmlFor="catalog_description" className="block mb-2 text-sm font-medium text-[#3B2A20]">Description</label>
+                                <textarea value={inputData.catalog_description} onChange={handleChange} name="catalog_description" id="catalog_description" rows="4" className="bg-white
+ border border-[#A65A34]/30 text-[#3B2A20] text-sm rounded-lg focus:ring-2 focus:ring-[#A65A34] focus:border-[#A65A34] block w-full p-3 " placeholder="Description" required></textarea>                    
                         </div>
 
                         <div className="col-span-2 sm:col-span-1">
-                                <label htmlFor="price" className="block mb-2 text-sm font-medium text-white">Price</label>
-                                <input type="number" name="catalog_price" value={inputData.catalog_price} onChange={handleChange}  id="catalog_price" className="bg-[#2a2a2a]
- border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " placeholder="Price" required/>
+                                <label htmlFor="price" className="block mb-2 text-sm font-medium text-[#3B2A20]">Price</label>
+                                <input type="number" name="catalog_price" value={inputData.catalog_price} onChange={handleChange}  id="catalog_price" className="bg-white
+ border border-[#A65A34]/30 text-[#3B2A20] text-sm rounded-lg focus:ring-2 focus:ring-[#A65A34] focus:border-[#A65A34] block w-full p-3 " placeholder="Price" required/>
                         </div>
 
 
 
                          <div className="col-span-2 ">
-                            <label className="block text-sm font-medium text-gray-100 mb-1" htmlFor="file_input">Upload an image</label>
-                            <input onChange={handleImageChange} className="block w-full text-sm text-[#9a9a9a]
-               file:mr-4 file:py-2 file:px-4
+                            <label className="block text-sm font-medium text-[#3B2A20] mb-2" htmlFor="file_input">Upload an image</label>
+                            <input onChange={handleImageChange} className="block w-full text-sm text-[#3B2A20]/70
+               file:mr-4 file:py-2.5 file:px-4
                file:rounded-lg file:border-0
                file:text-sm file:font-semibold
-               file:bg-gray-100 file:text-gray-700
+               file:bg-[#A65A34]/10 file:text-[#A65A34]
+               hover:file:bg-[#A65A34]/20
+               file:transition-colors file:duration-150
               
- border border-[#2f2f2f] rounded-lg cursor-pointer bg-[#2a2a2a]" type="file" placeholder="Catalog Image" name="catalog_image" aria-describedby="file_input_help" id="file_input"/>
-                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+ border border-[#A65A34]/30 rounded-lg cursor-pointer bg-white p-2.5" type="file" placeholder="Catalog Image" name="catalog_image" aria-describedby="file_input_help" id="file_input"/>
+                            <p className="mt-2 text-sm text-[#3B2A20]/60" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                         </div>
                       </div>
                       <input type="hidden" name="category" value={inputData.category} onChange={handleChange} />
 
 
-                        <button type="submit" className="text-white inline-flex items-center cursor-pointer  rounded-sm bg-[#096E22] hover:bg-[#075515] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                        <button type="submit" className="text-[#F7F1E8] inline-flex items-center justify-center w-full sm:w-auto cursor-pointer  rounded-lg bg-[#A65A34] hover:bg-[#8A4A2A] transition-colors duration-150 focus:ring-4 focus:outline-none focus:ring-[#A65A34]/30 font-medium text-sm px-6 py-3 mt-2 text-center shadow-sm">
                             <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
                             Add
                         </button>
@@ -255,9 +263,9 @@ const CatalogCategory = () => {
 
               {showPopup && (
             <div>
-        <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-none divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg  top-5 right-5" role="alert">
-        <div id="toast-success" className="flex items-center w-full max-w-xs p-4 mb-4 text-white bg-gray-500 rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800" role="alert">
-            <div className="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+        <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-[#3B2A20] bg-none  top-5 right-5" role="alert">
+        <div id="toast-success" className="flex items-center w-full max-w-xs p-4 text-[#F7F1E8] bg-[#3B2A20] rounded-xl shadow-lg" role="alert">
+            <div className="inline-flex items-center justify-center shrink-0 w-9 h-9 text-[#8A9A5B] bg-[#8A9A5B]/15 rounded-lg">
                 <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                 </svg>
@@ -271,22 +279,22 @@ const CatalogCategory = () => {
 
               {isLoading && (
             <div className="flex items-center justify-center my-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#8A9A5B] border-solid border-[#8A9A5B]/30"></div>
             </div>
           )}
 
-                  <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 p-10">
+                  <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 pt-8">
           {item.map((items) => (
             <AdminItem items={items} onReload={handleReloadData} category_ID={param.id} />
           ))}
           </ul>
 
           {!isLoading && item.length == 0 && (
-            <p className="flex justify-center text-white text-lg">There are no items in this category.</p>
+            <p className="flex justify-center text-[#3B2A20] text-lg py-12">There are no items in this category.</p>
           )}
 
           {item.length > 0 && (
-          <div className="w-full">
+          <div className="w-full pt-8">
           <Pagination totalPages={totalPages} currentPage={currentPage} fetchData={fetchCatalogByCategory} />
           </div>
           )}

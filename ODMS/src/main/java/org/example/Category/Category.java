@@ -26,13 +26,18 @@ public class Category {
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     private List<Catalog> catalog;
 
+    @NotNull
+    @Column(nullable = false)
+    private Long tenantId = 1L;
+
 
     public Category(){}
 
-    public Category(Long categoryId, String category_name, String category_image) {
+    public Category(Long categoryId, String category_name, String category_image, Long tenantId) {
         this.categoryId = categoryId;
         this.category_name = category_name;
         this.category_image = category_image;
+        this.tenantId = tenantId;
     }
 
     public Long getCategoryId() {
@@ -59,15 +64,23 @@ public class Category {
         this.category_image = category_image;
     }
 
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return Objects.equals(categoryId, category.categoryId) && Objects.equals(category_name, category.category_name) && Objects.equals(catalog, category.catalog) && Objects.equals(category_image, category.category_image);
+        return Objects.equals(categoryId, category.categoryId) && Objects.equals(category_name, category.category_name) && Objects.equals(catalog, category.catalog) && Objects.equals(category_image, category.category_image) && Objects.equals(tenantId, category.tenantId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(categoryId, category_name, catalog, category_image);
+        return Objects.hash(categoryId, category_name, catalog, category_image, tenantId);
     }
 }

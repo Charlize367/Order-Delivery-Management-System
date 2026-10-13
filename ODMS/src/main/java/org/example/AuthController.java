@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,8 +35,15 @@ public class AuthController {
 
     private final TokenService tokenService;
 
-    public AuthController(TokenService tokenService){
+
+    private final LoginSessionRepository loginSessionRepository;
+
+    public AuthController(
+            TokenService tokenService,
+            LoginSessionRepository loginSessionRepository
+    ) {
         this.tokenService = tokenService;
+        this.loginSessionRepository = loginSessionRepository;
     }
 
 
@@ -52,7 +60,21 @@ public class AuthController {
 
             String token = tokenService.generateToken(authentication);
 
+
+
+            String sessionId = tokenService.extractClaim(
+                    token,
+                    claims -> claims.getId()
+            );
+
             Users users = usersRepository.findByUsername(request.getUsername());
+
+            LoginSession session = new LoginSession();
+            session.setSessionId(sessionId);
+            session.setUserId(users.getUserId());
+            session.setLastActivityAt(Instant.now());
+
+            loginSessionRepository.save(session);
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);

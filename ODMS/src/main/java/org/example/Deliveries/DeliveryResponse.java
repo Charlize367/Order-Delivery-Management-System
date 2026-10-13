@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import org.example.Orders.OrderResponse;
 import org.example.Users.UserResponse;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class DeliveryResponse {
@@ -17,6 +18,7 @@ public class DeliveryResponse {
     private String address;
     private LocalTime estimated_time;
     private LocalTime delivered_time;
+    private LocalDateTime scheduledDeliveredTime;
 
 
     public Long getDeliveryId() {
@@ -66,4 +68,14 @@ public class DeliveryResponse {
     public void setDelivered_time(LocalTime delivered_time) {
         this.delivered_time = delivered_time;
     }
+
+    public LocalDateTime getScheduledDeliveredTime() {
+        return scheduledDeliveredTime;
+    }
+
+    public void setScheduledDeliveredTime(LocalDateTime scheduledDeliveredTime) {
+        this.scheduledDeliveredTime = scheduledDeliveredTime;
+    }
+
+
 }

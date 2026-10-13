@@ -5,6 +5,7 @@ import org.example.Category.CategoryResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class CatalogResponse  {
 
@@ -18,12 +19,14 @@ public class CatalogResponse  {
     private String catalog_description;
 
 
-    private Double catalog_price;
+    private BigDecimal catalog_price;
 
     private String catalog_image;
 
 
     private CategoryResponse category;
+
+    private boolean available;
 
     public Long getCatalogId() {
         return catalogId;
@@ -58,11 +61,11 @@ public class CatalogResponse  {
         this.catalog_description = catalog_description;
     }
 
-    public Double getCatalog_price() {
+    public BigDecimal getCatalog_price() {
         return catalog_price;
     }
 
-    public void setCatalog_price(Double catalog_price) {
+    public void setCatalog_price(BigDecimal catalog_price) {
         this.catalog_price = catalog_price;
     }
 
@@ -73,4 +76,13 @@ public class CatalogResponse  {
     public void setCatalog_image(String catalog_image) {
         this.catalog_image = catalog_image;
     }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
 }

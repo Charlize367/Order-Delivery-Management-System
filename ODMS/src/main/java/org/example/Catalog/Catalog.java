@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.example.Basket.Basket;
 import org.example.Category.Category;
+import org.example.ModifierGroup.ModifierGroup;
+import org.example.Orders.Orders;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,7 +24,7 @@ public class Catalog {
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.01", message = "Price must be greater than 0")
     @DecimalMax(value = "1000000.00", message = "Price must not exceed 1,000,000")
-    private Double catalog_price;
+    private BigDecimal catalog_price;
 
     @NotBlank(message = "Product description cannot be blank")
     @Size(max = 100, message = "Name must have at least 1-100 characters")
@@ -37,16 +40,27 @@ public class Catalog {
     @JoinColumn(name = "category_ID")
     private Category category;
 
+
+    @OneToMany(mappedBy = "catalog", fetch=FetchType.LAZY)
+    private List<ModifierGroup> modifierGroup;
+
     private boolean active = true;
 
+    private boolean available = true;
 
-    public Catalog(Long catalogId, String catalogName, Double catalog_price, String catalog_description, String catalog_image, Category category) {
+    @NotNull
+    @Column(nullable = false)
+    private Long tenantId = 1L;
+
+
+    public Catalog(Long catalogId, String catalogName, BigDecimal catalog_price, String catalog_description, String catalog_image, Category category, Long tenantId) {
         this.catalogId = catalogId;
         this.catalogName = catalogName;
         this.catalog_price = catalog_price;
         this.catalog_description = catalog_description;
         this.catalog_image = catalog_image;
         this.category = category;
+        this.tenantId = tenantId;
     }
 
 
@@ -66,11 +80,11 @@ public class Catalog {
         this.catalogName = catalogName;
     }
 
-    public Double getCatalog_price() {
+    public BigDecimal getCatalog_price() {
         return catalog_price;
     }
 
-    public void setCatalog_price(Double catalog_price) {
+    public void setCatalog_price(BigDecimal catalog_price) {
         this.catalog_price = catalog_price;
     }
 
@@ -109,17 +123,41 @@ public class Catalog {
         this.active = active;
     }
 
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public List<ModifierGroup> getModifierGroup() {
+        return modifierGroup;
+    }
+
+    public void setModifierGroup(List<ModifierGroup> modifierGroup) {
+        this.modifierGroup = modifierGroup;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Catalog catalog = (Catalog) o;
-        return Objects.equals(catalogId, catalog.catalogId) && Objects.equals(catalogName, catalog.catalogName) && Objects.equals(catalog_price, catalog.catalog_price) && Objects.equals(catalog_description, catalog.catalog_description)  && Objects.equals(catalog_image, catalog.catalog_image) && Objects.equals(category, catalog.category);
+        return Objects.equals(catalogId, catalog.catalogId) && Objects.equals(catalogName, catalog.catalogName) && Objects.equals(catalog_price, catalog.catalog_price) && Objects.equals(catalog_description, catalog.catalog_description)  && Objects.equals(catalog_image, catalog.catalog_image) && Objects.equals(category, catalog.category) && Objects.equals(tenantId, catalog.tenantId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(catalogId, catalogName, catalog_price, catalog_description, catalog_image, category);
+        return Objects.hash(catalogId, catalogName, catalog_price, catalog_description, catalog_image, category, tenantId);
     }
 
 

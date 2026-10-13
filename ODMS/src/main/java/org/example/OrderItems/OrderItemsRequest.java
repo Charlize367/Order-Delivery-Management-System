@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import org.example.Catalog.Catalog;
 import org.example.Orders.Orders;
 
+import java.math.BigDecimal;
+
 public class OrderItemsRequest {
 
     @NotNull(message = "Order ID is required")
@@ -23,7 +25,7 @@ public class OrderItemsRequest {
     @NotNull(message = "Subtotal is required")
     @DecimalMin(value = "0.01", message = "Subtotal must be greater than 0")
     @DecimalMax(value = "1000000.00", message = "Subtotal must not exceed 1,000,000")
-    private Double subtotal;
+    private BigDecimal subtotal;
 
     public Long getOrderId() {
         return orderId;
@@ -49,11 +51,11 @@ public class OrderItemsRequest {
         this.quantity = quantity;
     }
 
-    public Double getSubtotal() {
+    public BigDecimal getSubtotal() {
         return subtotal;
     }
 
-    public void setSubtotal(Double subtotal) {
+    public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
     }
 }

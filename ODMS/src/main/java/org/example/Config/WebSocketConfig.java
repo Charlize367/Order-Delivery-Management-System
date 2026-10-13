@@ -19,6 +19,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -94,22 +95,30 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         }
 
                         String token = authHeader.substring(7);
-                        String username = tokenService.extractUsername(token);
 
-                        CustomUserDetails userDetails = userDetailsService.loadUserById(Long.valueOf(username));
-                        Long userId = userDetails.getId();
+                        // Extract email safely using the subject field
+                        String email = tokenService.extractEmail(token);
+
+                        Long userId = tokenService.extractUserId(token);
+
+                        // Load user details by email instead of casting email string to a Long ID
+                        UserDetails userDetails = userDetailsService.loadUserById(userId);
 
                         UsernamePasswordAuthenticationToken authToken =
                                 new UsernamePasswordAuthenticationToken(
                                         userId.toString(), null, userDetails.getAuthorities());
 
                         accessor.setUser(authToken);
+                        System.out.println("===== WEBSOCKET AUTH =====");
+                        System.out.println("WebSocket user ID: " + userId);
+                        System.out.println("WebSocket principal: " + accessor.getUser().getName());
+                        System.out.println("==========================");
 
                         System.out.println("WebSocket principal set: " + accessor.getUser().getName());
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        return null; // prevent channel crash
+                        return null; // Stops connection if JWT is invalid/expired/signature mismatch
                     }
                 }
 

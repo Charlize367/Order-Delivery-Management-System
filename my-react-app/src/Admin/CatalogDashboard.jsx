@@ -25,7 +25,7 @@ const CatalogDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   
 
-
+ 
 
   const openAddForm = () => {
     setIsActive(!isActive);
@@ -59,7 +59,7 @@ const CatalogDashboard = () => {
             setIsLoading(false);
             
           } catch (error) {
-            console.error("Error");
+            console.error("Error", error);
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
                 const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
                 setRetryTime(retryAfter);
@@ -80,41 +80,46 @@ const CatalogDashboard = () => {
 
       
 
-      if (!categoryImage) {
-        alert("Please select an image"); 
-        return;
-      }
+      // if (!categoryImage) {
+      //   alert("Please select an image"); 
+      //   return;
+      // }
 
       setIsLoading(true);
       openAddForm(false);
 
       try {
 
-      const imageData = {
-        filename: categoryImage.name,
-        contentType: categoryImage.type,
-        fileSize: categoryImage.size
+    //   const imageData = {
+    //     filename: categoryImage.name,
+    //     contentType: categoryImage.type,
+    //     fileSize: categoryImage.size
 
-      }
-        const { data } = await axios.post(`${API_URL}/images/initiate`, imageData,  {
-                    headers: {
-                        'Authorization' : `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-        });
+    //   }
+    //     const { data } = await axios.post(`${API_URL}/images/initiate`, imageData,  {
+    //                 headers: {
+    //                     'Authorization' : `Bearer ${token}`,
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //     });
 
 
-        const { uploadUrl, key } = data;
+    //     const { uploadUrl, key } = data;
 
-      await axios.put(uploadUrl, categoryImage, {
-        headers: {
-          'Content-Type': categoryImage.type,
-        },
-      });
+    //   await axios.put(uploadUrl, categoryImage, {
+    //     headers: {
+    //       'Content-Type': categoryImage.type,
+    //     },
+    //   });
 
-      const categoryPayload = {
+    //   const categoryPayload = {
+    //   ...inputData,
+    //   category_image: key, 
+    // };
+
+     const categoryPayload = {
       ...inputData,
-      category_image: key, 
+    
     };
 
       const response = await axios.post(`${API_URL}/categories`, categoryPayload, {
@@ -160,31 +165,31 @@ const CatalogDashboard = () => {
 
 
   return (
-    <div>
+    <div className="bg-[#F7F1E8] min-h-screen">
       <Header />
      
-  <section  className=" bg-cover bg-center bg-no-repeat lg:grid lg:h-[500px] lg:place-content-center" style={{ backgroundImage: `url('/main-hero.jpg')`, backgroundColor: 'rgba(0,0,0,0.5)', backgroundBlendMode: 'darken' }}>
-  <div className="mx-auto w-screen max-w-7xl px-4 py-15 sm:px-6 sm:py-24 lg:px-8 lg:py-30">
+  <section  className=" bg-cover bg-center bg-no-repeat lg:grid lg:h-[500px] lg:place-content-center" style={{ backgroundImage: `url('/main-hero.svg')` }}>
+  <div className="mx-auto w-screen max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
     
     <div className="relative z-10 mx-auto max-w-prose text-center">
       
-      <h1 className="relative z-10 text-4xl text-white font-bold sm:text-5xl">
+      <h1 className="relative z-10 text-4xl text-[#F7F1E8] font-bold tracking-tight sm:text-5xl">
         Deliciousness at your doorstep.
       </h1>
 
-      <p className="relative z-10 mt-4 text-base text-pretty text-white sm:text-lg/relaxed">
+      <p className="relative z-10 mt-4 text-base text-pretty text-[#F7F1E8]/90 sm:text-lg/relaxed">
         Explore a menu full of fresh, flavorful dishes crafted to satisfy your cravings, delivered straight to you.
       </p>
 
-      <form  onSubmit={searchCatalog} class="max-w-md mt-6 sm:mt-8 mx-auto">   
+      <form  onSubmit={searchCatalog} class="max-w-md mt-8 mx-auto">   
     <label for="search" class="block mb-2.5 text-sm font-medium text-heading sr-only ">Search</label>
     <div class="relative">
-        <div class="absolute text-black inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+        <div class="absolute text-[#3B2A20] inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
             <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
         </div>
         <input type="search" id="search" value={query} 
-          onChange={(e) => setQuery(e.target.value)} class="block w-full p-5 ps-9 bg-white  text-heading text-sm rounded-4xl focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search" required />
-        <button type="submit" class="absolute cursor-pointer end-2 bottom-3 text-white bg-[#56C789] hover:bg-[#38A45C] text-white rounded-lg  box-border  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>
+          onChange={(e) => setQuery(e.target.value)} class="block w-full py-4 px-4 ps-10 bg-[#F7F1E8]  text-[#3B2A20] text-sm rounded-full focus:ring-2 focus:ring-[#A65A34] focus:border-[#A65A34] shadow-md placeholder:text-[#3B2A20]/50" placeholder="Search" required />
+        <button type="submit" class="absolute cursor-pointer end-2 top-1/2 -translate-y-1/2 text-[#F7F1E8] bg-[#A65A34] hover:bg-[#8A4A2A] transition-colors duration-150 rounded-full box-border focus:ring-4 focus:ring-[#A65A34]/30 shadow-sm font-medium leading-5 text-xs px-4 py-2.5 focus:outline-none">Search</button>
     </div>
 </form>
 
@@ -200,9 +205,9 @@ const CatalogDashboard = () => {
 
         {showPopup && (
                   <div>
-        <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-none divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg  top-5 right-5" role="alert">
-        <div id="toast-success" className="flex items-center w-full max-w-xs p-4 mb-4 text-white bg-gray-500 rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800" role="alert">
-            <div className="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+        <div id="toast-top-right" className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-[#3B2A20] bg-none  top-5 right-5" role="alert">
+        <div id="toast-success" className="flex items-center w-full max-w-xs p-4 text-[#F7F1E8] bg-[#3B2A20] rounded-xl shadow-lg" role="alert">
+            <div className="inline-flex items-center justify-center shrink-0 w-9 h-9 text-[#8A9A5B] bg-[#8A9A5B]/15 rounded-lg">
                 <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                 </svg>
@@ -214,21 +219,25 @@ const CatalogDashboard = () => {
         </div>
               )}
 
-        <button onClick={openAddForm} class="flex justify-center cursor-pointer m-10 rounded-sm bg-[#096E22] hover:bg-[#075515] text-white px-12 py-3 text-sm font-medium text-white  hover:text-gray-200" href="#">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-end pt-8">
+        <button onClick={openAddForm} class="flex justify-center cursor-pointer rounded-lg bg-[#A65A34] hover:bg-[#8A4A2A] transition-colors duration-150 text-[#F7F1E8] px-6 py-3 text-sm font-medium shadow-sm hover:shadow-md" href="#">
           Add Category +
         </button>
+        </div>
+        </div>
 
         {isActive && (
-            <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div id="crud-modal" tabIndex="-1" className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center  items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-[#3B2A20]/40 backdrop-blur-sm">
             <div className="relative p-4 w-full max-w-md max-h-full">
             
-                <div className="relative bg-gradient-to-b from-[#1A1A1A] to-[#2A2A2A] rounded-lg shadow-sm ">
+                <div className="relative bg-[#F7F1E8] rounded-2xl shadow-2xl border border-[#A65A34]/15 ">
                 
-                    <div className="flex items-center justify-between p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-100">
-                        <h3 className="text-lg font-semibold text-white">
+                    <div className="flex items-center justify-between px-6 py-5 rounded-t border-b border-[#A65A34]/15">
+                        <h3 className="text-lg font-semibold text-[#3B2A20]">
                             Add Category
                         </h3>
-                        <button type="button" onClick={openAddForm} className="text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                        <button type="button" onClick={openAddForm} className="text-[#3B2A20]/60 cursor-pointer bg-transparent hover:bg-[#A65A34]/10 hover:text-[#3B2A20] transition-colors duration-150 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="crud-modal">
                             <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -236,28 +245,29 @@ const CatalogDashboard = () => {
                         </button>
                     </div>
                     
-                    <form onSubmit={addCategory} className="p-4 md:p-5">
-                        <div className="grid gap-4 mb-4 grid-cols-2">
+                    <form onSubmit={addCategory} className="px-6 py-5">
+                        <div className="grid gap-5 mb-5 grid-cols-2">
                         <div className="col-span-2">
-                          <label htmlFor="category_name"  name="category_name"  className="block mb-2 text-sm font-medium text-gray-100">Name</label>
-                          <input type="text" id="category_name" name="category_name" placeholder="Category Name" value={inputData.category_name} onChange={handleChange} className="bg-[#2a2a2a]
- border border-[#2f2f2f] text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " required/>
+                          <label htmlFor="category_name"  name="category_name"  className="block mb-2 text-sm font-medium text-[#3B2A20]">Name</label>
+                          <input type="text" id="category_name" name="category_name" placeholder="Category Name" value={inputData.category_name} onChange={handleChange} className="bg-white
+ border border-[#A65A34]/30 text-[#3B2A20] text-sm rounded-lg focus:ring-2 focus:ring-[#A65A34] focus:border-[#A65A34] block w-full p-3 " required/>
                         </div>
                          <div className="col-span-2 ">
-                            <label className="block text-sm font-medium text-gray-100 mb-1" htmlFor="file_input">Upload an image</label>
-                            <input onChange={handleImageChange} className="block w-full cursor-pointer text-sm text-[#9a9a9a]
-               file:mr-4 file:py-2 file:px-4
+                            <label className="block text-sm font-medium text-[#3B2A20] mb-2" htmlFor="file_input">Upload an image</label>
+                            <input onChange={handleImageChange} className="block w-full cursor-pointer text-sm text-[#3B2A20]/70
+               file:mr-4 file:py-2.5 file:px-4
                file:rounded-lg file:border-0
                file:text-sm file:font-semibold
-               file:bg-gray-100 file:text-gray-700
-               hover:file:bg-gray-200
+               file:bg-[#A65A34]/10 file:text-[#A65A34]
+               hover:file:bg-[#A65A34]/20
+               file:transition-colors file:duration-150
                cursor-pointer
-               bg-[#2a2a2a]
- border border-[#2f2f2f] rounded-lg cursor-pointer " type="file" placeholder="Category Image" name="category_image" aria-describedby="file_input_help" id="file_input"/>
-                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+               bg-white p-2.5
+ border border-[#A65A34]/30 rounded-lg cursor-pointer " type="file" placeholder="Category Image" name="category_image" aria-describedby="file_input_help" id="file_input"/>
+                            <p className="mt-2 text-sm text-[#3B2A20]/60" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                         </div>
                       </div>
-                        <button type="submit" className="text-white inline-flex cursor-pointer items-center bg-gradient-to-r from-[#56C789] to-[#096E22] hover:from-[#38A45C] to-[#075515] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 text-center">
+                        <button type="submit" className="text-[#F7F1E8] inline-flex cursor-pointer items-center justify-center w-full sm:w-auto bg-[#A65A34] hover:bg-[#8A4A2A] transition-colors duration-150 focus:ring-4 focus:outline-none focus:ring-[#A65A34]/30 font-medium rounded-lg text-sm px-6 py-3 mt-2 text-center shadow-sm">
                             <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
                             Add
                         </button>
@@ -268,17 +278,17 @@ const CatalogDashboard = () => {
         )}
        
         
-        <div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
 
           {isLoading && (
             <div className="flex items-center justify-center my-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#8A9A5B] border-solid border-[#8A9A5B]/30"></div>
             </div>
           )}
-          <ul class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <ul class="grid grid-cols-2 md:grid-cols-3 gap-6">
           
           {!isLoading && categories.length == 0 && (
-            <p className="flex justify-center text-white text-lg">There are no categories found.</p>
+            <p className="flex justify-center text-[#3B2A20] text-lg col-span-full py-12">There are no categories found.</p>
           )}
 
           

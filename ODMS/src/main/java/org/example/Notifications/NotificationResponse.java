@@ -10,6 +10,8 @@ public class NotificationResponse {
     private NotificationType type;
     private String message;
     private boolean read;
+
+    private String status;
     private LocalDateTime createdAt;
 
     public NotificationResponse(
@@ -19,7 +21,8 @@ public class NotificationResponse {
             NotificationType type,
             String message,
             boolean read,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            String status
     ) {
         this.id = id;
         this.userId = userId;
@@ -28,6 +31,7 @@ public class NotificationResponse {
         this.message = message;
         this.read = read;
         this.createdAt = createdAt;
+        this.status = status;
     }
 
     public NotificationResponse() {}
@@ -86,5 +90,13 @@ public class NotificationResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

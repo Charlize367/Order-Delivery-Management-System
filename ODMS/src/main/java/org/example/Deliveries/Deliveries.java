@@ -10,6 +10,7 @@ import org.example.Orders.Orders;
 import org.example.Users.Users;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
@@ -24,14 +25,14 @@ public class Deliveries {
     @JoinColumn(name = "user_ID")
     private Users deliveryMen;
 
-    @ManyToOne( fetch=FetchType.EAGER)
+    @OneToOne( fetch=FetchType.EAGER)
     @JoinColumn(name = "order_ID")
     @NotNull(message = "Order is required")
     private Orders orders;
 
 
-    @NotBlank(message = "Order status cannot be blank")
-    @Size(min = 1, max = 50, message = "Order status must have at least 1-50 characters")
+    @NotBlank(message = "Address cannot be blank")
+    @Size(min = 1, max = 500, message = "Address must have at least 1-50 characters")
     private String address;
 
 
@@ -40,14 +41,22 @@ public class Deliveries {
 
     private LocalTime delivered_time;
 
-    public Deliveries(Long deliveryId, Users deliveryMen, Orders orders,  String address, LocalTime estimated_time, LocalTime delivered_time) {
+    private LocalDateTime scheduledDeliveredTime;
+
+
+
+    @NotNull
+    @Column(nullable = false)
+    private Long tenantId = 1L;
+
+    public Deliveries(Long deliveryId, Users deliveryMen, Orders orders,  String address, LocalTime estimated_time, LocalTime delivered_time, Long tenantId) {
         this.deliveryId = deliveryId;
         this.deliveryMen = deliveryMen;
         this.orders = orders;
-
         this.address = address;
         this.estimated_time = estimated_time;
         this.delivered_time = delivered_time;
+        this.tenantId = tenantId;
     }
 
     public Deliveries() {
@@ -103,17 +112,34 @@ public class Deliveries {
         this.address = address;
     }
 
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public LocalDateTime getScheduledDeliveredTime() {
+        return scheduledDeliveredTime;
+    }
+
+    public void setScheduledDeliveredTime(LocalDateTime scheduledDeliveredTime) {
+        this.scheduledDeliveredTime = scheduledDeliveredTime;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Deliveries that = (Deliveries) o;
-        return Objects.equals(deliveryId, that.deliveryId) && Objects.equals(orders, that.orders) && Objects.equals(deliveryMen, that.deliveryMen)  && Objects.equals(estimated_time, that.estimated_time) && Objects.equals(delivered_time, that.delivered_time) && Objects.equals(address, that.address);
+        return Objects.equals(deliveryId, that.deliveryId) && Objects.equals(orders, that.orders) && Objects.equals(deliveryMen, that.deliveryMen)  && Objects.equals(estimated_time, that.estimated_time) && Objects.equals(delivered_time, that.delivered_time) && Objects.equals(address, that.address) && Objects.equals(tenantId, that.tenantId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(deliveryId, orders, deliveryMen, estimated_time, delivered_time, address);
+        return Objects.hash(deliveryId, orders, deliveryMen, estimated_time, delivered_time, address, tenantId);
     }
 
 

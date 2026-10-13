@@ -1,6 +1,7 @@
 package org.example.Users;
 
 
+import org.example.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,11 +38,11 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponse>> getUsers(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "5") int size,
-                                                                @RequestParam(defaultValue = "userId") String sortBy,
-                                                                @RequestParam(required = false) String role,
-                                                                @RequestParam(defaultValue = "true") boolean descending) {
+    public ResponseEntity<PageResponse<UserResponse>> getUsers(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "5") int size,
+                                                               @RequestParam(defaultValue = "userId") String sortBy,
+                                                               @RequestParam(required = false) String role,
+                                                               @RequestParam(defaultValue = "true") boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -52,6 +53,11 @@ public class UserController {
     @GetMapping("{id}")
     public UserResponse getUsersById(@PathVariable long id) {
         return userService.getUsersById(id);
+    }
+
+    @GetMapping("/driver/{deliveryId}")
+    public UserResponse getDriverByDeliveryId(@PathVariable long deliveryId) {
+        return userService.getDriverByDelivery(deliveryId);
     }
 
     @GetMapping("/role/{role}")
@@ -76,21 +82,34 @@ public class UserController {
 
 
 
-    @PutMapping("/{user_ID}")
+    @PutMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUsers(@Validated @PathVariable long userId, @RequestBody UserRequest request) {
         UserResponse updateUser = userService.updateUsers(userId, request);
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/customers/{user_ID}")
-    public ResponseEntity<UserResponse> deleteCustomers(@PathVariable Long user_ID) {
-        userService.deleteCustomerById(user_ID);
+    @DeleteMapping("/customers/{userId}")
+    public ResponseEntity<UserResponse> deleteCustomers(@PathVariable Long userId) {
+        userService.deleteCustomerById(userId);
         return null;
     }
 
-    @DeleteMapping("/delivery/{user_ID}")
-    public ResponseEntity<UserResponse> deleteDeliveryDriver(@PathVariable Long user_ID) {
-        userService.deleteDeliveryDriverById(user_ID);
+    @DeleteMapping("/delivery/{userId}")
+    public ResponseEntity<UserResponse> deleteDeliveryDriver(@PathVariable Long userId) {
+        userService.deleteDeliveryDriverById(userId);
+        return null;
+    }
+
+    @DeleteMapping("/kitchen/{userId}")
+    public ResponseEntity<UserResponse> deleteKitchenStaff(@PathVariable Long userId) {
+        userService.deleteKitchenStaffById(userId);
+        return null;
+    }
+
+
+    @DeleteMapping("/dispatcher/{userId}")
+    public ResponseEntity<UserResponse> deleteDispatcher(@PathVariable Long userId) {
+        userService.deleteKitchenStaffById(userId);
         return null;
     }
 }

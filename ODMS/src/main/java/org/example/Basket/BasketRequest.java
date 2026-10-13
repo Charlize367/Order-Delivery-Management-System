@@ -1,16 +1,20 @@
 package org.example.Basket;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+import org.example.ModifierOption.ModifierOption;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class BasketRequest {
-    @NotNull(message = "Customer ID is required")
     private Long userId;
 
-    @NotNull(message = "Catalog ID is required")
+
     private Long catalogId;
+
+
+
+    private Long comboId;
 
     @NotNull(message = "Quantity is required")
     @Min(value = 0, message = "Stock must be at least 0")
@@ -19,7 +23,14 @@ public class BasketRequest {
     @NotNull(message = "Subtotal is required")
     @DecimalMin(value = "0.01", message = "Price must be greater than 0")
     @DecimalMax(value = "1000000.00", message = "Price must not exceed 1,000,000")
-    private Double subtotal;
+    private BigDecimal subtotal;
+
+
+    private List<Long> modifierOptionIds;
+
+
+    @Size(max = 500, message = "Special instructions must not exceed 500 characters")
+    private String specialInstructions;
 
 
     public Long getUserId() {
@@ -46,12 +57,36 @@ public class BasketRequest {
         this.quantity = quantity;
     }
 
-    public Double getSubtotal() {
+    public BigDecimal getSubtotal() {
         return subtotal;
     }
 
-    public void setSubtotal(Double subtotal) {
+    public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
     }
 
+
+    public List<Long> getModifierOptionIds() {
+        return modifierOptionIds;
+    }
+
+    public void setModifierOptionIds(List<Long> modifierOptionIds) {
+        this.modifierOptionIds = modifierOptionIds;
+    }
+
+    public String getSpecialInstructions() {
+        return specialInstructions;
+    }
+
+    public void setSpecialInstructions(String specialInstructions) {
+        this.specialInstructions = specialInstructions;
+    }
+
+    public Long getComboId() {
+        return comboId;
+    }
+
+    public void setComboId(Long comboId) {
+        this.comboId = comboId;
+    }
 }

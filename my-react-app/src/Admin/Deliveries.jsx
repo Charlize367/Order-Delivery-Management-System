@@ -27,11 +27,9 @@ const Deliveries = () => {
    const [showRateLimitPopup, setShowRateLimitPopup] = useState(false);
    const [error, setError] = useState("");
    const [isLoading, setIsLoading] = useState(true);
-   
-  
-    
-    
-    console.log(deliveryDetails);
+
+
+
     const openEditStatusForm = (deliveryId) => {
     setIsActive(!isActive);
     setDeliveryId(deliveryId);
@@ -47,7 +45,6 @@ const Deliveries = () => {
       setDeliveryId(deliveryId);
     }
 
-    console.log(deliveryDetails);
   const getDeliveryDetails = async (page = 0) => {
     try {
             const response = await axios.get(`${API_URL}/delivery?page=${page}&size=${pageSize}`, {
@@ -56,11 +53,11 @@ const Deliveries = () => {
                         'Content-Type': 'application/json'
                     }});
 
-          
-          const deliveries = response.data.content;
-         
 
-        
+          const deliveries = response.data.content;
+
+
+
           const sortedDeliveries = deliveries.sort(
       (a, b) => a.deliveryId - b.deliveryId
     );
@@ -69,7 +66,7 @@ const Deliveries = () => {
     setCurrentPage(response.data.number);
     setTotalPages(response.data.totalPages);
     setIsLoading(false);
-          
+
           } catch (error) {
             console.error("Error");
             if (error.response?.data === "Too many requests" || error.response?.status === 429) {
@@ -77,10 +74,10 @@ const Deliveries = () => {
                 setRetryTime(retryAfter);
                 setError("Too Many Requests");
                 setShowRateLimitPopup(true);
-          
+
             }
-            
-          
+
+
           }
   }
 
@@ -89,7 +86,7 @@ const Deliveries = () => {
     }, []);
 
 
-  
+
     const getDriver = async () => {
       try {
         const response = await axios.get(`${API_URL}/users/role/DELIVERY`, {
@@ -100,13 +97,12 @@ const Deliveries = () => {
 
               setDrivers(response.data);
       } catch (error) {
-        console.log("Error");
         if (error.response?.data === "Too many requests" || error.response?.status === 429) {
                 const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
                 setRetryTime(retryAfter);
                 setError("Too Many Requests");
                 setShowRateLimitPopup(true);
-          
+
          }
       }
     }
@@ -116,13 +112,12 @@ const Deliveries = () => {
 
     }, [])
 
-     
+
         const handleSubmit = async(deliveryId, status ) => {
-        
+
           const putData = {
         delivery_status: status
       }
-          console.log("Selected status:", status);
         try {
 
         const response = await axios.put(`${API_URL}/delivery/deliveryStatus/${deliveryId}`, putData , {
@@ -131,44 +126,37 @@ const Deliveries = () => {
                         'Content-Type': 'application/json'
                     }});
 
-                    console.log(response);
          setDeliveryDetails(d =>
           d.map(dd =>
             dd.deliveryId === deliveryId
               ? { ...dd, delivery_status:response.data.delivery_status
           }
             : dd
-        
+
         )
 
             );
-          
+
       getDeliveryDetails();
       setSelectedDriverId(null);
-      console.log(putData);
         }
         catch (error) {
-          console.log("Failed to Update Status")
-          
           if (error.response?.data === "Too many requests" || error.response?.status === 429) {
                 const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
                 setRetryTime(retryAfter);
                 setError("Too Many Requests");
                 setShowRateLimitPopup(true);
-          
+
           }
-          
+
         }
       }
 
-     
+
         const handleSubmit2 = async(deliveryId, driverId) => {
-       
-         
-          console.log("Selected status:", status);
-          console.log(driverId);
+
         try {
-    
+
 
 
         const response = await axios.put(`${API_URL}/delivery/${deliveryId}/drivers/${driverId}`, {}, {
@@ -177,29 +165,27 @@ const Deliveries = () => {
                         'Content-Type': 'application/json'
                     }});
 
-                    console.log(response);
          setDriver(response.data);
-          
+
      getDeliveryDetails();
-      
+
         }
         catch (error) {
-          console.log("Failed to Update Status");
           if (error.response?.data === "Too many requests" || error.response?.status === 429) {
                 const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
                 setRetryTime(retryAfter);
                 setError("Too Many Requests");
                 setShowRateLimitPopup(true);
-          
+
           }
-          
+
         }
       }
 
 
-     
+
         const handleSubmit3 = async(deliveryId, estimatedTime ) => {
-         
+
         const putData = {
         estimated_time: estimatedTime
       }
@@ -211,66 +197,81 @@ const Deliveries = () => {
                         'Content-Type': 'application/json'
                     }});
 
-                    console.log(response);
          setDeliveryDetails(d =>
           d.map(dd =>
             dd.deliveryId === deliveryId
               ? { ...dd, estimated_time:response.data.estimated_time
           }
             : dd
-        
+
         )
 
             );
-          
+
       getDeliveryDetails();
-     
+
         }
         catch (error) {
-          console.log("Failed to Update Time");
           if (error.response?.data === "Too many requests" || error.response?.status === 429) {
                 const retryAfter = parseInt(error.response.headers["retry-after"], 10) || 5;
                 setRetryTime(retryAfter);
                 setError("Too Many Requests");
                 setShowRateLimitPopup(true);
-          
+
           }
-          
-          
+
+
         }
       }
 
+  const statusBadgeClass = (status) => {
+    switch (status) {
+      case "Delivered":
+        return "bg-[#8A9A5B]/15 text-[#5b6a3a] border-[#8A9A5B]/40";
+      case "Cancelled":
+        return "bg-[#3B2A20]/10 text-[#3B2A20]/70 border-[#3B2A20]/20";
+      case "On the Way":
+        return "bg-[#A65A34]/15 text-[#A65A34] border-[#A65A34]/40";
+      default:
+        return "bg-white text-[#3B2A20] border-[#A65A34]/30";
+    }
+  };
 
-          
-  
+
+
   return (
-    <div className="body">
+    <div className="body bg-[#F7F1E8] min-h-screen pb-16">
       <Header />
-      
-       <div className="relative overflow-x-auto  shadow-xl rounded-xl sm:rounded-lg m-6">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-2">
+        <h1 className="text-2xl font-bold text-[#3B2A20]">Deliveries</h1>
+        <p className="text-sm text-[#3B2A20]/60 mt-1">Track and manage active deliveries</p>
+      </div>
+
+       <div className="relative overflow-x-auto rounded-xl shadow-md border border-[#A65A34]/10 max-w-7xl mx-auto mt-2 mx-4 sm:mx-6 lg:mx-8">
         {isLoading && (
             <div className="flex items-center justify-center my-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#8A9A5B] border-solid border-[#8A9A5B]/30"></div>
             </div>
           )}
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="bg-[#232323] text-gray-200 border-b border-[#2f2f2f]">
-            <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white">
-              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Delivery ID</th>
-              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Driver</th>
-              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Customer</th>
-              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Date</th>
-              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Status</th>
-              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Address</th>
-              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Estimated Time</th>
-              <th scope="col" className="px-6 py-3 text-sm font-semibold text-gray-200">Delivered Time</th>
-      
+          <table className="w-full text-sm text-left rtl:text-right">
+            <thead className="sticky top-0 bg-[#EFE6D8] text-[#3B2A20] border-b border-[#A65A34]/15 z-10">
+            <tr>
+              <th scope="col" className="px-6 py-3.5 text-sm font-semibold">Delivery ID</th>
+              <th scope="col" className="px-6 py-3.5 text-sm font-semibold">Driver</th>
+              <th scope="col" className="px-6 py-3.5 text-sm font-semibold">Customer</th>
+              <th scope="col" className="px-6 py-3.5 text-sm font-semibold">Date</th>
+              <th scope="col" className="px-6 py-3.5 text-sm font-semibold">Status</th>
+              <th scope="col" className="px-6 py-3.5 text-sm font-semibold">Address</th>
+              <th scope="col" className="px-6 py-3.5 text-sm font-semibold">Estimated Time</th>
+              <th scope="col" className="px-6 py-3.5 text-sm font-semibold">Delivered Time</th>
+
             </tr>
             </thead>
             {deliveryDetails.map((d) => {
 
-             
-      
+
+
       let deliveryDriver = "";
       if(d.deliveryMen === null) deliveryDriver = "Add Driver";
       else if(d.deliveryMen != null) deliveryDriver = d.deliveryMen.username;
@@ -296,78 +297,80 @@ const Deliveries = () => {
         delTime = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
       }
 
-      console.log(selectedDriverId);
 
-      
-      
+
+
       return(
-            <tbody className="bg-[#1f1f1f]">
+            <tbody className="bg-white">
         {showRateLimitPopup && (
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getDeliveryDetails} currentPage={currentPage} />
         )}
-              <tr className="border-b border-[#2a2a2a] hover:bg-[#262626] transition hover:text-white" key={d.deliveryId}>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.deliveryId}</td>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">
+              <tr className="border-b border-[#A65A34]/10 hover:bg-[#FBF8F3] transition-colors duration-150" key={d.deliveryId}>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-[#3B2A20] font-medium">#{d.deliveryId}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-[#3B2A20]">
                   <select id="driver" value={d.deliveryMen ? d.deliveryMen.userId : ""} onChange={(e) =>
-                  
+
                     handleSubmit2(d.deliveryId, e.target.value)
-                    } className="selectOrderStatus">
+                    } className="bg-white border border-[#A65A34]/30 text-[#3B2A20] text-sm rounded-lg focus:ring-2 focus:ring-[#A65A34] focus:border-[#A65A34] p-2">
                 <option value="">Assign a driver...</option>
                 {drivers.map(dd => (
                 <option key={dd.userId} value={dd.userId}>{dd.username}</option>
                 ))}
               </select></td>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.order.customer.username}</td>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{new Date(d.order.order_date).toLocaleDateString("en-US", {
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-[#3B2A20]">{d.order.customer.username}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-[#3B2A20]">{new Date(d.order.order_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}</td>
                 <td className="px-6 py-4 max-w-xs break-words">
                   <select id="status" value={d.delivery_status ? d.delivery_status : ""} onChange={(e) =>
-                  
+
                     handleSubmit(d.deliveryId, e.target.value)
-                    } className="selectOrderStatus">
+                    } className={`text-sm rounded-lg focus:ring-2 focus:ring-[#A65A34] p-2 border font-medium ${statusBadgeClass(d.delivery_status)}`}>
                 <option value="">Update Status...</option>
                 <option value="Pending Assignment">Pending Assignment</option>
                 <option value="Driver Assigned">Driver Assigned</option>
                 <option value="On the Way">On the Way</option>
                 <option value="Delivered">Delivered</option>
                 <option value="Cancelled">Cancelled</option>
-              
-              </select></td>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{d.address}</td>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300"><input type="time" id="eta" name="estimatedTime" value={d.estimated_time} onChange={(e) =>
-                    handleSubmit3(d.deliveryId, e.target.value)
-                    }/></td>
-                <td className="px-6 py-4 max-w-xs break-words text-sm text-gray-300">{delTime}</td>
 
-                
-                
+              </select></td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-[#3B2A20]">{d.address}</td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-[#3B2A20]"><input type="time" id="eta" name="estimatedTime" value={d.estimated_time} onChange={(e) =>
+                    handleSubmit3(d.deliveryId, e.target.value)
+                    } className="bg-white border border-[#A65A34]/30 text-[#3B2A20] text-sm rounded-lg focus:ring-2 focus:ring-[#A65A34] focus:border-[#A65A34] p-2"/></td>
+                <td className="px-6 py-4 max-w-xs break-words text-sm text-[#3B2A20]">{delTime}</td>
+
+
+
             </tr>
-          
+
             </tbody>
              )})}
             </table>
 
-           
+
 
           </div>
 
     {!isLoading && deliveryDetails.length == 0 && (
-            <p className="flex justify-center text-white text-lg">There are no deliveries found.</p>
+        <div className="flex flex-col items-center justify-center py-20 text-[#3B2A20]/50">
+          <svg className="w-16 h-16 mb-3 opacity-40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7l1.5-3h15L21 7M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18M9 12h6"/></svg>
+          <p className="text-lg">There are no deliveries found.</p>
+        </div>
     )}
 
     {deliveryDetails.length > 0 && (
-     <div className="w-full">
+     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <Pagination totalPages={totalPages} currentPage={currentPage} fetchData={getDeliveryDetails} />
       </div>
 
     )}
     </div>
-    
+
   )
 }
-        
+
 
 export default Deliveries

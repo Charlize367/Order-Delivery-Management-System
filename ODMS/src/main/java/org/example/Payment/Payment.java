@@ -11,7 +11,9 @@ import org.example.Users.Users;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Objects;
 
+@Entity
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +22,7 @@ public class Payment {
     @OneToOne
     private Orders order;
 
-    private Double amount;
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod method;
@@ -31,13 +33,19 @@ public class Payment {
 
     private String transactionReference;
 
+    private String paymentIntentId;
+
     private Instant paidAt;
 
     private Instant createdAt;
 
     private Instant updatedAt;
 
-    public Payment(Long paymentId, Orders order, Double amount, PaymentMethod method, PaymentStatus status, String transactionReference, Instant paidAt, Instant createdAt, Instant updatedAt) {
+    @NotNull
+    @Column(nullable = false)
+    private Long tenantId = 1L;
+
+    public Payment(Long paymentId, Orders order, BigDecimal amount, PaymentMethod method, PaymentStatus status, String transactionReference, Instant paidAt, Instant createdAt, Instant updatedAt, Long tenantId) {
         this.paymentId = paymentId;
         this.order = order;
         this.amount = amount;
@@ -47,6 +55,7 @@ public class Payment {
         this.paidAt = paidAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.tenantId = tenantId;
     }
 
     public Payment() {}
@@ -67,11 +76,11 @@ public class Payment {
         this.order = order;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -121,6 +130,35 @@ public class Payment {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getPaymentIntentId() {
+        return paymentIntentId;
+    }
+
+    public void setPaymentIntentId(String paymentIntentId) {
+        this.paymentIntentId = paymentIntentId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Payment payment = (Payment) o;
+        return Objects.equals(paymentId, payment.paymentId) && Objects.equals(order, payment.order) && Objects.equals(amount, payment.amount) && method == payment.method && status == payment.status && Objects.equals(transactionReference, payment.transactionReference) && Objects.equals(paidAt, payment.paidAt) && Objects.equals(createdAt, payment.createdAt) && Objects.equals(updatedAt, payment.updatedAt) && Objects.equals(tenantId, payment.tenantId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(paymentId, order, amount, method, status, transactionReference, paidAt, createdAt, updatedAt, tenantId);
     }
 
 }

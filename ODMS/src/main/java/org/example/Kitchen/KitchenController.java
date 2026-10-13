@@ -4,6 +4,7 @@ package org.example.Kitchen;
 import org.example.OrderItems.OrderItemsResponse;
 import org.example.Orders.OrderCancellationReason;
 import org.example.Orders.OrderResponse;
+import org.example.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,15 +25,27 @@ public class KitchenController {
     private KitchenService kitchenService;
 
     @GetMapping
-    public ResponseEntity<Page<OrderResponse>> getQueuedOrders(@RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "5") int size,
-                                                         @RequestParam(defaultValue = "orderId") String sortBy,
-                                                         @RequestParam(defaultValue = "true") boolean descending) {
+    public ResponseEntity<PageResponse<OrderResponse>> getQueuedOrders(@RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "5") int size,
+                                                                       @RequestParam(defaultValue = "orderId") String sortBy,
+                                                                       @RequestParam(defaultValue = "true") boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
 
         return ResponseEntity.ok(kitchenService.getQueuedOrders(pageable));
+    }
+
+    @GetMapping("/ready")
+    public ResponseEntity<PageResponse<OrderResponse>> getReadyOrders(@RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "5") int size,
+                                                                       @RequestParam(defaultValue = "orderId") String sortBy,
+                                                                       @RequestParam(defaultValue = "true") boolean descending) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+
+        return ResponseEntity.ok(kitchenService.getReadyOrders(pageable));
     }
 
     @PatchMapping("/preparing/{orderId}")

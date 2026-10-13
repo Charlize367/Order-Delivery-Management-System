@@ -1,94 +1,83 @@
 package org.example;
-
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.UUID;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.stream.Collectors;
+import java.security.Key;
+import java.util.Date;
+import java.util.function.Function;
+import io.jsonwebtoken.*;
 
 @Service
 public class TokenService {
 
-    @Autowired
-    private JwtDecoder jwtDecoder;
+    @Value("${app.jwt.secret}")
+    private String jwtSecret;
 
-    @Autowired
-    private JwtEncoder encoder;
-
-    private boolean initialized = false;
-
-    @PostConstruct
-    public void init() {
-        initialized = true;
-        System.out.println("✅ TokenService initialized. Encoder ready: " + encoder.getClass().getName());
-    }
-
-    public String extractUsername(String token) {
-        Jwt jwt = jwtDecoder.decode(token);
-        return jwt.getSubject();
-    }
-
-    public String extractUserId(String token) {
-        Jwt jwt = jwtDecoder.decode(token);
-        return jwt.getClaimAsString("userId");
-    }
-
+    @Value("${app.jwt.expiration-ms}")
+    private long jwtExpirationMs;
 
 
     public String generateToken(Authentication authentication) {
-        if (!initialized) {
-            throw new IllegalStateException(
-                    "TokenService called too early! Encoder not ready. Wait until Spring context is initialized."
-            );
-        }
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
 
-        JwsHeader jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
+        String sessionId = UUID.randomUUID().toString();
 
-        Instant now = Instant.now();
-        String scope = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.HOURS))
-                .subject(authentication.getName())
-                .claim("scope", scope)
-                .build();
-
-        System.out.println("⚡ Generating JWT with claims: " + claims.getClaims());
-
-        try {
-            String token = encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
-            System.out.println("✅ JWT generated successfully: " + token);
-            return token;
-        } catch (JwtEncodingException e) {
-            System.err.println("❌ Failed to encode JWT: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
+        return Jwts.builder()
+                .setId(sessionId)
+                .claim("roles", userDetails.getUser().getRole())
+                .claim("userId", userDetails.getUser().getUserId())
+                .setSubject(userDetails.getUser().getUserId().toString())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(
+                        System.currentTimeMillis() + jwtExpirationMs
+                ))
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    @PostConstruct
-    public void checkEncoderType() {
-        System.out.println("Encoder class: " + encoder.getClass());
+    private Key getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        System.out.println("TokenService key length: " + keyBytes.length + " | first 4 bytes: " + java.util.Arrays.toString(java.util.Arrays.copyOf(keyBytes, 4)));
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
-        try {
-            java.lang.reflect.Field secretField = encoder.getClass().getDeclaredField("secret");
-            secretField.setAccessible(true);
-            Object secretValue = secretField.get(encoder);
-            System.out.println("HMAC secret backing? " + (secretValue != null));
-        } catch (NoSuchFieldException e) {
-            System.out.println("No HMAC secret field → probably JWKSource-backed");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", Long.class));
+    }
+
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractEmail(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }

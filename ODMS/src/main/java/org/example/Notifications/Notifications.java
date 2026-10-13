@@ -1,6 +1,7 @@
 package org.example.Notifications;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +20,12 @@ public class Notifications {
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
-    public Notifications(Long id, Long userId, Long orderId, String message, boolean read, LocalDateTime createdAt, NotificationType type) {
+    @NotNull
+    @Column(nullable = false)
+    private Long tenantId = 1L;
+
+
+    public Notifications(Long id, Long userId, Long orderId, String message, boolean read, LocalDateTime createdAt, NotificationType type, Long tenantId) {
         this.id = id;
         this.userId = userId;
         this.orderId = orderId;
@@ -27,6 +33,7 @@ public class Notifications {
         this.read = read;
         this.type = type;
         this.createdAt = createdAt;
+        this.tenantId = tenantId;
     }
 
     public Notifications(){}
@@ -85,6 +92,14 @@ public class Notifications {
 
     public void setType(NotificationType type) {
         this.type = type;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 
 

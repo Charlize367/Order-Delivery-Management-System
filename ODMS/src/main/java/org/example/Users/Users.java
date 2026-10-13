@@ -7,12 +7,10 @@ import jakarta.validation.constraints.Size;
 import org.example.Basket.Basket;
 import org.example.Deliveries.Deliveries;
 import org.example.Orders.Orders;
+import org.example.Ratings.Rating;
 
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 
@@ -44,14 +42,22 @@ public class Users {
     @OneToMany(mappedBy = "deliveryMen", fetch=FetchType.EAGER)
     private List<Deliveries> deliveries;
 
+    @OneToMany
+    private List<Rating> ratings = new ArrayList<>();
+
+    @NotNull
+    @Column(nullable = false)
+    private Long tenantId = 1L;
 
 
-    public Users(Long userId, String username, String password, Boolean enabled, String role) {
+
+    public Users(Long userId, String username, String password, Boolean enabled, String role, Long tenantId) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.role = role;
+        this.tenantId = tenantId;
     }
 
     public Users(){
@@ -97,18 +103,33 @@ public class Users {
         this.role = role;
     }
 
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
 
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Users users = (Users) o;
-        return Objects.equals(userId, users.userId) && Objects.equals(username, users.username) && Objects.equals(password, users.password) && Objects.equals(enabled, users.enabled) && Objects.equals(role, users.role);
+        return Objects.equals(userId, users.userId) && Objects.equals(username, users.username) && Objects.equals(password, users.password) && Objects.equals(enabled, users.enabled) && Objects.equals(role, users.role) && Objects.equals(tenantId, users.tenantId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, username, password, enabled, role);
+        return Objects.hash(userId, username, password, enabled, role, tenantId);
     }
 
 }

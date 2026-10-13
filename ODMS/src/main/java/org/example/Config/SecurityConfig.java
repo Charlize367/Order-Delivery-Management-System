@@ -9,6 +9,7 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.example.CustomUserDetailsService;
@@ -90,6 +91,7 @@ public class SecurityConfig {
                 admin.setPassword(encoder.encode("admin-odms-123"));
                 admin.setEnabled(true);
                 admin.setRole("ADMIN");
+                admin.setTenantId(1L);
                 usersRepository.save(admin);
                 System.out.println("✅ Admin user created successfully.");
             } else {
@@ -114,39 +116,50 @@ public class SecurityConfig {
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
-
-        byte[] secretKey = "your-very-secure-32-char-secret-here".getBytes();
+        byte[] secretKey = Decoders.BASE64.decode(secret); // use the same @Value("${app.jwt.secret}") field, same decoding as TokenService
 
         SecretKey spec = new SecretKeySpec(secretKey, "HmacSHA256");
 
         JWK jwk = new OctetSequenceKey.Builder(spec)
-                .algorithm(JWSAlgorithm.HS256) // Match this!
+                .algorithm(JWSAlgorithm.HS256)
                 .build();
 
         return new ImmutableJWKSet<>(new JWKSet(jwk));
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource, JwtDecoder jwtDecoder) throws Exception {
+    public JwtDecoder jwtDecoder() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        SecretKey key = Keys.hmacShaKeyFor(keyBytes);
+        return NimbusJwtDecoder.withSecretKey(key).build();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .cors(withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .decoder(jwtDecoder) // <-- force your HS256 decoder
-                        )
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/catalog/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/combos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/modifierGroup/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/ratings/**").permitAll()
+
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/payments/webhook").permitAll() // <-- add this, before the broad POST rule
 
                         .requestMatchers("/login", "/register", "/images/**").permitAll()
                         .requestMatchers("/api/v1/notifications/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated()
+
                         .anyRequest().authenticated()
 
                 )

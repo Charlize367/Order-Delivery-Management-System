@@ -10,7 +10,7 @@ public class CategoryRequest {
     @Size(min = 1, max = 50, message = "Name must have at least 1-50 characters")
     private String category_name;
 
-    @NotBlank
+
     private String category_image;
 
     public String getCategory_name() {

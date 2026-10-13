@@ -36,6 +36,7 @@ public class DeliveryMapper {
         delivery.setAddress(req.getAddress());
         delivery.setEstimated_time(req.getEstimated_time());
         delivery.setDelivered_time(req.getDelivered_time());
+
         return delivery;
     }
 
@@ -51,6 +52,7 @@ public class DeliveryMapper {
         deliveryResponse.setAddress(delivery.getAddress());
         deliveryResponse.setEstimated_time(delivery.getEstimated_time());
         deliveryResponse.setDelivered_time(delivery.getDelivered_time());
+        deliveryResponse.setScheduledDeliveredTime(delivery.getScheduledDeliveredTime());
         return deliveryResponse;
     }
 
@@ -67,6 +69,7 @@ public class DeliveryMapper {
                     deliveryResponse.setAddress(delivery.getAddress());
                     deliveryResponse.setEstimated_time(delivery.getEstimated_time());
                     deliveryResponse.setDelivered_time(delivery.getDelivered_time());
+                    deliveryResponse.setScheduledDeliveredTime(delivery.getScheduledDeliveredTime());
                     return deliveryResponse;
                 })
                 .collect(Collectors.toList());

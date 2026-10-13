@@ -1,10 +1,12 @@
 package org.example.Orders;
 
+import com.stripe.exception.StripeException;
 import jakarta.transaction.Transactional;
 import org.example.Basket.BasketRepository;
 import org.example.Category.CategoryResponse;
 import org.example.Deliveries.DeliveryRepository;
 import org.example.OrderItems.OrderItemsRepository;
+import org.example.PageResponse;
 import org.example.Users.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,10 +52,10 @@ public class OrdersController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<OrderResponse>> getOrders(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "5") int size,
-                                                                @RequestParam(defaultValue = "orderId") String sortBy,
-                                                                @RequestParam(defaultValue = "true") boolean descending) {
+    public ResponseEntity<PageResponse<OrderResponse>> getOrders(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "5") int size,
+                                                                 @RequestParam(defaultValue = "orderId") String sortBy,
+                                                                 @RequestParam(defaultValue = "true") boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -73,14 +75,14 @@ public class OrdersController {
     }
 
     @PostMapping("/users/{userId}")
-    public ResponseEntity<OrderResponse> addOrders(@Validated @PathVariable long userId, @RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> addOrders(@Validated @PathVariable long userId, @RequestBody OrderRequest orderRequest) throws StripeException {
         OrderResponse orders = ordersService.addOrders(userId, orderRequest);
         return new ResponseEntity<>(orders, HttpStatus.OK);
 
     }
 
     @PatchMapping("/cancel/{orderId}")
-    public ResponseEntity<OrderResponse> cancelOrder(@Validated @PathVariable long orderId, String reason) {
+    public ResponseEntity<OrderResponse> cancelOrder(@Validated @PathVariable long orderId, OrderCancellationReason reason) {
         OrderResponse orders = ordersService.cancelOrder(orderId, reason);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }

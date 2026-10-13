@@ -1,16 +1,7 @@
 package org.example.Deliveries;
 
-import org.example.Basket.Basket;
-import org.example.Catalog.Catalog;
-import org.example.Category.CategoryResponse;
 import org.example.Orders.OrderResponse;
-import org.example.Orders.OrderStatus;
-import org.example.Orders.Orders;
-import org.example.Orders.OrdersRepository;
-import org.example.Users.Users;
-import org.example.Users.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.example.PageResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/delivery")
@@ -38,12 +28,12 @@ public class DeliveryController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<DeliveryResponse>> getDeliveries(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "5") int size,
-                                                                @RequestParam(defaultValue = "deliveryId") String sortBy,
-                                                                @RequestParam(required = false) Long customerId,
-                                                                @RequestParam(required = false) Long driverId,
-                                                                @RequestParam(defaultValue = "true") boolean descending) {
+    public ResponseEntity<PageResponse<DeliveryResponse>> getDeliveries(@RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "5") int size,
+                                                                        @RequestParam(defaultValue = "deliveryId") String sortBy,
+                                                                        @RequestParam(required = false) Long customerId,
+                                                                        @RequestParam(required = false) Long driverId,
+                                                                        @RequestParam(defaultValue = "true") boolean descending) {
         Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -56,6 +46,11 @@ public class DeliveryController {
         return deliveryService.getDeliveriesById(id);
     }
 
+
+    @GetMapping("/order/{orderId}")
+    public DeliveryResponse getDeliveriesByOrder(@PathVariable long orderId) {
+        return deliveryService.getDeliveryByOrderId(orderId);
+    }
 
     @GetMapping("/users/customer/{userId}")
     public ResponseEntity<List<DeliveryResponse>> getUserDeliveries(@PathVariable Long userId) {
@@ -83,21 +78,21 @@ public class DeliveryController {
         return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
     }
 
-    @PatchMapping("/otw/{deliveryId}")
-    public ResponseEntity<OrderResponse> updateDeliveredTime(@Validated @PathVariable long orderId) {
+    @PatchMapping("/otw/{orderId}")
+    public ResponseEntity<OrderResponse> markasOTW(@Validated @PathVariable long orderId) {
         OrderResponse updatedStatus = deliveryService.markAsOTW(orderId);
         return new ResponseEntity<>(updatedStatus, HttpStatus.OK);
     }
 
-    @PatchMapping("/delivered/{deliveryId}")
-    public ResponseEntity<OrderResponse> updateDeliveredTime(@Validated @PathVariable long orderId, @PathVariable long deliveryId) {
+    @PatchMapping("/{deliveryId}/delivered/{orderId}")
+    public ResponseEntity<OrderResponse> markAsDelivered(@Validated @PathVariable long orderId, @PathVariable long deliveryId) {
         OrderResponse updatedStatus = deliveryService.markAsDelivered(orderId, deliveryId);
         return new ResponseEntity<>(updatedStatus, HttpStatus.OK);
     }
 
     @PutMapping("/{deliveryId}/drivers/{userId}")
-    public ResponseEntity<DeliveryResponse> updatedDriver(@Validated @PathVariable long deliveryId, @PathVariable long userId) {
-        DeliveryResponse updatedDelivery = deliveryService.updateDeliveryDriver(deliveryId, userId);
+    public ResponseEntity<DeliveryResponse> assignDriver(@Validated @PathVariable long deliveryId, @PathVariable long userId) {
+        DeliveryResponse updatedDelivery = deliveryService.assignDriver(deliveryId, userId);
         return new ResponseEntity<>(updatedDelivery, HttpStatus.OK);
     }
 //    @PostMapping("/users/{user_ID}")

@@ -6,6 +6,9 @@ import org.example.Basket.BasketRepository;
 import org.example.Category.Category;
 import org.example.Category.CategoryRepository;
 import org.example.Exception.ResourceNotFoundException;
+import org.example.ModifierGroup.ModifierGroup;
+import org.example.ModifierGroup.ModifierGroupResponse;
+import org.example.PageResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
@@ -49,7 +52,7 @@ public class CatalogService {
     }
 
 
-    @Cacheable(value = "catalog")
+
     public List<CatalogResponse> getAllCatalog() {
         logger.info("Displaying all catalogs");
 
@@ -59,25 +62,27 @@ public class CatalogService {
                 .toList();
     }
 
-    @Cacheable(value = "catalog", key = "'page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()")
-    public Page<CatalogResponse> getCatalog(Long categoryId, Pageable pageable) {
+    @Cacheable(
+            value = "catalog",
+            key = "'category_'+#categoryId+'_page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()"
+    )
+    public PageResponse<CatalogResponse> getCatalog(Long categoryId, Pageable pageable) {
         logger.info("Displaying catalogs by page");
 
-        if(categoryId != null) {
-            return catalogRepository.findCatalogByCategoryCategoryIdAndActiveTrue(categoryId, pageable)
-                    .map(catalogMapper::toResponse);
-        }
-        return catalogRepository.findByActiveTrue(pageable)
-                .map(catalogMapper::toResponse);
+        Page<Catalog> page = catalogRepository.findCatalogByCategoryCategoryIdAndActiveTrue(categoryId, pageable);
+
+        Page<CatalogResponse> mapped = page.map(catalogMapper::toResponse);
+
+        return new PageResponse<>(mapped);
     }
 
 
     @Caching(
             put = {
-                    @CachePut(value = "catalogItem", key = "#savedCatalog.catalogId")
+                    @CachePut(value = "catalogItem", key = "#result.catalogId")
             },
             evict = {
-                    @CacheEvict(value = "catalogItem", allEntries = true)
+                    @CacheEvict(value = "catalog", allEntries = true)
             }
     )
     public CatalogResponse addCatalog(Long categoryId, CatalogRequest request) throws IOException {
@@ -172,5 +177,49 @@ public class CatalogService {
                 });
         logger.info("Successfully fetched catalog ID: {}", catalogId);
         return catalogMapper.toResponse(catalog);
+    }
+
+
+    @Caching(
+            put = {
+                    @CachePut(value = "catalogItem", key = "#result.catalogId")
+            },
+            evict = {
+                    @CacheEvict(value = "catalog", allEntries = true)
+            }
+    )
+    public CatalogResponse setUnavailable(Long catalogId) {
+        logger.info("Setting catalog as unavailable with ID: {}", catalogId);
+        Catalog catalog = catalogRepository.findById(catalogId)
+                .orElseThrow(() -> new ResourceNotFoundException("Catalog not found with id: " + catalogId));
+
+        catalog.setAvailable(false);
+
+        Catalog savedCatalog =  catalogRepository.save(catalog);
+        logger.info("Successfully set catalog unavailable with ID : {}", catalogId);
+        return catalogMapper.toResponse(savedCatalog);
+
+    }
+
+
+    @Caching(
+            put = {
+                    @CachePut(value = "catalogItem", key = "#result.catalogId")
+            },
+            evict = {
+                    @CacheEvict(value = "catalog", allEntries = true)
+            }
+    )
+    public CatalogResponse setAvailable(Long catalogId) {
+        logger.info("Setting catalog as available with ID: {}", catalogId);
+        Catalog catalog = catalogRepository.findById(catalogId)
+                .orElseThrow(() -> new ResourceNotFoundException("Catalog not found with id: " + catalogId));
+
+        catalog.setAvailable(true);
+
+        Catalog savedCatalog =  catalogRepository.save(catalog);
+        logger.info("Successfully set catalog available with ID : {}", catalogId);
+        return catalogMapper.toResponse(savedCatalog);
+
     }
 }

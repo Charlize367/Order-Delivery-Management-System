@@ -94,19 +94,38 @@ const OrderHistory = () => {
 
      
       const historyOrders = orderDetails.filter(or => getMergedStatus(or) === "History");
+
+      const statusBadgeClasses = (status) => {
+        if (status === "Cancelled") {
+          return "bg-red-100 text-red-700";
+        }
+        if (status === "Delivered") {
+          return "bg-[#8A9A5B]/15 text-[#5C6B3B]";
+        }
+        return "bg-[#A65A34]/12 text-[#A65A34]";
+      };
     
 
       console.log(orderDetails);
       
   
   return (
-    <div className="body">
+    <div className="body min-h-screen bg-[#F7F1E8]">
       <Header />
-      <h1 className="text-white text-4xl font-bold m-10">Order History</h1>
+      <div className="px-10 py-9">
+        <h1 className="font-['Fraunces',serif] text-3xl font-semibold text-[#3B2A20] sm:text-4xl">Order History</h1>
+        <div className="mt-3 h-1 w-14 rounded-full bg-[#A65A34]"></div>
+      </div>
 
       {!isLoading && historyOrders.length == 0 && (
-            <p className="flex justify-center text-white text-lg">No order history found.</p>
-        )}
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <svg className="mb-4 h-14 w-14 text-[#A65A34]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="font-['Fraunces',serif] text-lg font-medium text-[#3B2A20]">No order history found</p>
+          <p className="mt-1 text-sm text-[#8A7862]">Orders you complete will show up here.</p>
+        </div>
+      )}
 
       {showRateLimitPopup && (
           <RateLimitPopup error={error} retryTime={retryTime} setRetryTime={setRetryTime} setShowPopup={setShowRateLimitPopup} showPopup={showRateLimitPopup} fetchData={getOrderDetails} currentPage={currentPage} />
@@ -114,7 +133,7 @@ const OrderHistory = () => {
 
       {isLoading && (
             <div className="flex items-center justify-center my-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#E7DCC9] border-t-[#A65A34]"></div>
             </div>
           )}
 
@@ -134,45 +153,45 @@ const OrderHistory = () => {
 
       
     
-    <div class="bg-transparennt px-4 py-8">
-            <div class="max-w-screen-xl mx-auto">
-                <div class="flex flex-wrap justify-between items-center gap-6">
-                    <div class="max-w-96">
+    <div key={or.order.orderId} className="px-4 py-4">
+            <div className="mx-auto max-w-screen-xl">
+                <div className="flex flex-wrap justify-between items-center gap-6">
+                    <div className="max-w-96">
                        
-                        <p class="text-base text-white">View and manage your past orders</p>
+                        <p className="text-base text-[#6B5745]">View and manage your past orders</p>
                     </div>
                     
                 </div>
 
                 
 
-                <div class="space-y-6 mt-6">
-                    <div class="bg-[#232323] rounded-xl text-white overflow-hidden p-6">
-                        <div class="flex flex-wrap justify-between gap-6">
-                            <div class="max-w-96">
-                                <div class="flex items-center gap-4">
-                                    <span class="text-[15px] font-semibold text-white">Order {or.order.orderId}</span>
-                                    <span class="px-3 py-1.5 bg-green-100 text-green-900 text-xs font-medium rounded-md">{mergedStatus}</span>
+                <div className="space-y-6 mt-6">
+                    <div className="bg-white border border-[#E7DCC9] rounded-xl text-[#3B2A20] overflow-hidden p-6 shadow-sm transition hover:shadow-md">
+                        <div className="flex flex-wrap justify-between gap-6">
+                            <div className="max-w-96">
+                                <div className="flex items-center gap-4">
+                                    <span className="text-[15px] font-semibold text-[#3B2A20]">Order {or.order.orderId}</span>
+                                    <span className={`px-3 py-1.5 text-xs font-medium rounded-md ${statusBadgeClasses(mergedStatus)}`}>{mergedStatus}</span>
                                 </div>
-                                <p class="text-white text-sm mt-3">Placed on {or.order.order_date}</p>
+                                <p className="text-[#8A7862] text-sm mt-3">Placed on {or.order.order_date}</p>
                             </div>
-                            <div class="text-right">
-                                <p class="text-lg font-semibold text-white">PHP {or.order.order_price}</p>
+                            <div className="text-right">
+                                <p className="text-lg font-semibold text-[#A65A34]">PHP {or.order.order_price}</p>
                                 
                             </div>
                         </div>
 
-                        <hr class="border-gray-300 my-6" />
+                        <hr className="border-[#E7DCC9] my-6" />
 
-                        <div class="flex flex-wrap items-center gap-8">
+                        <div className="flex flex-wrap items-center gap-8">
                           {or.orderItems.map(oi => (
-                            <div class="flex items-center gap-4">
-                                <div class="w-16 h-16 bg-gray-100 p-1 rounded-md overflow-hidden">
-                                    <img src={`https://${bucket}.s3.${region}.amazonaws.com/${oi.catalog.catalog_image}`} alt="Product" class="w-full h-full object-contain" />
+                            <div key={oi.catalog.catalogId} className="flex items-center gap-4">
+                                <div className="w-16 h-16 bg-[#FBF6EE] border border-[#E7DCC9] p-1 rounded-md overflow-hidden">
+                                    <img src={`https://${bucket}.s3.${region}.amazonaws.com/${oi.catalog.catalog_image}`} alt="Product" className="w-full h-full object-contain" />
                                 </div>
                                 <div>
-                                    <p class="text-[15px] font-medium text-white">{oi.catalog.catalogName}</p>
-                                    <p class="text-xs text-white mt-1">Qty: {oi.quantity}</p>
+                                    <p className="text-[15px] font-medium text-[#3B2A20]">{oi.catalog.catalogName}</p>
+                                    <p className="text-xs text-[#8A7862] mt-1">Qty: {oi.quantity}</p>
                                 </div>
                             </div>
                           ))}

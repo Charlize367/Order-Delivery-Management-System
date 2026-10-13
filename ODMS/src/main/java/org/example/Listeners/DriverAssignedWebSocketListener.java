@@ -2,6 +2,9 @@ package org.example.Listeners;
 
 import org.example.Events.DriverAssignedEvent;
 import org.example.Exception.ResourceNotFoundException;
+import org.example.Firebase.FcmService;
+import org.example.Firebase.FcmToken;
+import org.example.Firebase.FcmTokenRepository;
 import org.example.Notifications.NotificationResponse;
 import org.example.Notifications.NotificationType;
 import org.example.Orders.Orders;
@@ -14,6 +17,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class DriverAssignedWebSocketListener {
@@ -25,6 +30,12 @@ public class DriverAssignedWebSocketListener {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private FcmService fcmService;
+
+    @Autowired
+    private FcmTokenRepository fcmTokenRepository;
 
     public DriverAssignedWebSocketListener(
             SimpMessagingTemplate messagingTemplate
@@ -49,7 +60,9 @@ public class DriverAssignedWebSocketListener {
                         NotificationType.DRIVER_ASSIGNED,
                         "You have been assigned Order #" + event.orderId(),
                         false,
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        order.getOrder_status().toString()
+
                 );
 
 
@@ -61,7 +74,9 @@ public class DriverAssignedWebSocketListener {
                         NotificationType.DRIVER_ASSIGNED,
                         "Your assigned driver is " + driver.getUsername(),
                         false,
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        order.getOrder_status().toString()
+
                 );
 
 
@@ -79,5 +94,38 @@ public class DriverAssignedWebSocketListener {
                 "/queue/notifications",
                 customerResponse
         );
+
+
+        messagingTemplate.convertAndSend(
+                "/topic/orders/" + order.getOrderId(),
+                customerResponse
+        );
+
+
+        Optional<FcmToken> latestToken =
+                fcmTokenRepository.findFirstByUserIdOrderByCreatedAtDesc(order.getCustomer().getUserId());
+
+        latestToken.ifPresent(token ->
+                fcmService.sendNotification(
+                        token.getToken(),
+                        "Order Update",
+                        customerResponse.getMessage()
+                )
+        );
+
+
+
+        Optional<FcmToken> latestToken2 =
+                fcmTokenRepository.findFirstByUserIdOrderByCreatedAtDesc(event.driverId());
+
+        latestToken2.ifPresent(token ->
+                fcmService.sendNotification(
+                        token.getToken(),
+                        "Order Update",
+                        driverResponse.getMessage()
+                )
+        );
+
+
     }
 }

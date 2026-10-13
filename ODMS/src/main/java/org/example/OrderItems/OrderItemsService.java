@@ -39,7 +39,7 @@ public class OrderItemsService {
         logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
     }
 
-    @Cacheable(value = "orderItems")
+
     public List<OrderItemsResponse> getAllOrderItems() {
         return orderItemsRepository.findAll().stream()
                 .map(orderItemsMapper::toResponse)

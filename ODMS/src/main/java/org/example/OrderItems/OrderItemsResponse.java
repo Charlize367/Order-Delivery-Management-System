@@ -1,19 +1,24 @@
 package org.example.OrderItems;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import org.example.Catalog.CatalogResponse;
+import org.example.Combo.ComboResponse;
+import org.example.OrderItemModifier.OrderItemModifierResponse;
 import org.example.Orders.OrderResponse;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class OrderItemsResponse {
 
     private Long orderItemsId;
     private OrderResponse order;
     private CatalogResponse catalog;
+    private ComboResponse combo;
     private Integer quantity;
-    private Double subtotal;
+    private BigDecimal subtotal;
+    private String specialInstructions;
+
+    private List<OrderItemModifierResponse> orderItemModifiers;
 
 
     public Long getOrderItemsId() {
@@ -40,6 +45,14 @@ public class OrderItemsResponse {
         this.catalog = catalog;
     }
 
+    public ComboResponse getCombo() {
+        return combo;
+    }
+
+    public void setCombo(ComboResponse combo) {
+        this.combo = combo;
+    }
+
     public Integer getQuantity() {
         return quantity;
     }
@@ -48,11 +61,27 @@ public class OrderItemsResponse {
         this.quantity = quantity;
     }
 
-    public Double getSubtotal() {
+    public BigDecimal getSubtotal() {
         return subtotal;
     }
 
-    public void setSubtotal(Double subtotal) {
+    public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public String getSpecialInstructions() {
+        return specialInstructions;
+    }
+
+    public void setSpecialInstructions(String specialInstructions) {
+        this.specialInstructions = specialInstructions;
+    }
+
+    public List<OrderItemModifierResponse> getOrderItemModifiers() {
+        return orderItemModifiers;
+    }
+
+    public void setOrderItemModifiers(List<OrderItemModifierResponse> orderItemModifiers) {
+        this.orderItemModifiers = orderItemModifiers;
     }
 }

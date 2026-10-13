@@ -52,7 +52,7 @@ public class CategoryService {
         logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
     }
 
-    @Cacheable(value = "categories")
+
     public List<CategoryResponse> getAllCategories() {
         logger.info("Displaying all categories");
         return categoryRepository.findAll().stream()
@@ -71,7 +71,7 @@ public class CategoryService {
 
     @Caching(
             put = {
-                    @CachePut(value = "category", key = "#savedCategory.categoryId")
+                    @CachePut(value = "category", key = "#result.categoryId")
             },
             evict = {
                     @CacheEvict(value = "categories", allEntries = true)

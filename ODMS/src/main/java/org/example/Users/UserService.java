@@ -4,11 +4,14 @@ import jakarta.transaction.Transactional;
 import org.example.Basket.Basket;
 import org.example.Basket.BasketRepository;
 import org.example.Catalog.Catalog;
+import org.example.Catalog.CatalogResponse;
+import org.example.CustomUserDetails;
 import org.example.Deliveries.Deliveries;
 import org.example.Deliveries.DeliveryRepository;
 import org.example.Exception.ResourceNotFoundException;
 import org.example.Orders.Orders;
 import org.example.Orders.OrdersRepository;
+import org.example.PageResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
@@ -22,6 +25,9 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +35,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService  {
 
     @Autowired
     private UsersRepository usersRepository;
@@ -57,7 +63,7 @@ public class UserService {
         logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
     }
 
-    @Cacheable(value = "users")
+
     public List<UserResponse> getAllUsers() {
         logger.info("Displaying all users");
         return usersRepository.findAll().stream()
@@ -66,20 +72,24 @@ public class UserService {
     }
 
     @Cacheable(value = "users", key = "'page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()")
-    public Page<UserResponse> getUsers(String role, Pageable pageable) {
+    public PageResponse<UserResponse> getUsers(String role, Pageable pageable) {
         logger.info("Displaying users by page");
 
+        Page<Users> page;
+
         if(role != null) {
-            return usersRepository.findByRole(role, pageable)
-                    .map(userMapper::toResponse);
+            page = usersRepository.findByRole(role, pageable);
+        } else {
+
+            page = usersRepository.findAll(pageable);
         }
-        return usersRepository.findAll(pageable)
-                .map(userMapper::toResponse);
+
+        return new PageResponse<>(page.map(userMapper::toResponse));
     }
 
     @Caching(
             put = {
-                    @CachePut(value = "user", key = "#savedUser.userId")
+                    @CachePut(value = "user", key = "#result.userId")
             },
             evict = {
                     @CacheEvict(value = "users", allEntries = true)
@@ -207,6 +217,36 @@ public class UserService {
     }
 
 
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#userId"),
+            @CacheEvict(value = "users", allEntries = true)
+    })
+    @Transactional
+    public void deleteKitchenStaffById(Long userId) {
+        logger.info("Deleting kitchen staff by ID: {}", userId);
+        Users kitchenStaff = usersRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        usersRepository.delete(kitchenStaff);
+        logger.info("Successfully deleted kitchen staff ID: {}", userId);
+    }
+
+
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#userId"),
+            @CacheEvict(value = "users", allEntries = true)
+    })
+    @Transactional
+    public void deleteDispatcherById(Long userId) {
+        logger.info("Deleting dispatcher by ID: {}", userId);
+        Users kitchenStaff = usersRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        usersRepository.delete(kitchenStaff);
+        logger.info("Successfully deleted dispatcher ID: {}", userId);
+    }
+
+
     @Cacheable(value = "user", key = "#userId")
     public UserResponse getUsersById(Long userId) {
         logger.info("Getting user ID: {}", userId);
@@ -217,6 +257,18 @@ public class UserService {
         logger.info("Successfully fetched user ID: {}", userId);
         return userMapper.toResponse(user);
     }
+
+    public UserResponse getDriverByDelivery(Long deliveryId) {
+        logger.info("Getting deliveryId ID: {}", deliveryId);
+        Users user = usersRepository.findById(deliveryId)
+                .orElseThrow(() -> {
+                    return new ResourceNotFoundException("User not found.");
+                });
+        logger.info("Successfully fetched delivery ID: {}", deliveryId);
+        return userMapper.toResponse(user);
+    }
+
+
 }
 
 

@@ -1,14 +1,17 @@
 package org.example.Payment;
 
 import org.example.Orders.OrderMapper;
+import org.springframework.stereotype.Component;
 
+
+@Component
 public class PaymentMapper {
 
-    private final PaymentMapper paymentMapper;
+
     private final OrderMapper orderMapper;
 
-    public PaymentMapper(PaymentMapper paymentMapper, OrderMapper orderMapper) {
-        this.paymentMapper = paymentMapper;
+    public PaymentMapper(OrderMapper orderMapper) {
+
         this.orderMapper = orderMapper;
     }
 

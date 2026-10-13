@@ -47,6 +47,7 @@ const BrowseCatalog = () => {
 
 
  
+console.log(item);
 
 
   const fetchCatalogByCategory = async (page = 0) => {
@@ -87,11 +88,12 @@ const BrowseCatalog = () => {
 
 
   return (
-    <div className="body">
+    <div className="body min-h-screen bg-[#F7F1E8]">
       <Header />
       <section className="dashboard">
-        <div className="catalog-top">
-         <h1 className="text-4xl m-9 font-bold text-white">{param.name}</h1>
+        <div className="catalog-top border-b border-[#E7DCC9] px-10 py-9">
+          <h1 className="font-['Fraunces',serif] text-3xl font-semibold text-[#3B2A20] sm:text-4xl">{param.name}</h1>
+          <div className="mt-3 h-1 w-14 rounded-full bg-[#A65A34]"></div>
         </div>
 
         {showRateLimitPopup && (
@@ -100,20 +102,26 @@ const BrowseCatalog = () => {
 
         {isLoading && (
             <div className="flex items-center justify-center my-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#56C789] border-solid border-green-400"></div>
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#E7DCC9] border-t-[#A65A34]"></div>
             </div>
           )}
 
-                  <ul className="grid grid-cols-1 md:grid-cols-4  sm:grid-cols-3 gap-6 p-10">
+        <ul className="grid grid-cols-1 gap-6 p-10 sm:grid-cols-3 md:grid-cols-4">
           {item.map((items) => (
-            <ItemCard items={items} onReload={handleReloadData} category_ID={param.id} guestBasket={guestBasket} 
+            <ItemCard key={items.catalogId} items={items} onReload={handleReloadData} category_ID={param.id} guestBasket={guestBasket}
   setGuestBasket={setGuestBasket} />
           ))}
-          </ul>
+        </ul>
 
-       {!isLoading && item.length == 0 && (
-            <p className="flex justify-center text-white text-lg">There are no items in this category.</p>
-          )}
+        {!isLoading && item.length == 0 && (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <svg className="mb-4 h-14 w-14 text-[#A65A34]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 3v2m6-2v2M5 8h14M6 8v10a2 2 0 002 2h8a2 2 0 002-2V8" />
+            </svg>
+            <p className="font-['Fraunces',serif] text-lg font-medium text-[#3B2A20]">Nothing here yet</p>
+            <p className="mt-1 text-sm text-[#8A7862]">There are no items in this category.</p>
+          </div>
+        )}
 
       {item.length > 0 && (
       <div className="w-full">

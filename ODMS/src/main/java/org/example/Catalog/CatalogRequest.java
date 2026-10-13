@@ -3,6 +3,7 @@ package org.example.Catalog;
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CatalogRequest {
@@ -17,13 +18,13 @@ public class CatalogRequest {
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.01", message = "Price must be greater than 0")
     @DecimalMax(value = "1000000.00", message = "Price must not exceed 1,000,000")
-    private Double catalog_price;
+    private BigDecimal catalog_price;
 
 
     @NotNull(message = "Category ID is required")
     private Long categoryId;
 
-    @NotBlank
+
     private String catalog_image;
 
 
@@ -51,11 +52,11 @@ public class CatalogRequest {
         this.catalog_description = catalog_description;
     }
 
-    public Double getCatalog_price() {
+    public BigDecimal getCatalog_price() {
         return catalog_price;
     }
 
-    public void setCatalog_price(Double catalog_price) {
+    public void setCatalog_price(BigDecimal catalog_price) {
         this.catalog_price = catalog_price;
     }
 

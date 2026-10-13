@@ -46,6 +46,7 @@ public class CatalogMapper {
             catalogResponse.setCategory(null);
         }
         catalogResponse.setCatalog_image(catalog.getCatalog_image());
+        catalogResponse.setAvailable(catalog.isAvailable());
         return catalogResponse;
     }
 
@@ -57,6 +58,7 @@ public class CatalogMapper {
                     catalogResponse.setCatalogName(catalog.getCatalogName());
                     catalogResponse.setCatalog_description(catalog.getCatalog_description());
                     catalogResponse.setCatalog_price(catalog.getCatalog_price());
+                    catalogResponse.setAvailable(catalog.isAvailable());
                     if (catalog.getCategory() != null) {
                         CategoryResponse catRes = new CategoryResponse();
                         catRes.setCategoryId(catalog.getCategory().getCategoryId());

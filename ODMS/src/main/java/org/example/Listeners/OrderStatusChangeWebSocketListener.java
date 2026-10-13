@@ -4,6 +4,9 @@ package org.example.Listeners;
 import org.example.Events.OrderCancelledEvent;
 import org.example.Events.OrderStatusChangeEvent;
 import org.example.Exception.ResourceNotFoundException;
+import org.example.Firebase.FcmService;
+import org.example.Firebase.FcmToken;
+import org.example.Firebase.FcmTokenRepository;
 import org.example.Notifications.NotificationResponse;
 import org.example.Notifications.NotificationType;
 import org.example.Orders.Orders;
@@ -15,6 +18,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class OrderStatusChangeWebSocketListener {
@@ -25,6 +30,12 @@ public class OrderStatusChangeWebSocketListener {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private FcmService fcmService;
+
+    @Autowired
+    private FcmTokenRepository fcmTokenRepository;
 
     public OrderStatusChangeWebSocketListener(
             SimpMessagingTemplate messagingTemplate
@@ -48,7 +59,8 @@ public class OrderStatusChangeWebSocketListener {
                         NotificationType.ORDER_STATUS_CHANGED,
                         "Your order status is: " + event.status(),
                         false,
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        order.getOrder_status().toString()
                 );
 
 
@@ -56,6 +68,27 @@ public class OrderStatusChangeWebSocketListener {
                 order.getCustomer().getUserId().toString(),
                 "/queue/notifications",
                 response
+        );
+
+        messagingTemplate.convertAndSend(
+                "/topic/orders/" + order.getOrderId(),
+                response
+        );
+
+        List<FcmToken> tokens =
+                fcmTokenRepository.findByUserId(
+                        order.getCustomer().getUserId()
+                );
+
+        Optional<FcmToken> latestToken =
+                fcmTokenRepository.findFirstByUserIdOrderByCreatedAtDesc(order.getCustomer().getUserId());
+
+        latestToken.ifPresent(token ->
+                fcmService.sendNotification(
+                        token.getToken(),
+                        "Order Update",
+                        response.getMessage()
+                )
         );
     }
 }

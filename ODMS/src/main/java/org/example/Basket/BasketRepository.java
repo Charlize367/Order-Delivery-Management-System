@@ -17,4 +17,7 @@ public interface BasketRepository extends JpaRepository<Basket, Long> {
     List<Basket> findByCatalog(Catalog catalog);
     Optional<Basket> findByCustomer_UserIdAndCatalog_CatalogId(Long userId, Long catalogId);
 
+    Optional<Basket> findByCustomer_UserIdAndCombo_ComboId(Long userId, Long comboId);
+
+
 }

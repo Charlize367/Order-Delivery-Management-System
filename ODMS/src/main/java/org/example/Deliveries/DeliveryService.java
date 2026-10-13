@@ -1,14 +1,18 @@
 package org.example.Deliveries;
 
 
+import jakarta.transaction.Transactional;
+import org.example.Events.DriverAssignedEvent;
 import org.example.Events.OrderDeliveredEvent;
 import org.example.Events.OrderStatusChangeEvent;
 import org.example.Exception.ResourceNotFoundException;
 import org.example.Notifications.NotificationRepository;
 import org.example.Orders.*;
+import org.example.PageResponse;
 import org.example.Users.Users;
 import org.example.Users.UsersRepository;
 
+import org.example.Validator.OrderStatusTransitionValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,14 +53,16 @@ public class DeliveryService {
     private OrderMapper orderMapper;
 
     private final ApplicationEventPublisher publisher;
+    private final OrderStatusTransitionValidator validator;
 
 
 
 
     private static final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
 
-    public DeliveryService(ApplicationEventPublisher publisher) {
+    public DeliveryService(ApplicationEventPublisher publisher, OrderStatusTransitionValidator validator ) {
         this.publisher = publisher;
+        this.validator = validator;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -65,7 +71,7 @@ public class DeliveryService {
         logger.info("Application Ready: Internal and External Caches have been nuked to sync with Database.");
     }
 
-    @Cacheable(value = "deliveries")
+
     public List<DeliveryResponse> getAllDeliveries() {
         logger.info("Displaying all deliveries");
         return deliveryRepository.findAll().stream()
@@ -74,31 +80,29 @@ public class DeliveryService {
     }
 
     @Cacheable(value = "deliveries", key = "'page_'+#pageable.pageNumber+'_'+#pageable.pageSize+'_'+#pageable.sort.toString()")
-    public Page<DeliveryResponse> getDeliveries(Long customerId, Long driverId, Pageable pageable) {
+    public PageResponse<DeliveryResponse> getDeliveries(Long customerId, Long driverId, Pageable pageable) {
         logger.info("Displaying all deliveries by page");
 
 
+        Page<Deliveries> page;
 
         if(customerId != null) {
             Users customer = usersRepository.findById(customerId)
                     .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
-            return deliveryRepository.findByOrdersCustomer(customer, pageable)
-                    .map(deliveryMapper::toResponse);
-        }
-
-        if(driverId != null) {
+            page = deliveryRepository.findByOrdersCustomer(customer, pageable);
+        } else if (driverId != null) {
             Users driver = usersRepository.findById(driverId)
                     .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + driverId));
-            return deliveryRepository.findByDeliveryMen(driver, pageable)
-                    .map(deliveryMapper::toResponse);
+            page = deliveryRepository.findByDeliveryMen(driver, pageable);
+        } else {
+            page = deliveryRepository.findAll(pageable);
         }
 
-        return deliveryRepository.findAll(pageable)
-                .map(deliveryMapper::toResponse);
+        return new PageResponse<>(page.map(deliveryMapper::toResponse));
     }
 
 
-    @Cacheable(value = "delivery", key = "#userId")
+//    @Cacheable(value = "delivery", key = "#userId")
     public List<DeliveryResponse> getDeliveriesByUser(Long userId) {
         logger.info("Displaying deliveries by user");
         Users customer = usersRepository.findById(userId)
@@ -107,7 +111,15 @@ public class DeliveryService {
         return deliveryMapper.toListResponse(deliveries);
     }
 
-    @Cacheable(value = "delivery", key = "#userId")
+
+    public DeliveryResponse getDeliveryByOrderId(Long orderId) {
+        logger.info("Displaying deliveries by order");
+
+        Deliveries delivery = deliveryRepository.findByOrdersOrderId(orderId);
+        return deliveryMapper.toResponse(delivery);
+    }
+
+    @Cacheable(value = "deliveries", key = "#userId")
     public List<DeliveryResponse> getDeliveriesByDeliveryMen(Long userId) {
         logger.info("Displaying deliveries by delivery men");
         Users deliveryMen = usersRepository.findById(userId)
@@ -119,7 +131,7 @@ public class DeliveryService {
 
     @Caching(
             put = {
-                    @CachePut(value = "delivery", key = "#savedDelivery.deliveryId")
+                    @CachePut(value = "delivery", key = "#result.deliveryId")
             },
             evict = {
                     @CacheEvict(value = "deliveries", allEntries = true)
@@ -148,7 +160,7 @@ public class DeliveryService {
 
     @Caching(
             put = {
-                    @CachePut(value = "delivery", key = "#delivery.deliveryId")
+                    @CachePut(value = "delivery", key = "#result.deliveryId")
             },
             evict = {
                     @CacheEvict(value = "deliveries", allEntries = true)
@@ -165,32 +177,65 @@ public class DeliveryService {
     }
 
 
-
+    @Transactional
     @Caching(
             put = {
-                    @CachePut(value = "delivery", key = "#delivery.deliveryId")
+                    @CachePut(value = "delivery", key = "#result.deliveryId")
             },
             evict = {
-                    @CacheEvict(value = "deliveries", allEntries = true)
+                    @CacheEvict(value = "deliveries", allEntries = true),
+                    @CacheEvict(value = "queuedOrders", allEntries = true),
+                    @CacheEvict(value = "readyOrders", allEntries = true),
+                    @CacheEvict(value = "order", key = "#orderId"),
+                    @CacheEvict(value = "orders", allEntries = true)
             }
     )
-    public DeliveryResponse updateDeliveryDriver(Long deliveryId, Long userId) {
+
+    public DeliveryResponse assignDriver(Long deliveryId, Long userId) {
         logger.info("Updating delivery ID {} with user ID: {}", deliveryId, userId);
         Users deliveryMen = usersRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + deliveryId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         Deliveries deliveries = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Delivery not found with id: " + deliveryId));
         deliveries.setDeliveryMen(deliveryMen);
+
+        Orders order = ordersRepository.findByDeliveriesDeliveryId(deliveryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with delivery id: " + deliveryId));
+
+        if (deliveryMen == deliveries.getDeliveryMen()) {
+            validator.validate(order.getOrder_status(), OrderStatuses.ASSIGNED);
+            order.setOrder_status(OrderStatuses.ASSIGNED);
+            ordersRepository.save(order);
+            publisher.publishEvent(
+                    new DriverAssignedEvent(
+                            order.getOrderId(),
+                            userId
+                    )
+            );
+        }
+
+
         Deliveries delivery =  deliveryRepository.save(deliveries);
         logger.info("Successfully updated delivery ID {} with user ID: {}, name: {}", deliveryId, userId, deliveryMen.getUsername());
+
+
         return deliveryMapper.toResponse(delivery);
     }
 
 
+
+    @Caching(evict = {
+            @CacheEvict(value = "queuedOrders", allEntries = true),
+            @CacheEvict(value = "readyOrders", allEntries = true),
+            @CacheEvict(value = "order", key = "#orderId"),
+            @CacheEvict(value = "orders", allEntries = true),
+            @CacheEvict(value = "deliveries", allEntries = true)
+    })
     public OrderResponse markAsOTW(Long orderId) {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
+        validator.validate(order.getOrder_status(), OrderStatuses.OUT_FOR_DELIVERY);
         order.setOrder_status(OrderStatuses.OUT_FOR_DELIVERY);
         publisher.publishEvent(
                 new OrderStatusChangeEvent(
@@ -204,10 +249,19 @@ public class DeliveryService {
     }
 
 
+    @Caching(evict = {
+            @CacheEvict(value = "queuedOrders", allEntries = true),
+            @CacheEvict(value = "readyOrders", allEntries = true),
+            @CacheEvict(value = "order", key = "#orderId"),
+            @CacheEvict(value = "orders", allEntries = true),
+            @CacheEvict(value = "delivery", key = "#deliveryId"),
+            @CacheEvict(value = "deliveries", allEntries = true)
+    })
     public OrderResponse markAsDelivered(Long orderId, Long deliveryId) {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
+        validator.validate(order.getOrder_status(), OrderStatuses.DELIVERED);
         order.setOrder_status(OrderStatuses.DELIVERED);
 
         Deliveries deliveries = deliveryRepository.findById(deliveryId)
@@ -246,4 +300,8 @@ public class DeliveryService {
         logger.info("Successfully fetched delivery ID: {}", deliveryId);
         return deliveryMapper.toResponse(delivery);
     }
+
+
+
+
 }

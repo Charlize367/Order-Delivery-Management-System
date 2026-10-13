@@ -21,8 +21,8 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "https://order-delivery-management-system.vercel.app/", "http://localhost:5174", "http://localhost:5178", "http://13.60.248.219:3000", url )); // Frontend origin
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174", "https://order-delivery-management-system.vercel.app/", "http://localhost:5174", "http://localhost:5178", "http://13.60.248.219:3000", url )); // Frontend origin
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
@@ -37,8 +37,8 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5175", "https://order-delivery-management-system.vercel.app/", "http://localhost:5174", "http://localhost:5173",  "http://13.60.248.219:3000", url)
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedOrigins("http://localhost:5173", "http://localhost:5174","https://order-delivery-management-system.vercel.app/", "http://localhost:5174", "http://localhost:5173",  "http://13.60.248.219:3000", url)
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
